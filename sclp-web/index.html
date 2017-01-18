@@ -1,0 +1,2107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, user-scalable=0">
+    <meta http-equiv="content-type" content="text/html;
+      charset=windows-1252">
+    <style type="text/css">
+  table.topbar {
+    position: fixed;
+    text-align: center;
+    top: 0px;
+    left: 0px;
+    background-color: #ffffff;
+    width: 100% }
+  table.leftbar {
+    position: fixed;
+    text-align: left;
+    top: 10px;
+    left: 0px;
+    background-color: #ffffff;
+    width: 285px }
+ ol.nested
+   {
+     counter-reset: item
+   }
+ li.nested
+  {
+    display: block
+  }
+ li.nested:before
+  {
+    content: counters(item, ".") ". ";
+    counter-increment: item
+  }
+ li.toc {
+    margin-bottom: 2px;
+    margin-left: -15px;
+  }
+ body {
+    margin-left: 295px;
+   }
+
+
+  </style>
+  </head>
+  <body>
+    <!--
+<table class="topbar" ;="" style="text-align: center;">
+  <tbody>
+    <tr>
+      <td> <span style="font-style: italic;"> <big><big><span
+ style="font-weight: bold;"> cfglp: A CFG (Control Flow Graph) Language
+Processor </span> </big></big> </span></td>
+    </tr>
+    <tr>
+      <td>(<big><span style="font-style: italic;">version 2.2)</span></big>
+      </td>
+    </tr>
+    <tr>
+      <td><big style="font-style: italic; font-family: sans-serif;"> <a
+ href="http://www.cse.iitb.ac.in/%7Euday">Uday Khedker</a>, <a
+ href="http://www.cse.iitb.ac.in/">Department of Computer Science &amp;
+Engg., IIT Bombay</a> </big> </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      <table
+ style="width: 100%; text-align: left; background-color: rgb(153, 255, 255); margin-left: auto; margin-right: auto; font-family: sans-serif;"
+ border="0" cellpadding="2" cellspacing="2">
+        <tbody>
+          <tr>
+            <td
+ style="width: 8%; text-align: center; vertical-align: middle;"><a
+ href="#about">About cfglp</a></td>
+            <td
+ style="width: 8%; text-align: center; vertical-align: middle;"> <a
+ href="#functionality">Functionality</a></td>
+            <td
+ style="vertical-align: middle; text-align: center; width: 10%;"><a
+ href="#using_cfglp">Using
+cfglp</a></td>
+            <td
+ style="width: 9%; text-align: center; vertical-align: middle;"><a
+ href="#enhancing">Enhancing cfglp</a></td>
+            <td
+ style="width: 10%; text-align: center; vertical-align: middle;"><a
+ href="#design">Overall Design </a></td>
+            <td
+ style="width: 8%; vertical-align: middle; text-align: center;"><a
+ href="#level0fe">&nbsp;Level 0 Front End</a><br>
+            </td>
+            <td
+ style="width: 9%; text-align: center; vertical-align: middle;"><a
+ href="#level_0_interpreter">Level 0 Interpreter<br>
+            </a></td>
+            <td
+ style="width: 11%; vertical-align: top; text-align: center;"><a
+ href="cfglp-source.tar.gz">Download source</a> </td>
+ <td
+style="vertical-align: middle; text-align: center; width: 15%;"><a
+href="#SrcImpl">
+Source Code of Level 0</a> </td>
+            <td
+ style="vertical-align: middle; text-align: center; width: 15%;"><a
+ href="#RefImpl">
+Reference Implementatins</a> </td>
+<td
+style="vertical-align: middle; text-align: center; width: 15%;"><a
+href="#flexcpp-bisoncpp-usage">
+Using Flexc++ and Bisonc++</a> </td>
+            <td
+ style="vertical-align: middle; text-align: center; width: 12%;">&nbsp;<a
+ href="#dependencies">Dependencies
+for&nbsp;
+installation </a></td>
+          </tr>
+        </tbody>
+      </table>
+      </td>
+    </tr>
+    <tr>
+      <td> <br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+-->
+    <table class="leftbar" ;="" style="font-style: italic; font-family:
+      sans-serif;" border="0;">
+      <tbody>
+        <tr>
+          <td>
+            <table style="background-color: rgb(153, 255, 255);"
+              cellspacing="5" cellpadding="5" border="0">
+              <tbody>
+                <tr>
+                  <td style="font-style: italic;">sclp: A Language
+                    Processor for a Subset of C <br>
+                    (version 0.1)<br>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <ul>
+                      <li class="toc"><a href="#home_top">Home</a><br>
+                      </li>
+                      <li class="toc"><a href="#about">About sclp</a></li>
+                      <li class="toc"><a
+                          href="cs306-compilation-overview.pdf">An
+                          overview of compilation</a><br>
+                      </li>
+                      <li class="toc"> <a href="#functionality">Functionality
+of
+
+
+
+
+
+
+
+
+
+                          sclp<br>
+                        </a></li>
+                      <li class="toc"> <a href="#using_cfglp">Using
+                          cfglp</a></li>
+                      <li class="toc"> <a href="#enhancing">cfglp
+                          Levels<br>
+                        </a></li>
+                      <li class="toc"> <a href="#design">Design of sclp
+                          level 1<br>
+                        </a></li>
+                      <ul>
+                        <li class="toc"> <a href="#level_0_grammar">Grammar</a></li>
+                        <li class="toc"><a
+                            href="#Level_0_Data_Structures">Data
+                            structures</a><br>
+                        </li>
+                        <li class="toc"> <a href="#level_0_interpreter">Interpretation</a></li>
+                        <li class="toc"><a href="#compilation">Compilation</a><br>
+                        </li>
+                        <li class="toc"><a href="#limitations">Possible
+                            improvements</a><br>
+                        </li>
+                      </ul>
+                      <li class="toc"><a href="#SrcImpl">Source Code of
+                          Level 1 sclp<br>
+                        </a> </li>
+                      <li class="toc"><a href="#RefImpl">Reference
+                          Implementations</a></li>
+                      <li class="toc"><a
+                          href="index.html#flexcpp-bisoncpp-usage">Using
+                          Flexc++ and Bisonc++</a></li>
+                      <ul>
+                        <li class="toc"><a href="#flexcpp_only"><span
+                              style="text-decoration: underline;">Recognizing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                              numbers</span></a><br>
+                        </li>
+                        <li class="toc"><a href="#flexcpp_and_bisconcpp">Recognizing
+
+                            expressions<br>
+                          </a></li>
+                        <li class="toc"><a href="#simcalc"><span
+                              style="text-decoration: underline;">Computing
+
+                              expressions</span></a></li>
+                        <li class="toc"><span style="text-decoration:
+                            underline;"><a
+                              href="#Passing_different_values_derived_from">Passing
+
+                              values from a scanner to a parser for a
+                              list of numbers and names</a><br>
+                          </span></li>
+                        <li class="toc"><a
+                            href="index.html#flexcpp_bisoncpp_installation">Installing
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            Flexc++ and Bisonc++<br>
+                          </a></li>
+                      </ul>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- Main text starts here -->
+    <table style="text-align: left;">
+      <tbody>
+        <tr>
+          <td> <span style="font-style: italic;"> <big><big><span
+                    style="font-weight: bold;"> <a name="home_top"></a>sclp:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    A Language Processor for a Subset of C</span> </big></big>
+            </span></td>
+        </tr>
+        <tr>
+          <td>(<big><span style="font-style: italic;">version 0.1)</span></big>
+          </td>
+        </tr>
+        <tr>
+          <td><big style="font-style: italic; font-family: sans-serif;">
+              <a href="http://www.cse.iitb.ac.in/%7Euday">Uday Khedker</a>
+              <br>
+            </big></td>
+        </tr>
+        <tr>
+          <td style="font-style: italic; font-family: sans-serif;"> <a
+              href="http://www.cse.iitb.ac.in/">Department of Computer
+              Science &amp; Engg., IIT Bombay</a> </td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+        </tr>
+        <!--
+    <tr>
+      <td>
+      <table
+ style="width: 100%; text-align: left; background-color: rgb(153, 255, 255); margin-left: auto; margin-right: auto; font-family: sans-serif;"
+ border="0" cellpadding="2" cellspacing="2">
+        <tbody>
+          <tr>
+            <td
+ style="width: 8%; text-align: center; vertical-align: middle;"><a
+ href="#about">About cfglp</a></td>
+            <td
+ style="width: 8%; text-align: center; vertical-align: middle;"> <a
+ href="#functionality">Functionality</a></td>
+            <td
+ style="vertical-align: middle; text-align: center; width: 10%;"><a
+ href="#using_cfglp">Using
+cfglp</a></td>
+            <td
+ style="width: 9%; text-align: center; vertical-align: middle;"><a
+ href="#enhancing">Enhancing cfglp</a></td>
+            <td
+ style="width: 10%; text-align: center; vertical-align: middle;"><a
+ href="#design">Overall Design </a></td>
+            <td
+ style="width: 8%; vertical-align: middle; text-align: center;"><a
+ href="#level0fe">&nbsp;Level 0 Front End</a><br>
+            </td>
+            <td
+ style="width: 9%; text-align: center; vertical-align: middle;"><a
+ href="#level_0_interpreter">Level 0 Interpreter<br>
+            </a></td>
+            <td
+ style="width: 11%; vertical-align: top; text-align: center;"><a
+ href="cfglp-source.tar.gz">Download source</a> </td>
+<td
+style="vertical-align: middle; text-align: center; width: 15%;"><a
+href="#SrcImpl">
+Source Code of Level 0</a> </td>            
+<td
+ style="vertical-align: middle; text-align: center; width: 15%;"><a
+ href="#RefImpl">
+Reference Implementations</a> </td>
+<td
+style="vertical-align: middle; text-align: center; width: 15%;"><a
+href="#flexcpp-bisoncpp-usage">
+Using Flexc++ and Bisonc++</a> </td>
+            <td
+ style="vertical-align: middle; text-align: center; width: 12%;">&nbsp;<a
+ href="#dependencies">Dependencies
+for&nbsp;
+installation </a></td>
+          </tr>
+-->
+      </tbody>
+    </table>
+    <br>
+    <a name="about"></a>
+    <table style="background-color: rgb(255, 204, 51); width: 100%;
+      text-align: left;" cellspacing="2" cellpadding="2" border="0">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;"><big><span style="font-style:
+                italic;"><span style="font-weight: bold;">About sclp</span></span></big><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <div style="text-align: justify;"><font face="sans-serif">The
+        language processor sclp <big><code style="font-weight: bold;"></code></big>has
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        been implemented for UG courses cs302+cs316: Implementation of
+        Programming Languages (theory and lab) at IIT Bombay. It is
+        designed and implemented by Uday Khedker with the help of many
+        students. Its immediate predecessor&nbsp;&nbsp;&nbsp; cfglp,
+        which processed cfg output of gcc </font><font
+        face="sans-serif"><font face="sans-serif">was implemented by
+          Tanu Kanvar.<br>
+          <br>
+        </font> If you are new to the area of compilers, you may want to
+        <a href="notes/cs306-compilation-overview.pdf">see this for an
+          overview</a> before proceeding further.<br>
+        <br>
+        The main motivation behind this implementation has been to
+        create a small well-crafted code base for a UG compiler
+        construction class such that it can be enhanced systematically
+        by the students. We begin with a<span style="font-style:
+          italic;"> very</span> small language and enhance it using well
+        defined increments. <span style="font-style: italic;">Each step
+          supports new source language features rather than a new phase
+          in a compiler or an interpreter</span>. In other words, each
+        step results in<br>
+      </font>
+      <ul>
+        <li><font face="sans-serif">a complete working compiler which
+            generates code which can be executed, and <br>
+          </font> </li>
+        <li><font face="sans-serif">a complete working interpreter which
+            executes all programs that can be written with the allowed
+            source language features. <br>
+          </font> </li>
+      </ul>
+      <span style="font-family: sans-serif;"> The complexity of
+        understanding the complete compilation is controlled by
+        restricting the input language instead of omitting phases or
+        modules of the language processor. We believe that this provides
+        a much better feel of an integrated working system than the
+        traditional approach of enhancing the compiler phase-wise. What
+        distinguishes sclp from cfglp is one more layer of modularity in
+        the form of a well-chosen set of library support for different
+        phases so that a student is not exposed to a large code base
+        right in the beginning.<br>
+        <br>
+        We welcome feedback and suggestions on improving sclp,<big><code
+            style="font-weight: bold;"></code></big> as also bug
+        reports.<br>
+      </span><br>
+      <span style="font-family: sans-serif;"><font face="sans-serif">All
+          copyrights are reserved by Uday Khedker. This implementation
+          has been made available purely for academic purposes without
+          any warranty of any kind.<br>
+        </font> <font face="sans-serif"> </font> </span>
+      <div style="text-align: justify;"><font face="sans-serif"><br>
+        </font></div>
+      <span style="font-family: sans-serif;"><br>
+      </span></div>
+    <a name="functionality"></a><br>
+    <table style="background-color: rgb(255, 204, 51); width: 100%;
+      text-align: left;" cellspacing="2" cellpadding="2" border="0">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;"><big><span style="font-style:
+                italic;"><span style="font-weight: bold;">Functionality
+                  of sclp</span></span></big><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <div style="text-align: justify;"><font face="sans-serif">This
+        language processor takes as input programs written in a subset
+        of C (described below). Based on command line parameters, the
+        read program is either interpreted or compiled to generate
+        equivalent <a href="http://spimsimulator.sourceforge.net/">spim</a>
+        assembly language program.<br>
+      </font> <font face="sans-serif"><br>
+      </font> <font face="sans-serif">The overall functionality
+        supported by sclp <big><code style="font-weight: bold;"></code></big>is
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        best described by the usage printed by it:<br>
+      </font> </div>
+    <font face="sans-serif"> </font><br style="font-family:
+      sans-serif;">
+    <table style="background-color: rgb(255, 204, 51); width: 100%;
+      text-align: left;" cellspacing="0" cellpadding="0" border="0">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top; background-color: rgb(153,
+            255, 255);"><big style="font-family: sans-serif;"><span
+                style="font-style: italic;"><span style="font-weight:
+                  bold;"></span></span></big>&nbsp;<code> <big>U</big><big>sage:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                sclp [options] [file]<br>
+                &nbsp;&nbsp;&nbsp;&nbsp; Options:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -help&nbsp;&nbsp;&nbsp;&nbsp; Show this help<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -tokens&nbsp;&nbsp; Show the tokens in file.toks (or
+                out.toks)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -parse&nbsp;&nbsp;&nbsp; Stop processing after parsing.
+                Do not perform semantic analysis<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -ast&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Show abstract syntax
+                trees in file.ast (or out.ast)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -symtab&nbsp;&nbsp; Show the symbol table of
+                declarations in file.sym (or out.sym)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -eval&nbsp;&nbsp;&nbsp;&nbsp; Interpret the program and
+                show a trace of the execution in file.eval (or out.eval)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -compile&nbsp; Compile the program and generate spim
+                code in file.spim (or out.spim)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                (-eval and -compile options are mutually exclusive)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                (-compile is the default option)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -lra&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Do local register
+                allocation to avoid redundant loads within a basic block<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -icode&nbsp;&nbsp;&nbsp; Compile the program and show
+                the intermediate code in file.ic (or out.ic)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                (-eval and -icode options are mutually exclusive)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Demo
+                version. Use stdout for the outputs instead of files</big></code><big
+              style="font-weight: bold;"><code><br>
+              </code></big> </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <font face="sans-serif">For simplicity, we have divided cfglp into
+      two parts: Interpreter and Compiler. <br>
+      <br>
+    </font> <a name="using_cfglp"></a><br>
+    <table style="background-color: rgb(255, 204, 51); width: 100%;
+      text-align: left;" cellspacing="2" cellpadding="2" border="0">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;"><big><span style="font-style:
+                italic;"><span style="font-weight: bold;">A Schematic of
+                  sclp</span></span></big><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="text-align: justify;"><font face="sans-serif"><big><code
+            style="font-weight: bold;"></code></big> <br>
+      </font><br>
+      <br>
+      <div style="text-align: center;"><img
+          src="pictures/cfglp-usage.png" alt="cfglup usage" width="408"
+          height="283" align="middle"><br style="font-family:
+          sans-serif;">
+      </div>
+      <br>
+      <ul style="font-family: sans-serif; text-align: justify;">
+      </ul>
+      <span style="font-family: sans-serif;"></span> </div>
+    <a name="enhancing"></a><br>
+    <table style="background-color: rgb(255, 204, 51); width: 100%;
+      text-align: left;" cellspacing="2" cellpadding="2" border="0">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;"><big><span style="font-style:
+                italic;"><span style="font-weight: bold;">sclp Levels</span></span></big><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <div style="text-align: justify;"><font face="sans-serif">A subset
+        of sclp code has been made available for level 1 in the form of
+        some sclp files that need to be completed. The reference
+        implementations in the form of binaries for subsequent levels
+        (1, 2, and 3) will be made available for programming assignments</font>
+      <font face="sans-serif"> </font> <span style="color: rgb(0, 0,
+        0);">
+        <ul>
+        </ul>
+      </span><font face="sans-serif"> </font>
+      <meta http-equiv="CONTENT-TYPE" content="text/html;
+        charset=windows-1252">
+      <title></title>
+      <meta name="GENERATOR" content="LibreOffice 3.5 (Linux)">
+      <style type="text/css">
+	<!--
+		@page { margin: 2cm }
+		P { margin-bottom: 0.21cm }
+		CODE.cjk { font-family: "WenQuanYi Micro Hei", monospace }
+		CODE.ctl { font-family: "Lohit Hindi", monospace }
+	-->
+	</style>
+      <meta http-equiv="CONTENT-TYPE" content="text/html;
+        charset=windows-1252">
+      <title></title>
+      <meta name="GENERATOR" content="LibreOffice 3.5 (Linux)">
+      <style type="text/css">
+	<!--
+		@page { margin: 2cm }
+		P { margin-bottom: 0.21cm }
+		CODE.cjk { font-family: "WenQuanYi Micro Hei", monospace }
+		CODE.ctl { font-family: "Lohit Hindi", monospace }
+	-->
+	</style>
+      <meta http-equiv="CONTENT-TYPE" content="text/html;
+        charset=windows-1252">
+      <title></title>
+      <meta name="GENERATOR" content="LibreOffice 3.5 (Linux)">
+      <style type="text/css">
+	<!--
+		@page { margin: 2cm }
+		P { margin-bottom: 0.21cm }
+		CODE.cjk { font-family: "WenQuanYi Micro Hei", monospace }
+		CODE.ctl { font-family: "Lohit Hindi", monospace }
+	-->
+	</style>
+      <meta http-equiv="CONTENT-TYPE" content="text/html;
+        charset=windows-1252">
+      <ol>
+        <font face="sans-serif"> </font>
+        <li><font face="sans-serif"><i>Level 1</i>. (<a
+              href="test_files/level1">Sample files</a>). This level
+            consists of a (possibly empty) list of global declaration
+            statements followed by the definition of the <big
+              style="font-weight: bold;"><code>main</code></big>
+            procedure. No other procedure definition is allowed.<br>
+          </font>
+          <ul>
+            <li><font face="sans-serif">The lone <big
+                  style="font-weight: bold;"><code>main</code></big>
+                procedure has the following restrictions: <br>
+              </font>
+              <ul>
+                <li><font face="sans-serif">It consists of a (possibly
+                    empty) list of local declaration statements followed
+                    by a (possibly empty) list of assignment statements.
+                    <br>
+                  </font> </li>
+                <li><font face="sans-serif">The declarations can
+                    introduce only integer variables (introduced by the
+                    type specifier <big style="font-weight: bold;"><code>int</code></big>).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    No other type or data structure is allowed. <br>
+                  </font> </li>
+                <li><font face="sans-serif">The list of statements does
+                    not have control flow statements or procedure calls.
+                    <br>
+                  </font> </li>
+              </ul>
+            </li>
+            <li><font face="sans-serif">An assignment statement has the
+                following restrictions: <br>
+              </font>
+              <ul>
+                <li><font face="sans-serif">The right hand side must be
+                    an integer variable or an integer number. <br>
+                  </font> </li>
+              </ul>
+            </li>
+            <li><font face="sans-serif">All declaration statements
+                precede any executable statements. Thus there are no
+                assignments in declarations.<br>
+              </font> </li>
+          </ul>
+        </li>
+        <font face="sans-serif"> </font>
+        <li><font face="sans-serif"><i>Level 2</i>. </font><font
+            face="sans-serif"><font face="sans-serif">(<a
+                href="test_files/level2">Sample files</a>). </font>This
+            level extends level 1 in the following ways: <br>
+          </font>
+          <ul>
+            <li><font face="sans-serif">Apart from integers, single
+                precision floating point types (introduced by the type
+                specifier <big style="font-weight: bold;"><code>float</code></big>)
+                are supported.<br>
+              </font> </li>
+            <li><font face="sans-serif">Expressions appearing in the
+                right hand side of an assignment or in comparisons may
+                contain the following arithmetic operators:&nbsp; +, -,
+                *, /, and unary minus. Note that the expressions do not
+                have any side effects.&nbsp;</font></li>
+          </ul>
+        </li>
+        <font face="sans-serif"> </font>
+        <li><font face="sans-serif"><i>Level 3</i>. </font><font
+            face="sans-serif"><font face="sans-serif"><font
+                face="sans-serif">(<a href="test_files/level3">Sample
+                  files</a>). </font></font> This level extends level 2
+            by supporting intra-procedural control flow statements and
+            evaluation of conditions in the following ways: <br>
+          </font>
+          <ul>
+            <li><font face="sans-serif">Conditional expression <span
+                  style="font-size: medium;"><big><code><span
+                        style="font-weight: bold; font-style: italic;">e1?e2:e3</span></code></big>,
+                  <big style="font-weight: bold;"><code>while</code></big>,
+                  <big style="font-weight: bold;"><code>do-while</code></big>,
+                  <big style="font-weight: bold;"><code>for</code></big>,<big
+                    style="font-weight: bold;"><code> if</code></big>, <big
+                    style="font-weight: bold;"><code>if-else</code></big></span>,
+                and </font><font face="sans-serif"><font
+                  face="sans-serif"><span style="font-size: medium;"><big
+                      style="font-weight: bold;"><code>goto</code></big></span></font>
+                statements are allowed. <br>
+              </font> </li>
+            <li><font face="sans-serif"><span style="font-size: medium;"><big
+                    style="font-weight: bold;"><code>switch</code></big>
+                </span>statements are not supported. <br>
+              </font> </li>
+            <li><font face="sans-serif">The boolean conditions
+                controlling the control flow consist of the six
+                comparison operators (&lt;, &lt;=, &gt;, &gt;=, ==, and
+                !=) and three logical operators&nbsp;<span
+                  style="font-size: medium;">&nbsp; (<big
+                    style="font-weight: bold;"><code>&amp;&amp;</code></big>,
+                  <big style="font-weight: bold;"><code>||</code></big>,
+                  and <big style="font-weight: bold;"><code>!</code></big>)</span>.
+                <br>
+              </font> </li>
+            <li><font face="sans-serif">The values used for comparison
+                are only integer values. <br>
+              </font> </li>
+            <li><font face="sans-serif">The comparison expressions can
+                also appear on the right hand sides of assignment
+                statements. <br>
+              </font> </li>
+          </ul>
+          <font face="sans-serif"> </font>
+          <ul>
+          </ul>
+        </li>
+        <font face="sans-serif"> </font>
+        <li><font face="sans-serif"><i>Level 4</i>. </font><font
+            face="sans-serif"><font face="sans-serif"><font
+                face="sans-serif">(<a href="test_files/level4">Sample
+                  files</a>). </font></font> This level extends Level 4
+            by supporting function calls (including recursion). In this
+            level, we have multiple functions. Besides, the functions
+            may take arguments and may return results. For simplicity,
+            we assume that function calls do not appear as operands in
+            expression; this requirement is met by first assigning the
+            result of a function call to a source variable and then
+            using the source variable as an operand in the expression at
+            the required place. <br>
+          </font> </li>
+        <font face="sans-serif"> </font>
+        <li><font face="sans-serif"><i>Level 5</i>. This level extends
+            Level 4 by supporting data structures such as arrays and <font
+              size="+1"><b><code>st</code></b><b><code>r</code></b><b><code>uct</code></b></font>s.</font></li>
+      </ol>
+      <a name="design"></a>
+      <table style="background-color: rgb(255, 204, 51); width: 100%;
+        text-align: left;" cellspacing="2" cellpadding="2" border="0">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;"><big><span
+                  style="font-style: italic;"><span style="font-weight:
+                    bold;">Design of sclp level 1</span></span></big> </td>
+          </tr>
+        </tbody>
+      </table>
+      <span style="font-family: monospace;"><span style="font-weight:
+          bold;"><br>
+        </span></span>
+      <div style="text-align: justify;"><span style="font-family:
+          sans-serif;"><big style="font-weight: bold;"><code></code></big>sclp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          embodies object oriented design and implementation. The
+          implementation language is C++. Bisonc++ and flexc++ have been
+          used for parsing and scanning. Bisonc++ specifications create
+          an object of class parser which is then invoked in the main
+          function. The overall compilation flow is the classical
+          sequence of<br>
+        </span></div>
+      <font face="sans-serif"> </font>
+      <ul>
+        <li style="text-align: justify;"><font face="sans-serif">parse
+            and construct ASTs&nbsp; and symbol table (invoke the
+            scanner when a token is needed, and typecheck during
+            parsing), and<br>
+          </font> </li>
+        <li style="text-align: justify;"><font face="sans-serif">evaluate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (store the results in the symbol table) , or <br>
+          </font> </li>
+        <li style="text-align: justify;"><font face="sans-serif">compile
+            (assign offsets to variables, generate code in intermediate
+            form by invoking optional register allocation, emit assembly
+            instructions during compilation).<br>
+          </font> </li>
+      </ul>
+      <font face="sans-serif"> The main classes that constitute sclp <big><code
+            style="font-weight: bold;"></code></big>are: </font>
+      <ul>
+        <li><font face="sans-serif">program, procedure, basic block,
+            abstract syntax trees</font></li>
+        <li><font face="sans-serif">symbol table (persistent as well as
+            volatile symbol table for scope analysis)</font></li>
+        <li><font face="sans-serif">register and instruction descriptor</font></li>
+        <li><font face="sans-serif">intermediate code</font></li>
+      </ul>
+      <font face="sans-serif"> <a name="level_0_grammar"></a><big
+          style="font-weight: bold;"><span style="font-style: italic;">Level
+
+
+
+
+
+
+
+
+
+            1 Grammar</span></big><br>
+        <br>
+      </font>
+      <div style="text-align: justify;"><font face="sans-serif">A
+          program consists of a <big style="font-weight: bold;"><code>declaration_list</code></big>
+          which is a list of (optional) global <big style="font-weight:
+            bold;"><code>variable_declaration_list</code></big>, and a <big
+            style="font-weight: bold;"><code>procedure_declaration</code></big>,
+          followed by a<big style="font-weight: bold;"><code>
+              procedure_definition</code></big> (in level 1 we have a
+          single procedure).</font><br>
+        <span style="font-family: sans-serif;"></span></div>
+      <span style="font-family: sans-serif;"><br>
+      </span>
+      <table style="text-align: left; background-color: rgb(204, 255,
+        255); margin-left: auto; margin-right: auto;" width="478"
+        height="212" cellspacing="2" cellpadding="2" border="0">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;">
+              <pre style="margin-left: 40px;"><big style="font-weight: bold;"><code><br>program			:	declaration_list <br>				procedure_definition<br>			;<br><small></small></code></big><code><small><big><big><b><br>declaration_list	:</b></big></big></small><small><big><big><b><small><b>	<big>	procedure_declaration</big></b><big><b><br>			|</b><b>	variable_declaration_list </b><b><br>				procedure_declaration</b><br><b>			|</b><b>	procedure_declaration <br>				</b><b>variable_declaration_list<br>			;</b></big></small></b></big></big></small></code><span style="font-family: sans-serif;"><br></span></pre>
+              <span style="font-family: sans-serif;"> </span></td>
+          </tr>
+        </tbody>
+      </table>
+      <span style="font-family: sans-serif;"><br>
+      </span>
+      <div style="text-align: justify;"><font face="sans-serif"> The
+          associated action saves the list of global variables and
+          checks that the names of the global variables and the
+          procedure name are distinct. If no global variables are
+          declared in the user program then the global variable list is
+          <big><code style="font-weight: bold;">NULL</code></big>. Once
+          the body of the procedure is processed, the procedure is added
+          with its procedure name to a map of procedures (in level 1 we
+          have only one procedure).<br>
+          <big style="font-weight: bold;"><code></code></big><br>Note that there is a difference between a <i>procedure declaration</i> (</font><code><small><big><big><b><small><big><b>procedure_declaration</b></big></small></b></big></big></small></code><font face="sans-serif"> in the productions above) and a <i>procedure definition&nbsp; </i></font><font face="sans-serif"><code>(</code></font><code><big><span style="font-weight: bold;">procedure_definition</span></big></code><font face="sans-serif"> the productions below).</font>
+<br><br><font face="sans-serif">Our <big style="font-weight: bold;"><code>declaration_list</code></big>
+          indicates that the optional global variable list and the
+          procedure prototype can exist in any order. In the <big style="font-weight: bold;"><code>procedure_definition</code></big>
+          the procedure does not have a return type associated with it
+          (because it does not return a value) and does not have any
+          parameters. The procedure body is enclosed in a pair of braces
+          ’{’ and ’}’ and contains an <big style="font-weight: bold;"><code>optional_variable_declaration_list</code></big>
+          (local variables) followed by a <big style="font-weight:
+            bold;"><code>statement_list</code></big> (in case of level 1).</font><br>
+      </div>
+      <span style="font-family: sans-serif;"><br>
+      </span>
+      <table style="text-align: left; background-color: rgb(204, 255,
+        255); margin-left: auto; margin-right: auto;" width="710" height="211" cellspacing="2" cellpadding="2" border="0">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;">
+              <pre>  <big> <br>	<span style="font-weight: bold;">procedure_declaration	:	VOID NAME '(' ')' ';'<br>     		  		;<br><br>	procedure_definition	:	NAME '(' ')'</span><br style="font-weight: bold;"><span style="font-weight: bold;">                  	</span><span style="font-weight: bold;">   		'{'</span><br>				<span style="font-weight: bold;">		optional_variable_declaration_list</span><br style="font-weight: bold;"><span style="font-weight: bold;">	                        		statement_list<br style="font-weight: bold;"></span><span style="font-weight: bold;">        	           		'}'</span><span style="font-weight: bold;"></span><span style="font-weight: bold;"><br>                         	;</span></big><br></pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <span style="font-family: sans-serif;"><br>
+      </span>
+      <div style="text-align: justify;"><font face="sans-serif">The
+          action associated with this rule checks if the list of local
+          variables have been declared in the user program, and saves
+          the list of local variables and the basic block.<br>
+        </font> </div>
+      <span style="font-family: sans-serif;"> <br>
+        The <big style="font-weight: bold;"><code>variable_declaration_list</code></big>
+        is defined recursively as follows:<br>
+        <br>
+      </span>
+      <table style="text-align: left; background-color: rgb(204, 255,
+        255); margin-left: auto; margin-right: auto;" width="701" height="279" cellspacing="2" cellpadding="2" border="0">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;">
+              <pre>&nbsp;&nbsp;<big style="font-weight: bold;"> <br>	optional_variable_declaration_list	:	/* empty */<br>						|	variable_declaration_list<br>						;<br><br>	variable_declaration_list		:	variable_declaration<br>						|	variable_declaration_list <br>							variable_declaration<br>						;<br><br>	variable_declaration			:	declaration ';'<br>						;<br><br>	declaration				:	INTEGER NAME<br>						;</big><span style="font-family: sans-serif;"><br></span></pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="text-align: justify;"><font face="sans-serif"><br>
+          Note that the same non-terminal is used for lists of global as
+          well as local variables and the position where it occurs
+          (inside of a procedure or outside it) tells us whether it is
+          global or local. A declaration of a variable consists of the
+          type name (only <big><code style="font-weight: bold;">INTEGER</code></big>
+          in level 1) and the <big><code style="font-weight: bold;">NAME</code></big>
+          of the variable followed by a semicolon (’<big><code style="font-weight: bold;">;</code></big>’). The action
+          checks variables for possible redeclaration within the same
+          scope. Variables thus recognized, are pushed in a symbol
+          table.<br>
+        </font></div>
+      <span style="font-family: sans-serif;"> </span><span style="font-family: sans-serif;"></span><font face="sans-serif"><br>In level 1, we have only assignment statements. An assignment statement can involve only a variable or an
+          integer number on the right hand side and only a variable on
+          the left hand side.<br>
+        </font> 
+      <span style="font-family: sans-serif;"> <br>
+      </span>
+      <table style="text-align: left; width: 685px; height: 226px;
+        margin-left: auto; margin-right: auto; background-color:
+        rgb(204, 255, 255);" cellspacing="2" cellpadding="2" border="0">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;">
+              <pre><br>	<big><span style="font-weight: bold;">statement_list	        :	/* empty */</span><br style="font-weight: bold;"><span style="font-weight: bold;">				|	statement_list</span><br style="font-weight: bold;"><span style="font-weight: bold;">					assignment_statement</span><br style="font-weight: bold;"><span style="font-weight: bold;">				;</span><br><br style="font-weight: bold;"><span style="font-weight: bold;">	assignment_statement	:	variable ASSIGN variable ’;’</span><br style="font-weight: bold;"><span style="font-weight: bold;">				|	variable ASSIGN constant ’;’</span><br style="font-weight: bold;"><span style="font-weight: bold;">				;</span><br><br style="font-weight: bold;"><span style="font-weight: bold;">	variable		:	NAME</span><br style="font-weight: bold;"><span style="font-weight: bold;">				;</span><br><br style="font-weight: bold;"><span style="font-weight: bold;">	constant		:	INTEGER_NUMBER</span><br style="font-weight: bold;"><span style="font-weight: bold;">				;</span></big><br></pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <span style="font-family: sans-serif;"><br>
+        The associated actions check that a variable has been declared
+        and the types of the left hand side and the right hand side are
+        same.<br>
+      </span>
+      <h4 style="font-style: italic; font-family: sans-serif;"><a name="Level_0_Data_Structures"></a>Level 1 Data Structures</h4>
+       <font face="sans-serif">The data structure of the interpreter
+          for Level 1 is as shown below. For simplicity, we first show the data structure restricted to a single parameterless procedure (as mandated by Level 1). Its extension for a compiler for higher levels is provided <a href="#Level_1_Compilation">further below.</a><br><br></font><div align="center"><img alt="" src="pictures/ProgramStructure.png" width="965" height="523"><br></div><font color="#ff0000"><br></font><br><font face="sans-serif"><a>The <big><code style="font-weight:
+              bold;">program</code></big> object is an instance of class
+          <big><code style="font-weight: bold;">Program</code></big>. It
+          contains: <br>
+        </a> </font>
+      <ul>
+        <li style="text-align: justify;"><font face="sans-serif"><a>A <big style="font-weight: bold;"><code>global_symbol_table</code></big>
+              object which is an instance of class <big style="font-weight: bold;"><code>Symbol_Table.</code></big></a><a>
+              It </a><a><big style="font-weight: bold;"><code></code></big></a><a>
+              is a list of <big style="font-weight: bold;"><code>symbol_entry</code></big>
+              objects which are instances of class <big style="font-weight: bold;"><code>Symbol_Table_Entry</code></big>.</a></font></li>
+        <font face="sans-serif"><br>
+        </font>
+        <li style="text-align: justify;"><font face="sans-serif"><a>A <big style="font-weight: bold;"><code>procedure</code></big>
+              object which is an instance of class <big style="font-weight: bold;"><code>Procedure</code></big>.</a><a>&nbsp;
+            </a>It contains <br>
+          </font> </li>
+        <font face="sans-serif"><br>
+        </font>
+        <ul>
+          <li style="text-align: justify;"><font face="sans-serif">A <a><big style="font-weight: bold;"><code>local_symbol_table</code></big>
+                object which is an instance of class <big style="font-weight: bold;"><code>Symbol_Table</code></big></a>.
+              <a>It </a><a><big style="font-weight: bold;"><code></code></big></a><a>
+                is a list of <big style="font-weight: bold;"><code>symbol_entry</code></big>
+                objects which are instances of class <big style="font-weight: bold;"><code>Symbol_Table_Entry</code></big>.</a></font></li>
+          <font face="sans-serif"><br>
+          </font>
+          <li style="text-align: justify;"><font face="sans-serif">A <big style="font-weight: bold;"><code>basic_block_list</code></big>
+              object which is a list of pointers to instances of class <big style="font-weight: bold;"><code>Basic_Block</code></big>.
+            </font></li>
+        </ul>
+      </ul>
+      <font face="sans-serif"> </font>
+      <div style="text-align: justify; margin-left: 80px;"><font face="sans-serif">Each basic block contains a list of objects
+          representing AST Statements (Abstract Syntax Tree). They are
+          represented by an abstract class <big style="font-weight:
+            bold;"><code>Ast</code></big> as shown below. The following
+          classes are derived from <big style="font-weight: bold;"><code>Ast</code></big>
+          in Level 1: <big style="font-weight: bold;"><code>Name_Ast</code></big><a>,
+            <big style="font-weight: bold;"><code>Number_Ast</code></big>,
+            <big style="font-weight: bold;"><code>Assignment_Ast</code></big>,
+            and <big style="font-weight: bold;"><code>Return_Ast</code></big></a>.</font></div>
+      <font face="sans-serif"> </font><br><div align="center"><img alt="" src="pictures/Ast.png" width="861" height="419"><br></div>
+      <ul>
+        <ul>
+          <span style="font-family: sans-serif;"></span>
+          <ul></ul>
+        </ul>
+      </ul>
+      <div style="margin-left: 120px;" align="center"><font face="sans-serif"><a>The Ast classes described in gray colour
+            are to be included in the subsequent levels.</a></font><br><font color="#ff0000"><br>
+</font><br>
+      </div>
+      <h4><a name="level_0_interpreter"></a><big style="font-style:
+          italic;"><a style="font-family: sans-serif;">Level 1
+            Interpretation</a></big></h4>
+      <div style="text-align: justify;"><font face="sans-serif"><a>During
+            interpretation, the local and global variables are copied
+            into a separate data structure called the <big style="font-weight: bold;"><code>eval_env</code></big>
+            which is an instance of class <big style="font-weight:
+              bold;"><code>Local_Environment</code></big> which stores
+            the variable names and their information for each procedure
+            call (including recursive function calls). Note that this
+            data structure is not necessary in level 1 because the
+            values could be stored in the symbol table but this design
+            has been chosen keeping in mind the enhancements in the
+            subsequent levels.</a><br>
+        </font> <font face="sans-serif"><br>
+        </font> <font face="sans-serif"><a>Interpretation is performed
+            by traversing the basic blocks and visiting each AST in the
+            basic block. Each AST is evaluated and the values of the
+            variables in <big style="font-weight: bold;"><code>eval_env</code></big>
+            are updated. This requires recording the targets of goto
+            statements also. Further, subsequent levels would need
+            recording the values of floating point variables also. In
+            order to implement a generic evaluate procedure across all
+            ASTs, the values are stored using objects of a class called
+            <big style="font-weight: bold;"><code>Eval_Result</code></big>.
+            We derive three classes </a><a><big style="font-weight:
+              bold;"><code>Eval_Result_Value</code></big> (</a><a>used
+            to store values of variables) and <big style="font-weight:
+              bold;"><code>Eval_Result_Target</code></big> (used to store
+            the targets of gotos in level 3). We also derive classes </a><a><big style="font-weight: bold;"><code>Eval_Result_Value_Int</code></big>
+            and </a><a><big style="font-weight: bold;"><code>Eval_Result_Value_Float</code></big>
+            (this distinction will be required in level 3).</a><br>
+        </font> </div>
+      <font face="sans-serif"> <a> </a> </font>
+      <h4 style="font-style: italic;"><a name="Level_1_Compilation"></a><big><a name="compilation"></a><span style="font-family: sans-serif;">Level 1 Compilation</span></big></h4>
+      <font face="sans-serif"><a>Compilation requires successful
+          construction of ASTs for the entire program submitted to sclp and is </a><a>performed by traversing the ASTs. It involves the following two steps. <br>
+        </a> </font>
+      <ul>
+        <li><font face="sans-serif"><a>In the first step, an
+              intermediate code is generated. The intermediate code is
+              essentially a three address code with an operator, a
+              result, and two operands. This step stores intermediate
+              results into registers. The option <big style="font-weight: bold;"><code>-lra</code></big>
+              optimizes this local register allocation and tries to
+              reuse registers by freeing registers of intermediate
+              values earlier and by remembering and using variables for
+              registers.<br>
+            </a></font></li>
+        <li><font face="sans-serif"><a>In the second step, intermediate
+              code is compiled to assembly code.In this step, local
+              variables are assigned offsets, actual machine operations
+              are identified, and appropriate assembly format is used
+              for emitting the code.<br>
+            </a></font></li>
+      </ul>
+      <font face="sans-serif"> </font><a><span style="font-family:
+          sans-serif;">The revised data structure (generalized to multiple procedures and procedures with parameters) now looks as shown
+          below. The light blue boxes indicate additions required for
+          compilation. The dashed lines indicate shared data structures
+          that undergo a shallow copy and not a deep copy.<br>
+          <br></span></a><div align="center"><a><span style="font-family:
+          sans-serif;"></span></a><img alt="" src="pictures/CompilerStructure.png" width="898" height="925"><a><span style="font-family: sans-serif;"></span></a><br><a><span style="font-family: sans-serif;"></span></a></div><a><span style="font-family: sans-serif;">
+        </span></a><font face="sans-serif"><br><br>An intermediate code
+        statement can be one of the following. <big style="font-weight:
+          bold;"><code>Icode_Stmt</code></big> is the base class and
+        other classes are derived from it. In level 1, we have only move
+        statements. The gray ovals indicate the statements that you will
+        have to introduce in subsequent levels. <br>
+      </font><br><div align="center"><img alt="" src="pictures/Icode_Stmt.png" width="749" height="343"><br></div>
+      <font face="sans-serif">In order to understand the compilation,
+        you basically need to understand the following:<br>
+      </font>
+      <ol>
+        <li><font face="sans-serif">Why multiple intermediate code
+            statements may be generated for a single AST.<br>
+          </font> </li>
+        <li><font face="sans-serif">Why it is useful to also record the
+            register that contains the final result of the computation
+            described by a list of intermediate code statements.<br>
+          </font> </li>
+        <li><font face="sans-serif">How the register information has
+            been encoded in the data structures. </font></li>
+        <li><font face="sans-serif">How the statement categories (eg.
+            register-to-memory, memory-to-register etc.) have been used
+            for register allocation. </font></li>
+        <li><font face="sans-serif">How offsets are assigned to
+            variables. </font></li>
+        <li><font face="sans-serif">The activation record structure. </font></li>
+        <li><font face="sans-serif">How the machine instructions have
+            been encoded in the data structures.</font></li>
+      </ol>
+      <font face="sans-serif"> </font><span style="font-family:
+        sans-serif;">Points 1, 2, 5, and 6 are generic concepts that can
+        be understood from the first principles. Points 3, 4, and 7 are
+        specific sclp design. Points 1 and 2 implement the spirit of
+        the syntax directed definition provided in Figure 6.19 (page
+        379) of the text book (Compilers: Principles, Techniques, and
+        Tools by Aho, Lam, Sethi, and Ullman).<br>
+        <br>
+        While understanding points 3, 4, 6, and 7, please keep the <a href="http://spimsimulator.sourceforge.net/">spim
+          instruction set architecture</a> in mind. </span><br>
+      <a><span style="font-family: sans-serif;"></span></a>
+      <h4><a name="limitations"></a><big><a style="font-style: italic;"><span style="font-family: sans-serif;">Current Limitations and
+              Possible Improvements</span></a></big></h4>
+      <font face="sans-serif"><a>The design and implementation of sclp
+          has some limitations which we expect to overcome in subsequent
+          versions. We welcome more additions to the following list. </a><br>
+      </font>
+      <ul style="text-align: justify; font-family: sans-serif;">
+        <li>The use of a map to store symbol table details is fine for
+          global and local variables where the order does not matter.
+          However, for formal parameters, the order matters (because of
+          positional correspondence between actual and formal
+          parameters). I have been able to circumvent this problem by
+          explicitly storing the sequence number but perhaps a better
+          design is possible.</li>
+        
+        <li>We would like to introduce an optimizer generator which
+          works with sclp to allow the users to specify analyses and
+          transformations declaratively and automatically construct
+          optimizers that work within cfglp.<br>
+        </li>
+      </ul>
+      <a name="SrcImpl"></a>
+      <table width="981" height="28" cellspacing="2" cellpadding="2" border="0" bgcolor="#ffcc00">
+        <tbody>
+          <tr>
+            <td valign="top" bgcolor="#ffcc00"><a name="SrcImpl"></a><i><big><b>Source
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    Code of Level 1</b></big></i><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <span style="font-family: sans-serif;"><br>
+        Source code for Level 1 will be provided at a later stage.<br>
+        <br></span><br>
+      <div style="text-align: justify;"><span style="font-family:
+          sans-serif;"> </span></div>
+      <a name="RefImpl"></a>
+      <table style="background-color: rgb(255, 204, 51); text-align:
+        left;" width="981" height="34" cellspacing="2" cellpadding="2" border="0">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;"><big><span style="font-style: italic;"><span style="font-weight:
+                    bold;">Reference Implementations</span></span></big><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <div style="text-align: justify;"><font face="sans-serif">Executables
+          of reference implementation for different levels will be          provided from time to time.<br></font><br></div>
+      <font face="sans-serif"> </font><span style="font-family: sans-serif;"><br>
+        We would appreciate hearing about bugs if you come across any.<br><br>
+      </span> <a name="flexcpp-bisoncpp-usage"></a>
+      <table style="background-color: rgb(255, 204, 51); width: 100%;
+        text-align: left;" cellspacing="2" cellpadding="2" border="0">
+        <tbody>
+          <tr>
+            <td style="vertical-align: top;"><big><span style="font-style: italic;"><span style="font-weight:
+                    bold;">Using Flexc++ and Bisonc++</span></span></big><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <span style="color: rgb(0, 153, 0);"></span><br>
+      <div style="text-align: justify;"><font face="sans-serif">We use
+          flexc++ and bisonc++ to generate C++ code for the scanner and
+          parser. They provide a cleaner interface compared to flex and
+          bison which generates C code by default but can be made to
+          generate C++ code. For a detailed documentation, please visit
+          the oringal <a href="http://flexcpp.sourceforge.net/">flexc++
+            web page</a> and the <a href="http://bisoncpp.sourceforge.net/">bisonc++ web page</a>.
+          They contain extensive documentation. Here we provide some
+          details to help your understanding.<br>
+          <br>
+          We introduce flexc++ and bisonc++ in three steps keeping the
+          examples as simple as possible:<br>
+        </font>
+        <ul>
+          <li><font face="sans-serif">First we construct a <a href="#flexcpp_only">scanner to recognize numbers</a>.
+              This requires using flexc++ without bisonc++. Its <a href="only-flexcpp-intro.tgz">complete tarball
+                can be downloaded </a>or <a href="only-flexcpp-intro">files can be seen
+                here</a>.</font></li>
+          <li><font face="sans-serif">In the second step, we construct <a href="#flexcpp_and_bisconcpp">a scanner and a parser to
+                recognize expressions</a>. This requires cooperation
+              between the scanner and parser in that the scanner must
+              pass tokens to the parser. This equires us to modify the
+              generated class descriptions. We use five grammars
+              beginning with simplest of expressions to more complicated
+              expressions. Its <a href="flexcpp-bisoncpp-intro.tgz">complete
+                tarball can be downloaded</a> or <a href="flexcpp-bisoncpp-intro">the files can be
+                seen here</a>.</font></li>
+          <li><font face="sans-serif">In the final step, we construct <a href="#simcalc">a calculator to compute the values of
+                expressions</a>. This requires further interaction
+              between the scanner and the parser because apart from the
+              tokens, the token values also need to be passed from the
+              scanner to the parser. This requires us to change the
+              classes further to share variables. Its <a href="simcalc.tgz">complete tarball can be
+                downloaded</a> or <a href="simcalc">the files
+                can be seen</a>.</font></li>
+        </ul>
+        <font face="sans-serif"> We explain the interaction between the
+          scanner and the parser in details in the third step.</font><br>
+        <h4><a name="flexcpp_only"></a><big style="font-family:
+            sans-serif; font-style: italic;">Using Flexc++ to Create a
+            Scanner to Recognize Numbers<br>
+          </big></h4>
+        <font face="sans-serif">We provide a simple example of using
+          flexc++ to creare a standalone scanner. Since the generated
+          scanner is called from main.cc rather than from within a
+          parser, the class Scanner generated by flexc++ is sufficient
+          and there is no need to manually change it unlike in the next
+          two cases. <br>
+          We reproduce the scanner script below. It defines tokens using
+          regular expressions defined over character classes and prints
+          the lexemes found along with the token that they match.<br>
+        </font><br>
+        <table style="text-align: left; width: 750px; height: 157px;
+          margin-left: auto; margin-right: auto; background-color:
+          rgb(204, 255, 255);" cellspacing="0" cellpadding="5" border="0">
+          <tbody>
+            <tr>
+              <td style="vertical-align: top;">
+                <pre><big><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><br style="font-weight: bold;"><span style="font-weight: bold;">digit [0-9]</span><br style="font-weight: bold;"><span style="font-weight: bold;">operator [-+*/]</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">%%</span><br style="font-weight: bold;"><span style="font-weight: bold;">{digit}+    { std::cout &lt;&lt; "Found a number whose lexeme is '" &lt;&lt; matched() &lt;&lt; "'\n"; }</span><br style="font-weight: bold;"><span style="font-weight: bold;">{operator}  { std::cout &lt;&lt; "Found an operator whose lexeme is '" &lt;&lt; matched()[0] &lt;&lt; "'\n"; }</span><br style="font-weight: bold;"><span style="font-weight: bold;">.           { std::cout &lt;&lt; "Found an unrecoganized character '" &lt;&lt; matched()[0] &lt;&lt; "'\n"; </span></big><br></pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <font face="sans-serif">Please <a href="only-flexcpp-intro.tgz">download the
+            complete tarball </a>or <a href="only-flexcpp-intro">see the files</a>.
+          Please see the README file and Makefile for more details.</font><br>
+        <h4><a name="flexcpp_and_bisconcpp"></a><big style="font-style:
+            italic; font-family: sans-serif;"> Using Flexc++ and Bisonc++
+            together to Recognize Expressions<br>
+          </big></h4>
+        <span style="font-family: sans-serif;">We provide a simple
+          example of using flexc++ and bisconc++ to creare a parser and
+          scanner that recognize valid expressions. Now the scanner
+          returns a token to the parser (eg. <big><code style="font-weight: bold;">return Parser::NUM;</code></big>
+          ).<br>
+          <br>
+          <br>
+        </span>
+        <table style="text-align: left; margin-left: auto; margin-right:
+          auto;" cellspacing="0" cellpadding="10" border="1">
+          <tbody>
+            <tr style="font-family: sans-serif; font-style: italic;" align="center">
+              <td colspan="1" rowspan="1" style="vertical-align: top;">Scanner
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                script<br>
+              </td>
+              <td style="vertical-align: top;">Parser scripts<br>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center; vertical-align: middle;">
+                <table style="text-align: left; width: 100%;" cellspacing="2" cellpadding="2" border="0">
+                  <tbody>
+                    <tr align="center">
+                      <td style="vertical-align: top;"><span style="font-family: sans-serif;">exp.ll</span><br>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="vertical-align: top;">
+                        <table style="text-align: left; width: 275px;
+                          height: 299px; margin-left: auto;
+                          margin-right: auto; background-color: rgb(204,
+                          255, 255);" cellspacing="0" cellpadding="2" border="0">
+                          <tbody>
+                            <tr>
+                              <td style="vertical-align: top;">
+                                <pre><big><span style="font-weight: bold;"></span><span style="font-weight: bold;">%%</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">[0-9]+	{</span><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><br style="font-weight: bold;"><span style="font-weight: bold;">	    return Parser::NUM; </span><br style="font-weight: bold;"><span style="font-weight: bold;">	}</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">[-+*/]	{</span><br style="font-weight: bold;"><span style="font-weight: bold;">	    return matched()[0];</span><br style="font-weight: bold;"><span style="font-weight: bold;">	}</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">\n	{     </span><br style="font-weight: bold;"><span style="font-weight: bold;">	    return matched()[0];</span><br style="font-weight: bold;"><span style="font-weight: bold;">	}</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">[ \t]	{ }</span><br style="font-weight: bold;"><span style="font-weight: bold;"></span><br style="font-weight: bold;"><span style="font-weight: bold;">%%</span></big><br></pre>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br>
+              </td>
+              <td style="vertical-align: top;">
+                <table style="text-align: left; width: 100%;" cellspacing="5" cellpadding="2" border="0">
+                  <tbody>
+                    <tr>
+                      <td style="text-align: center; font-family:
+                        sans-serif;">exp1.yy<br>
+                      </td>
+                      <td style="vertical-align: top;">
+                        <table style="text-align: left; width: 562px;
+                          height: 130px; margin-left: auto;
+                          margin-right: auto; background-color: rgb(204,
+                          255, 255);" cellspacing="0" cellpadding="2">
+                          <tbody>
+                            <tr>
+                              <td style="vertical-align: top;">
+                                <pre><big><span style="font-weight: bold;"></span><span style="font-weight: bold;">%start E</span><br style="font-weight: bold;"><span style="font-weight: bold;">%token NUM</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">%%</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">E : NUM       { cout &lt;&lt; "found an expression consisting of a number\n"; }</span><br style="font-weight: bold;"><span style="font-weight: bold;">  ;</span></big><br></pre>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: center; font-family:
+                        sans-serif;">exp2.yy<br>
+                      </td>
+                      <td style="vertical-align: top;">
+                        <table style="text-align: left; width: 560px;
+                          height: 162px; margin-left: auto;
+                          margin-right: auto; background-color: rgb(204,
+                          255, 255);" cellspacing="0" cellpadding="2" border="0">
+                          <tbody>
+                            <tr>
+                              <td style="vertical-align: top;">
+                                <pre><big><span style="font-weight: bold;"></span><span style="font-weight: bold;">%start E</span><br style="font-weight: bold;"><span style="font-weight: bold;">%token NUM<br style="font-weight: bold;"></span><br style="font-weight: bold;"><span style="font-weight: bold;">%%</span><br style="font-weight: bold;"><span style="font-weight: bold;">E : NUM    </span><span style="font-weight: bold;">	{ cout &lt;&lt; "found an expression consisting of a number\n"; }</span><br style="font-weight: bold;"><span style="font-weight: bold;">  | E '+' E  </span><span style="font-weight: bold;">	{ cout &lt;&lt; "found a plus expression\n"; }</span><br style="font-weight: bold;"><span style="font-weight: bold;">  ;</span></big><br></pre>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: center; font-family:
+                        sans-serif;">exp3.yy<br>
+                      </td>
+                      <td style="vertical-align: top;">
+                        <table style="text-align: left; width: 560px;
+                          height: 162px; margin-left: auto;
+                          margin-right: auto; background-color: rgb(204,
+                          255, 255);" cellspacing="0" cellpadding="2" border="0">
+                          <tbody>
+                            <tr>
+                              <td style="vertical-align: top;">
+                                <pre><big><span style="font-weight: bold;"></span><code><span style="font-weight: bold;">%start E</span><br style="font-weight: bold;"><span style="font-weight: bold;">%token NUM<br>%left '+'<br style="font-weight: bold;"></span><br style="font-weight: bold;"><span style="font-weight: bold;">%%</span><br style="font-weight: bold;"><span style="font-weight: bold;">E : NUM    </span><span style="font-weight: bold;">   { cout &lt;&lt; "found an expression consisting of a number\n"; }</span><br style="font-weight: bold;"><span style="font-weight: bold;">  | E '+' E  </span><span style="font-weight: bold;"> { cout &lt;&lt; "found a plus expression\n"; }</span><br style="font-weight: bold;"><span style="font-weight: bold;">  ;</span></code></big><br></pre>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: center; font-family:
+                        sans-serif;">exp4.yy<br>
+                      </td>
+                      <td style="vertical-align: top;">
+                        <table style="text-align: left; width: 560px;
+                          height: 162px; margin-left: auto;
+                          margin-right: auto; background-color: rgb(204,
+                          255, 255);" cellspacing="0" cellpadding="2" border="0">
+                          <tbody>
+                            <tr>
+                              <td style="vertical-align: top;">
+                                <pre><big><span style="font-weight: bold;"></span><code><span style="font-weight: bold;">%start E</span><br style="font-weight: bold;"><span style="font-weight: bold;">%token NUM<br>%left '+'<br>%left '*'<br></span><br style="font-weight: bold;"><span style="font-weight: bold;">%%</span><br style="font-weight: bold;"><span style="font-weight: bold;">E : NUM    </span><span style="font-weight: bold;">   { cout &lt;&lt; "found an expression consisting of a number\n"; }</span><br style="font-weight: bold;"><span style="font-weight: bold;">  | E '+' E  </span><span style="font-weight: bold;"> { cout &lt;&lt; "found a plus expression\n"; }<br>  | E '*' E   { cout &lt;&lt; "found a mult expression\n"; }<br style="font-weight: bold;"></span><span style="font-weight: bold;">  ;</span></code></big><br></pre>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="text-align: center; font-family:
+                        sans-serif;">exp5.yy<br>
+                      </td>
+                      <td style="vertical-align: top;">
+                        <table style="text-align: left; width: 560px;
+                          height: 162px; margin-left: auto;
+                          margin-right: auto; background-color: rgb(204,
+                          255, 255);" cellspacing="0" cellpadding="2" border="0">
+                          <tbody>
+                            <tr>
+                              <td style="vertical-align: top;">
+                                <pre><big><span style="font-weight: bold;"></span><code><span style="font-weight: bold;">%start E</span><br style="font-weight: bold;"><span style="font-weight: bold;">%token NUM<br>%left '+' '-'<br>%left '*' '/'<br></span><br style="font-weight: bold;"><span style="font-weight: bold;">%%</span><br style="font-weight: bold;"><span style="font-weight: bold;">E : NUM    </span><span style="font-weight: bold;">   { cout &lt;&lt; "found an expression consisting of a number\n"; }</span><br style="font-weight: bold;"><span style="font-weight: bold;">  | E '+' E </span><span style="font-weight: bold;">  { cout &lt;&lt; "found a plus expression\n"; }<br>  | E '*' E   { cout &lt;&lt; "found a mult expression\n"; }<br>  | E '-' E   { cout &lt;&lt; "found a sub expression\n"; }<br>  | E '/' E   { cout &lt;&lt; "found a div expression\n"; }          <br style="font-weight: bold;"></span><span style="font-weight: bold;">  ;</span></code></big><br></pre>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <font face="sans-serif">Please <a href="flexcpp-bisoncpp-intro.tgz">download the
+            complete tarball</a> or <a href="flexcpp-bisoncpp-intro">see the files</a>.
+          Please see the README file and Makefile for more details.</font><br>
+        <h4><a name="simcalc"></a><big style="font-family: sans-serif;"><span style="font-style: italic;">A Simple Expressions
+              Calculator Example<br>
+            </span></big></h4>
+        <font face="sans-serif">We use a simple calculator program to
+          explain the interaction between a scanner and a parser
+          generated using flexc++ and bisonc++. The calculator computes
+          the result of a single expression consisting of numbers and
+          operators <big><code style="font-weight: bold;">+</code></big>
+          and <big><code style="font-weight: bold;">*</code></big>. <br>
+          <br>
+          The the scanner and parser specificatons for our calculator,
+          along with the associated actions to perform the computation
+          are: <br>
+        </font>
+        <pre><span style="font-family: sans-serif;"><br></span></pre>
+        <table style="text-align: left; margin-left: auto; margin-right:
+          auto;" cellspacing="0" cellpadding="2" border="1">
+          <tbody>
+            <tr>
+              <td style="vertical-align: top; text-align: center;
+                font-family: sans-serif; font-style: italic;">Scanner
+                script<br>
+              </td>
+              <td style="vertical-align: top; text-align: center;
+                font-family: sans-serif; font-style: italic;">Parser
+                script<br>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center; vertical-align: middle;">
+                <table style="text-align: left; width: 425px; height:
+                  290px; margin-left: auto; margin-right: auto;
+                  background-color: rgb(204, 255, 255);" cellspacing="0" cellpadding="2" border="0">
+                  <tbody>
+                    <tr>
+                      <td style="vertical-align: top;">
+                        <pre><big><span style="font-weight: bold;"></span><span style="font-weight: bold;">%%</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">[0-9]+	{</span><br style="font-weight: bold;"><span style="font-weight: bold;"> 	   ParserBase::STYPE__ *val = getSval();</span><br style="font-weight: bold;"><span style="font-weight: bold;">          *val = atoi(matched().c_str());</span><br style="font-weight: bold;"><span style="font-weight: bold;">	   return Parser::NUM; </span><br style="font-weight: bold;"><span style="font-weight: bold;">	}</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">[+*]	{</span><span style="font-weight: bold;">  return matched()[0];</span><span style="font-weight: bold;"> }</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">\n	{  </span><span style="font-weight: bold;">return matched()[0];</span><span style="font-weight: bold;"> }</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">[ \t]	{ }</span><br style="font-weight: bold;"><span style="font-weight: bold;">.	{ </span><br style="font-weight: bold;"><span style="font-weight: bold;">	   string error_message;</span><br style="font-weight: bold;"><span style="font-weight: bold;">	   error_message =  "Illegal character `" + matched();</span><br style="font-weight: bold;"><span style="font-weight: bold;">	   error_message += "' on line " + lineNr();</span><br style="font-weight: bold;"><span style="font-weight: bold;">          cerr &lt;&lt; error_message;	</span><br style="font-weight: bold;"><span style="font-weight: bold;">	   exit(1);</span><br style="font-weight: bold;"><span style="font-weight: bold;">	}</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">%%</span></big><br></pre>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <table style="text-align: left; width: 425px; height:
+                  290px; margin-left: auto; margin-right: auto;
+                  background-color: rgb(204, 255, 255);" cellspacing="0" cellpadding="2" border="0">
+                  <tbody>
+                    <tr>
+                      <td style="vertical-align: top;">
+                        <pre><big><span style="font-weight: bold;">%token NUM</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">%start Start</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">%left '+'</span><br style="font-weight: bold;"><span style="font-weight: bold;">%left '*'</span><br style="font-weight: bold;"><br style="font-weight: bold;"><span style="font-weight: bold;">%%</span></big><br><br>   <big><span style="font-weight: bold;"> <br>Start : Expr '\n'         { cout &lt;&lt; "\t= " &lt;&lt; $1 &lt;&lt; "\n"; }<br>      ;<br>Expr : Expr '+' Expr      { $$ = $1 + $3; }<br>     | Expr '*' Expr</span></big><big><span style="font-weight: bold;">      { $$ = $1 + $3; }</span></big><big><span style="font-weight: bold;">     <br>     | NUM                { $$ = $1; }<br>     ;</span></big><br></pre>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <pre><span style="font-family: sans-serif;"><br></span></pre>
+        <font face="sans-serif"> Please <a href="simcalc.tgz">download
+            the complete tarball</a> or <a href="simcalc">see
+            the files</a>.<br>
+          <br>
+          In this grammar we have four terminals (or tokens): <big><code style="font-weight: bold;">NUM</code></big>, <big><code style="font-weight: bold;">+</code></big>, <big><code style="font-weight: bold;">*</code></big>, and <big><code style="font-weight: bold;">\n</code></big> and two
+          non-terminals <big><code style="font-weight: bold;">Start</code></big>
+          and <big><code style="font-weight: bold;">Expr</code></big>.
+          The operators <big><code style="font-weight: bold;">+</code></big>
+          and <big><code style="font-weight: bold;">*</code></big> have
+          been declared to be left associative and <big><code style="font-weight: bold;">*</code></big> is declared to
+          have a higher precedence than <big><code style="font-weight:
+              bold;">+</code></big> (because its associativity
+          specification appears lower). The action <big style="background-color: rgb(153, 255, 255);"><code style="font-weight: bold;">$$ = $1 + $3</code></big>&nbsp;
+          adds up the values associated with the two occurrences of <big><code style="font-weight: bold;">Expr</code></big> on the right
+          hand side and assigns it to the value of the <big><code style="font-weight: bold;">Expr</code></big> appearing on
+          the left hand side. The action&nbsp; <big><code style="font-weight: bold;"><span style="background-color:
+                rgb(153, 255, 255);">{ $$ = $1; }</span></code></big>
+          assigns the value of <big><code style="font-weight: bold;">NUM</code></big>
+          to <big><code style="font-weight: bold;">Expr</code></big>.</font><br><h4><a name="Passing_different_values_derived_from"></a><big style="font-family: sans-serif;"><span style="font-style: italic;"><a name="passing-lexeme-to-parser"></a>Passing different values derived from the lexemes from a scanner to a parser</span></big></h4></div><div style="text-align: justify;"><font face="sans-serif">The calculator example illustrates how an integer value can be passed from a scanner to a parser. In most cases, we need to pass more than one type of values. For this we declare a<font size="+1"><code> <b>union</b> </code></font>of values in the parser, qualify the grammar symbols with the field names and set appropriate values using the field names in the scanner script. <br><br>The following example illustrates this. Our parser recognizes a list (non-terminal <font size="+1"><b><code>List</code></b></font>) consisting of names (terminal <font size="+1"><b><code>NAME</code></b></font>) and numbers (terminal <font size="+1"><b><code>NUM</code></b></font>). In our scheme of things, the lexemes matching the token <font size="+1"><b><code>NUM</code></b></font> represent integer values whereas the lexemes matching the token <font size="+1"><b><code>NAME</code></b></font> represent string values. We specify this in the parser script as a C++ <font size="+1"><b><code>union</code></b></font> of integer and a pointer to a string through the directive <font size="+1"><b><code>%union</code></b></font>. This union is used to declare values of the type <font size="+1"><b><code>STYPE__</code></b></font> internally by the parser. We have named the fields of the union as <font size="+1"><b><code>integer_value</code></b></font> and <font size="+1"><b><code>string_value</code></b></font>. The specifications of the terminals are qualified with appropriate field name (<font size="+1"><b><code>integer_value</code></b></font> for token <font size="+1"><b><code>NUM</code></b></font> and <font size="+1"><b><code>string_value</code></b></font> for token <font size="+1"><b><code>NAME</code></b></font>) in the parser script.<br><br>The values of the tokens are set by the scanner script using function <font size="+1"><b><code>matched</code></b></font> which returns the actual lexeme matching the regular expression corresponding to the token identified. The values are set in two steps: First, we acquire a pointer to <font size="+1"><b><code>STYPE__</code></b></font> using the <a href="#scannerBaseClass"><font size="+1"><b><code>getSva</code></b></font>l function in the <font size="+1"><b><code>ScannerBase</code></b></font> class</a>. Then we store the values using the appropriate field of the union </font><font face="sans-serif"> (<font size="+1"><b><code>integer_value</code></b></font> for token <font size="+1"><b><code>NUM</code></b></font> and <font size="+1"><b><code>string_value</code></b></font> for token <font size="+1"><b><code>NAME</code></b></font>)</font><font face="sans-serif"><font face="sans-serif">. Finally the tokens are returned to the parser. <br><br>Within the parser script, the values are directly available and can be accessed using the <font size="+1"><b><code>$</code></b></font>i variable for the i<sup>th</sup> grammar symbol on the RHS of a rule.<sup><br></sup></font></font><br><table style="text-align: left; margin-left: auto; margin-right:
+          auto;" cellspacing="0" cellpadding="2" border="1">
+          <tbody>
+            <tr>
+              <td style="vertical-align: top; text-align: center;
+                font-family: sans-serif; font-style: italic;">Scanner
+                script<br>
+              </td>
+              <td style="vertical-align: top; text-align: center;
+                font-family: sans-serif; font-style: italic;">Parser
+                script<br>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center; vertical-align: middle;">
+                <table style="text-align: left; margin-left: auto; margin-right: auto; background-color: rgb(204, 255, 255);" width="400" height="290" cellspacing="0" cellpadding="2" border="0">
+                  <tbody>
+                    <tr>
+                      <td style="vertical-align: top;">
+                        <pre><big><span style="font-weight: bold;"></span><span style="font-weight: bold;">%%</span><br style="font-weight: bold;"><span style="font-weight: bold;"></span></big><font size="+1"><b><br></b><b>[[:digit:]]+	{<br><br></b><b></b><b> 	  ParserBase::STYPE__ *val = getSval();</b><b><br></b><b>          val-&gt;integer_value = atoi(matched().c_str());</b><b><br></b><b>	  return Parser::NUM; </b><b><br></b><b>	}</b><b><br></b><b><br></b><b>[[:alpha:]_][[:alpha:][:digit:]_]* {</b><b><br></b><b><br></b><b>	  ParserBase::STYPE__ *val = getSval();	</b><b><br></b><b>	  val-&gt;string_value = new std::string(matched());</b><b><br></b><b>	  </b><b>return Parser::NAME; </b><b><br></b><b>	}</b><br><br></font><br></pre>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+              <td style="text-align: center; vertical-align: middle;">
+                <table style="text-align: left; width: 425px; height:
+                  290px; margin-left: auto; margin-right: auto;
+                  background-color: rgb(204, 255, 255);" cellspacing="0" cellpadding="2" border="0">
+                  <tbody>
+                    <tr>
+                      <td style="vertical-align: top;">
+                        <pre><big><span style="font-weight: bold;">%union <br>{<br>	int integer_value;<br>	std::string * string_value;<br>};<br><br>%token &lt;integer_value&gt; NUM<br>%token &lt;string_value&gt; NAME<br><br>%%<br><br>List 	: List NUM   { cout &lt;&lt; "Parser found a number " &lt;&lt;  $2 &lt;&lt; endl; }<br> 	| List NAME  { cout &lt;&lt; "Parser found a name "   &lt;&lt; *$2 &lt;&lt; endl; }<br>	| NUM	     { cout &lt;&lt; "Parser found a number " &lt;&lt;  $1 &lt;&lt; endl; }<br>	| NAME	     { cout &lt;&lt; "Parser found a name "   &lt;&lt; *$1 &lt;&lt; endl; }<br>	;<br></span></big><big><span style="font-weight: bold;"></span></big><br></pre>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table><font face="sans-serif"><br></font><br><font face="sans-serif"><font face="sans-serif"><a href="simple-parser.tgz">This simple parser implementation can be downloaded for experimentation</a>. <br><br><br>The </font>internal details of the interaction between a scanner and a parser are as follows. The&nbsp; scanner is defined by an object of class <big><code style="font-weight: bold;">Scanner</code></big> which
+          inherits from a base class <big><code style="font-weight:
+              bold;">ScannerBase</code></big>. Similarly, the parser is
+          defined by an object of class <big><code style="font-weight:
+              bold;">Parser</code></big> which inherits from a base
+          class <big><code style="font-weight: bold;">ParserBase</code></big>.
+          <br>
+        </font> <font face="sans-serif"><br>
+        </font> <font face="sans-serif">We create an object called <big><code style="font-weight: bold;">simcalc</code></big> as an
+          instance of class <big><code style="font-weight: bold;">Parser</code></big>
+          and then call its <big><code style="font-weight: bold;">parse()</code></big>
+          function. The constructor of <big><code style="font-weight:
+              bold;">Parser </code></big>creates an object called <big><code style="font-weight: bold;">d_scanner</code></big> as an
+          instance of the <big><code style="font-weight: bold;">Scanner</code></big>
+          class. The <big><code style="font-weight: bold;">parse()</code></big>
+          function receives tokens from the <big><code style="font-weight: bold;">lex()</code></big> function and
+          takes the parsing decisions. This has been illustrated below.<br>
+        </font> </div>
+      <font face="sans-serif"> </font><br>
+      <div style="text-align: center;"><img alt="" src="pictures/info-flow.png" width="660" height="623"><br>
+        <div style="text-align: left;"> <font face="sans-serif">Since
+            the the tokens are recognized by the scanner, and their
+            values have to be passed by the scanner to the parser. In
+            this case, after the scanner identifies a certain sequence
+            of digits as a lexeme corresponding to the token <big><code style="font-weight: bold;">NUM</code></big>, it should
+            also compute the value of the number from the lexeme and
+            make it available to the parser. We explain this interaction
+            below by first showing the default <big><code style="font-weight: bold;">Scanner</code></big> class
+            generated by flexc++ and the default <big><code style="font-weight: bold;">Parser</code></big> class
+            generated by bisonc++. Then we show how the classes are
+            modified.<br>
+          </font></div>
+        <font face="sans-serif"> </font>
+        <div style="text-align: left;"><font face="sans-serif"> </font>
+          <div style="text-align: justify;"><span style="font-family:
+              sans-serif;"><br>
+            </span>
+            <table style="text-align: left; margin-left: auto;
+              margin-right: auto;" cellspacing="0" cellpadding="10" border="1">
+              <tbody>
+                <tr style="font-family: sans-serif; font-style: italic;" align="center">
+                  <td colspan="2" rowspan="1" style="vertical-align:
+                    top;"><font color="#ff0000"><b>Automatically generated Scanner and Parser
+                    classes are as shown below</b></font><br>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="vertical-align: top;">
+                    <pre><big><big><br><small style="font-weight: bold;">class Scanner: public ScannerBase<br>{<br>    public:<br>        explicit Scanner(std::istream &amp;in = std::cin,<br>                         std::ostream &amp;out = std::cout);<br><br>        Scanner(std::string const &amp;infile, <br>                std::string const &amp;outfile);<br><br>        // $insert lexFunctionDecl<br>        int lex();<br><br>    private:<br>        int lex__();<br>        int executeAction__(size_t ruleNr);<br><br>        void print();<br>        void preCode();    <br>};</small></big></big></pre>
+                  </td>
+                  <td style="vertical-align: top;">
+                    <pre><big><big><br><small style="font-weight: bold;">class Parser: public ParserBase<br>{<br>    // $insert scannerobject<br>    Scanner d_scanner;<br><br>    public:<br>        int parse();<br><br>    private:<br>        void error(char const *msg);    <br>        int lex();                      <br>                                       <br>        void print();                   <br><br>    // support functions for parse():<br>        void executeAction(int ruleNr);<br>        void errorRecovery();<br>        int lookup(bool recovery);<br>        void nextToken();<br>};</small></big></big></pre>
+                  </td>
+                </tr>
+                <tr align="center">
+                  <td colspan="2" rowspan="1" style="vertical-align:
+                    top;"><span style="font-style: italic; font-family:
+                      sans-serif;"><b><font color="#ff0000"><a name="scannerBaseClass"></a>Manually updated classes (see the
+                      lines in red) to enable transfer of values
+                      from&nbsp; the Scanner to the Parser</font></b><br></span><div align="left"><span style="font-family: sans-serif;">(Our Makefile performs adds these lines automatically using sed commands </span><span style="font-family: sans-serif;">Please see the explanation in the README&nbsp; <br>file and the Makefile.)</span><br><span style="font-style: italic; font-family:
+                      sans-serif;"></span></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="vertical-align: top;">
+                    <pre><big><big><br><small style="font-weight: bold;">class Scanner: public ScannerBase<br>{<br>    public:<br>        explicit Scanner(std::istream &amp;in = std::cin,<br>                         std::ostream &amp;out = std::cout);<br><br>        Scanner(std::string const &amp;infile, <br>                         std::string const &amp;outfile);<br><br>        // $insert lexFunctionDecl<br>        int lex();<br><br>    private:<br>       <span style="color: rgb(204, 0, 0);"> ParserBase::STYPE__ * dval;</span><br><br>        int lex__();<br>        int executeAction__(size_t ruleNr);<br><br>        void print();<br>        void preCode();      <br>                            <br><br>    public:<br>        <span style="color: rgb(204, 0, 0);">void setSval(ParserBase::STYPE__ * val);</span><br style="color: rgb(204, 0, 0);"><span style="color: rgb(204, 0, 0);">        ParserBase::STYPE__  * getSval();</span><br><br>};</small></big></big><br></pre>
+                  </td>
+                  <td style="vertical-align: top;">
+                    <pre><big><big><small style="font-weight: bold;"><br>class Parser: public ParserBase<br>{<br>    // $insert scannerobject<br>    Scanner d_scanner;<br><br>    public:<br>        <span style="color: rgb(204, 0, 0);">Parser()</span><br style="color: rgb(204, 0, 0);"><span style="color: rgb(204, 0, 0);">        {</span><br style="color: rgb(204, 0, 0);"><span style="color: rgb(204, 0, 0);">                d_scanner.setSval(&amp;d_val__);</span><br style="color: rgb(204, 0, 0);"><span style="color: rgb(204, 0, 0);">        }</span><br><br>        int parse();<br><br>    private:<br>        void error(char const *msg);   <br>        int lex();                     <br>                                         <br>        void print();                   <br>    // support functions for parse():<br>        void executeAction(int ruleNr);<br>        void errorRecovery();<br>        int lookup(bool recovery);<br>        void nextToken();<br>};</small><br></big></big></pre>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <font face="sans-serif"><br>
+              The class <big><code style="font-weight: bold;">Parser</code></big>
+              has a protected member <big><code style="font-weight:
+                  bold;">d_val__ </code></big>which it inherits from
+              the base class <big><code style="font-weight: bold;">ParserBase</code></big>.
+              We make the address of this variable&nbsp; available to
+              the <big><code style="font-weight: bold;">Scanner</code></big>
+              class by adding new constructor for the <big><code style="font-weight: bold;">Parser </code></big>class
+              which calls the function <big><code style="font-weight:
+                  bold;">d_scanner.setSval</code></big> (<big><code style="font-weight: bold;">d_scanner</code></big> is
+              the scanner object used by the parser object). This is a
+              function that we have added in the <big><code style="font-weight: bold;">Scanner</code></big> class.
+              This function store the pointer in a private variable <big><code style="font-weight: bold;">dval</code></big>. Whenever
+              the script in <big><code style="font-weight: bold;">scanner.ll</code></big>
+              has to make the value available to the parser, it gets the
+              pointer&nbsp; using the function <big><code style="font-weight: bold;">getSval</code></big> and
+              stores the value in the address which happens to be the
+              address of the variable <big><code style="font-weight:
+                  bold;">d_val__</code></big> in an object of the <big><code style="font-weight: bold;">Parser</code></big> class.<br>
+              <code style="font-weight: bold;"><big><small><span style="color: rgb(204, 0, 0);"></span></small></big></code><br>
+              The file inclusions are a little tricky and have been
+              illustrated below. The files at the top are the files that
+              we write. The <big><code style="font-weight: bold;">parser.yy</code></big>
+              and <big><code style="font-weight: bold;">scanner.ll</code></big>
+              are the scripts that are read by <big><code style="font-weight: bold;">bisonc++</code></big> and <big><code style="font-weight: bold;">flexc++</code></big> which
+              then generate the <code style="font-weight: bold;">parser.cc</code>
+              and <big><code style="font-weight: bold;">scanner.cc</code></big>
+              files and the associated header files.&nbsp; <br>
+            </font></div>
+          <font face="sans-serif"> </font><br>
+          <div align="center"><img alt="" src="pictures/HeaderCppFileInfoFlow.png" width="661" height="656"></div>
+        </div>
+        <div style="text-align: left;">
+          <h4><br></h4><h4><a name="flexcpp_bisoncpp_installation"></a><big style="font-style: italic;"><span style="font-family:
+                sans-serif;">Installing Flexc++ and Bisonc++ <br></span></big></h4>
+          <div style="text-align: justify;"><br><font face="sans-serif"><font face="sans-serif"> On Ubuntu 14.04 and 16.04, a standard installation from the repositories using apt or synaptic work well.</font></font><font face="sans-serif"><br><br>
+              For Ubuntu 12.04, the steps for installing Flexc++ and Bisonc++ on a 64 bit intel processor based machine have
+              been given below. For a 32 bit intel processor based
+              machine, please replace <big style="font-weight: bold;
+                color: rgb(204, 0, 0);"><code>amd64</code></big> by <big style="color: rgb(204, 0, 0);"><code style="font-weight:
+                  bold;">i386</code></big> in the installation of <big><code style="font-weight: bold;">libbobcat</code></big> and
+              <big><code style="font-weight: bold;">libbobcat-dev</code></big>.
+              <br>
+            </font> <font face="sans-serif"><br>
+            </font> <font face="sans-serif">We need to install the
+              following packages. Note that the specific version numbers
+              (or higher versions) are important. Wherever possible, we
+              suggest using the <big><code style="font-weight: bold;">apt-get</code></big>
+              command (synaptic package manger would do just as well)
+              minimising the need of installation from <big><code style="font-weight: bold;">.deb</code></big> files or
+              source files.<br>
+            </font> </div>
+          <font face="sans-serif"> </font>
+          <ul style="font-family: sans-serif; text-align: justify;">
+            <li><big><code style="font-weight: bold;">g++</code></big>
+              version 4:4.6.3-1ubuntu5.&nbsp;</li>
+            <ul>
+              <li>Use the command <big style="background-color:
+                  rgb(153, 255, 255);"><code style="font-weight: bold;">sudo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    apt-get install g++</code></big>.<br>
+              </li>
+            </ul>
+            <li><big><code style="font-weight: bold;">bisonc++</code></big>
+              version 2.09.03-1. <br>
+            </li>
+            <ul>
+              <li>Use the command <big style="background-color:
+                  rgb(153, 255, 255);"><code style="font-weight: bold;">sudo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    apt-get install bisonc++</code></big>.</li>
+            </ul>
+            <li><big><code style="font-weight: bold;">icmake</code></big>
+              version 7.16.01-1ubuntu1</li>
+            <ul>
+              <li>Use the command <big style="background-color:
+                  rgb(153, 255, 255);"><code style="font-weight: bold;">sudo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    apt-get install icmake</code></big>.</li>
+            </ul>
+            <li><big><code style="font-weight: bold;">libbobcat</code></big>
+              version 3_3.01.00-1</li>
+            <ul>
+              <li>Visit the site <a href="https://launchpad.net/ubuntu/quantal/amd64/libbobcat3/3.01.00-1">https://launchpad.net/ubuntu/quantal/<span style="color: rgb(204, 0, 0);">amd64</span>/libbobcat3/3.01.00-1.</a></li>
+              <li>Check for all dependencies and their versions listed
+                on the site. You may want to use the synaptic package
+                manager to find out whether the dependencies have been
+                installed on your system. Install all missing
+                dependencies.<br>
+              </li>
+              <li>Download the <big><code style="font-weight: bold;">libbobcat3_3.01.00-1_<span style="color: rgb(204, 0, 0);">amd64</span>.deb</code></big>
+                file and use the command <big style="background-color:
+                  rgb(153, 255, 255);"><code style="font-weight: bold;">sudo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    dpkg -i libbobcat3_3.01.00-1_<span style="color:
+                      rgb(204, 0, 0);">amd64</span>.deb</code></big>.<br>
+              </li>
+            </ul>
+            <li><big><code style="font-weight: bold;">libbobcat-dev</code></big>
+              version 3.01.00-1. These are the development libraries
+              (note the suffix <big><code style="font-weight: bold;">-dev</code></big>).</li>
+            <ul>
+              <li>Visit the site <a href="https://launchpad.net/ubuntu/raring/amd64/libbobcat-dev/3.01.00-1">https://launchpad.net/ubuntu/raring/<span style="color: rgb(204, 0, 0);">amd64</span>/libbobcat-dev/3.01.00-1</a>.</li>
+              <li>Check for all dependencies and their versions listed
+                on the site. You may want to use the synaptic package
+                manager to find out whether the dependencies have been
+                installed on your system. Install all missing
+                dependencies.</li>
+              <li>Download the <big><code style="font-weight: bold;">libbobcat-dev_3.01.00-1_<span style="color: rgb(204, 0, 0);">amd64</span>.deb</code></big>
+                file and use the command <big style="background-color:
+                  rgb(153, 255, 255);"><code style="font-weight: bold;">sudo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    dpkg -i libbobcat-dev_3.01.00-1_<span style="color:
+                      rgb(204, 0, 0);">amd64</span>.deb</code></big>.</li>
+            </ul>
+            <li><big><code style="font-weight: bold;">flexc++</code></big>
+              version 0.98.00.</li>
+            <ul>
+              <li>Visit the site <a href="https://launchpad.net/ubuntu/+source/flexc++/0.98.00-1">https://launchpad.net/ubuntu/+source/flexc++/0.98.00-1</a>.</li>
+            </ul>
+            <ul style="font-family: sans-serif;">
+              <li>Check for all dependencies and their versions listed
+                on the site. You may want to use the synaptic package
+                manager to find out whether the dependencies have been
+                installed on your system. Install all missing
+                dependencies.</li>
+              <li>Download the source code archive file <big><code style="font-weight: bold;">flexc++_0.98.00.orig.tar.gz</code></big>.</li>
+              <li>Untar the source code using the command <big style="background-color: rgb(153, 255, 255);"><code style="font-weight: bold;">tar zxvf
+                    flexc++_0.98.00.orig.tar.gz</code></big>.</li>
+              <li>Change the directory using <big style="background-color: rgb(153, 255, 255);"><code style="font-weight: bold;">cd flexc++-0.98.00</code></big>.
+                <br>
+              </li>
+              <li>Follow the steps given in the file <big><code style="font-weight: bold;">INSTALL</code></big>.<br>
+              </li>
+              <ul style="font-family: sans-serif;">
+                <ul>
+                </ul>
+              </ul>
+            </ul>
+          </ul>
+        </div>
+      </div>
+    </div>
+  
+
+</body></html>

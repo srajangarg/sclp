@@ -1,0 +1,6 @@
+     Sample introductory programs for flexc++ and bisonc++
+     ----------------------------------------------------
+
+- num.ll is used only to demonstrate token identification. 
+  Since there is no parser, no additional code needs to be
+  included in scanner.h.

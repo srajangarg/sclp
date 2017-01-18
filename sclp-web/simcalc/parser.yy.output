@@ -1,0 +1,81 @@
+[parser.yy (info)] Line 44: 
+Production Rules
+(rule precedences determined from %prec or 1st terminal between parentheses):
+1: Start ('\x0a') ->  Expr '\x0a'
+2: Expr ('+') ->  Expr '+' Expr
+3: Expr ('*') ->  Expr '*' Expr
+4: Expr (NUM) ->  NUM
+5: Start_$ ->  Start
+
+[parser.yy (info)] 
+Symbolic Terminal tokens:
+       error
+       EOF
+   257: NUM
+    43: '+'
+    42: '*'
+    10: '\x0a'
+
+[parser.yy (info)] 
+Grammar States: 
+[parser.yy (info)] State 0:
+5: Start_$ ->  . Start 
+  0:   On Start to state 1
+  1:   On Expr to state 2
+  2:   On NUM to state 3
+
+
+State 1:
+5: Start_$ -> Start  . 
+
+
+State 2:
+1: Start -> Expr  . '\x0a' 
+2: Expr -> Expr  . '+' Expr 
+3: Expr -> Expr  . '*' Expr 
+  0:   On '\x0a' to state 4
+  1:   On '+' to state 5
+  2:   On '*' to state 6
+
+
+State 3:
+4: Expr -> NUM  . 
+  Reduce by 4: Expr -> NUM  . 
+
+
+State 4:
+1: Start -> Expr '\x0a'  . 
+  Reduce by 1: Start -> Expr '\x0a'  . 
+
+
+State 5:
+2: Expr -> Expr '+'  . Expr 
+  0:   On Expr to state 7
+  1:   On NUM to state 3
+
+
+State 6:
+3: Expr -> Expr '*'  . Expr 
+  0:   On Expr to state 8
+  1:   On NUM to state 3
+
+
+State 7:
+2: Expr -> Expr '+' Expr  . 
+2: Expr -> Expr  . '+' Expr 
+3: Expr -> Expr  . '*' Expr 
+  0 (removed by precedence):   On '+' to state 5
+  1:   On '*' to state 6
+  Reduce by 2: Expr -> Expr '+' Expr  . 
+
+
+State 8:
+3: Expr -> Expr '*' Expr  . 
+2: Expr -> Expr  . '+' Expr 
+3: Expr -> Expr  . '*' Expr 
+  0 (removed by precedence):   On '+' to state 5
+  1 (removed by precedence):   On '*' to state 6
+  Reduce by 3: Expr -> Expr '*' Expr  . 
+
+
+

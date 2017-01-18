@@ -1,0 +1,148 @@
+
+#############################################################################################
+#
+#                                cinc : A C Interpreter and Compiler
+#                                -----------------------------------
+#
+#           About:
+#
+#           Implemented   by  Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
+#           Khedker    (http://www.cse.iitb.ac.in/~uday)  for the courses
+#           cs302+cs306: Language  Processors  (theory and  lab)  at  IIT
+#           Bombay.
+#
+#           Release  date  Jan  15, 2013.  Copyrights  reserved  by  Uday
+#           Khedker. This  implemenation  has been made  available purely
+#           for academic purposes without any warranty of any kind.
+#
+#           Documentation (functionality, manual, and design) and related
+#           tools are  available at http://www.cse.iitb.ac.in/~uday/cinc
+#
+#
+###############################################################################################
+
+REPO_DIR = /home/maitreyee/Desktop/Compilers/Source/Level-0
+AST_OBJ = ast.o ast-eval.o ast-compile.o
+PROG_OBJ = program.o program-eval.o program-compile.o
+PROC_OBJ = procedure.o procedure-eval.o procedure-compile.o
+BB_OBJ = sequence-ast.o sequence-ast-eval.o sequence-ast-compile.o
+SYMTAB_OBJ = symbol-table.o symbol-table-compile.o
+OBJ_CORE = error-display.o main.o user-options.o local-environment.o icode.o reg-alloc.o
+OBJ_GEN = scanner.o parser.o
+
+HEADERS_CORE = error-display.hh user-options.hh local-environment.hh ast.hh symbol-table.hh program.hh procedure.hh sequence-ast.hh icode.hh reg-alloc.hh common-classes.hh
+HEADERS_GEN = parser.h parser.ih parserbase.h scanner.h scanner.ih scannerbase.h
+
+HEADERS = $(HEADERS_CORE) $(HEADERS_GEN)
+OBJ = $(OBJ_GEN) $(OBJ_CORE) $(AST_OBJ) $(PROC_OBJ) $(PROG_OBJ) $(BB_OBJ) $(SYMTAB_OBJ)
+
+CPP = g++
+BISONCPP = bisonc++
+FLEXCPP = flexc++
+TGT = sclp16
+
+option = -DCOMPILE -fPIC
+CFLAGS = -g
+
+$(TGT): $(OBJ) 
+	$(CPP) --std=c++0x $(option) $(OBJ) -o $(TGT)
+
+%.o: %.cc $(HEADERS)
+	$(CPP) --std=c++0x $(option) $(CFLAGS) -c $<
+
+scanner.cc scannerbase.h: scanner.ll scanner.ih scanner.h
+	$(FLEXCPP) scanner.ll
+
+parserbase.h: parser.cc
+
+parser.cc: parser.yy parser.ih parser.h
+	$(BISONCPP) --verbose parser.yy
+
+LBITS=$(shell getconf LONG_BIT)
+level=-1
+
+pull_files:         #get files from source directory in the current directory
+	@make --no-print-directory -f Makefile clean
+	
+	cp -u  $(REPO_DIR)/Interpreter/* .
+	cp -u  $(REPO_DIR)/CommonCode/* .
+	cp -u  $(REPO_DIR)/Compiler/* .
+	cp -u  $(REPO_DIR)/current-grammar.txt $(REPO_DIR)/desired-grammar.txt .
+	
+
+push_files:    #copy the changed files back to source directories
+	cp -u  *-eval.cc $(REPO_DIR)/Interpreter/
+	cp -u  local-environment.* $(REPO_DIR)/Interpreter/
+	
+	cp -u  *-compile.cc $(REPO_DIR)/Compiler/
+	cp -u  icode.* reg-alloc.* $(REPO_DIR)/Compiler/
+	
+	cp -u  *.cc *.hh *.ih *.h *.yy *.ll $(REPO_DIR)/CommonCode/
+	cp -u  current-grammar.txt desired-grammar.txt Makefile $(REPO_DIR)
+	
+
+check_compiler:
+	@# create .toks .ast .eval files. First pick up the valid test files in the directory test_files/valid.
+	@# Then pick up the invalid test files in the directory test_files/invalid.
+	@# compare .toks .ast .eval files of valid files
+	@# compare .toks .ast .eval files of invalid files
+
+check_interpreter:
+	@# create .toks .ast .eval files for valid input files.
+	@# compare .toks .ast .eval files
+	@# compare .toks .ast .eval files
+
+help:
+	@echo "Programmer's guide: Should be copied to SourceCode directory of a level"
+	@echo "------------------"
+	@echo " "
+	@echo "		make -f Makefile [options]"
+	@echo " "
+	@echo "  options:"
+	@echo "				Compiles the code using source files"
+	@echo "				from the present directory."
+	@echo "				Creates an executable cinc."
+	@echo " "
+	@echo "	pull_files		Copies the contents of the Interpreter,"
+	@echo "				Compiler, and CommonCode directory to the"
+	@echo "				current location."
+	@echo "				Compiles the code."
+	@echo "				Creates an executable cinc for interpretation."
+	@echo " "
+	@echo "	option=-DCOMPILE  	Compiles the code with macro COMPILE as"
+	@echo "				defined."
+	@echo "				Creates an executable cinc for compilation."
+	@echo " "
+	@echo "	push_files		Copies the source files from current"
+	@echo "				directory to their respective Interpreter,"
+	@echo "				CommonCode and Compiler directory."
+	@echo " "
+	@echo "	make_cfg level={NUM}	{NUM} is the level number whose test_files"
+	@echo "				.c files are to converted to .cfg files."
+	@echo "				Creates a local test_files and"
+	@echo "				test_files_output directory."
+	@echo "				Copies the .c files of test_files and"
+	@echo "				dummy_test_files folder to the local"
+	@echo "				test_files folder and test_files_output"
+	@echo "				contents to the local test_files_output"
+	@echo "				folder."
+	@echo "				Converts all the .c files of test_files"
+	@echo "				folder to .cfg."
+	@echo " "
+	@echo "	check_interpreter	Executes .cfg files using cinc executable."
+	@echo "				Compares them with the corresponding files"
+	@echo "		 		in test_files_output files."
+	@echo " "
+	@echo "	check_compiler		Executes .cfg files using cinc executable."
+	@echo "				Compares them with the corresponding files"
+	@echo "				in test_files_output files."
+	@echo " "
+	@echo "	clean			Cleans the current directory, restoring it"
+	@echo "				to its original form except keeping .cc"
+	@echo "				and .h files still in the current directory."
+
+clean :
+	rm -rf test_files test_files_output
+	rm -f *.o scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output
+	rm -f cinc
+	rm -f cscope.out tags a.out

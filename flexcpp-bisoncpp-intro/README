@@ -1,0 +1,21 @@
+      Sample introductory programs for flexc++ and bisonc++
+      ----------------------------------------------------
+
+- exp1.yy merely shows reduction of a number to an expression.
+
+- exp2.yy shows the construction of plus expression.
+
+  on input 1 + 2 + 3 + 4 + 5, it first reads all the numbers 
+  and then starts constructing the expression.
+
+- exp3.yy fixes the above problem by making + left associative.
+
+- exp4.yy includes + and *.
+
+  On input 1 + 2 * 3 it seems fine.
+  On input 1 * 2 + 3 it does not seem fine.
+
+- exp5.yy fixes the above problem.
+
+- unambiguous-exp.yy shows how an unambiguous grammar can be used
+  to avoid using precedences and associativities.

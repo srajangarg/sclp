@@ -1,0 +1,35 @@
+
+
+                simcalc : A Simple Calculator Using Flexc++ and Bisonc++ 
+                --------------------------------------------------------
+
+               About:
+               Implemented by Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
+               Khedker (http://www.cse.iitb.ac.in/~uday)  for the courses
+               cs302+cs306: Language  Processors (theory and lab)  at IIT
+               Bombay.
+    
+               Release  date Jan  15, 2013.  Copyrights reserved  by Uday
+               Khedker. This implemenation has been made available purely
+               for academic purposes without any warranty of any kind.
+
+               Explanations of the scanner parser interaction in simcalc 
+               can be found at http://www.cse.iitb.ac.in/~uday/cfglp
+    
+
+This directory contains the implementation of a simple calculator that consists of three files: 
+scanner.ll, parser.yy, and Makefile.
+
+flexc++ and bisonc++ create the files scanner.h and parser.h which are required to be manually
+updated by adding some functions in them. If these files already exist, they are not over-written.
+They are created only when they do not exist.
+This manual intervention requires us to do the work in three steps. 
+(a) In the first step, the scanner.ll and parser.yy scripts are processed without any dependency 
+    on the scanner.h and parser.h file (because they do not exist and will be generated).
+(b) In the second step, the  scanner.h and parser.h files are manually updated. 
+(c) In the third step, the scanner.ll and parser.yy are processed with a dependency on the 
+    scanner.h and parser.h file. Every time they are modified, the scanner.ll and parser.yy 
+    should be processed again.
+The Makefile provides commands for all the three steps.  The target all checks whether scanner.h
+file exists and executes steps (a) and (b). If it does, the Makefile calls itself recursively 
+for executing step (c). Otherwise it executes steps (a) and (c).
