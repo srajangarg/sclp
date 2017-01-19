@@ -249,9 +249,26 @@ declaration:
 
 statement_list:
 	//ADD YOUR CODE HERE
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		Sequence_Ast * seq = new Sequence_Ast(get_line_number());
+		$$ = seq;
+	}
+	}
 |
 	statement_list assignment_statement
 	//ADD YOUR CODE HERE
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($1 != NULL), "Statement list cannot be null here");
+		Sequence_Ast * seq = $1;
+		Ast * ast_stmt = $2;
+		seq->ast_push_back(ast_stmt);
+		$$ = seq;
+	}
+	}
 ;
 
 assignment_statement:
@@ -262,6 +279,9 @@ assignment_statement:
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 
 		//ADD YOUR CODE HERE
+		Ast * lhs = $1;
+		Ast * rhs = $3;
+		Ast * assignment_stmt = new Assignment_Ast(lhs, rhs, get_line_number());
 	}
 	}
 |
@@ -272,6 +292,9 @@ assignment_statement:
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 
 		//ADD YOUR CODE HERE
+		Ast * lhs = $1;
+		Ast * rhs = $3;
+		Ast * assignment_stmt = new Assignment_Ast(lhs, rhs, get_line_number());
 	}
 	}
 ;
@@ -306,4 +329,17 @@ variable:
 constant:
 	INTEGER_NUMBER
 	//ADD YOUR CODE HERE
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		//CHECK_INVARIANT(($1 != NULL), "Constant Number cannot be null");
+
+		int num = $1;
+		Data_Type type = int_data_type;
+
+		Ast * num_ast = new Number_Ast<int> (num, type, get_line_number());
+
+		$$ = num_ast;
+	}
+	}
 ;
