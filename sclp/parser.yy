@@ -252,8 +252,9 @@ statement_list:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		Sequence_Ast * seq = new Sequence_Ast(get_line_number());
-		$$ = seq;
+		Sequence_Ast * ast_seq = new Sequence_Ast(get_line_number());
+		current_procedure->set_sequence_ast(*ast_seq);
+		$$ = ast_seq;
 	}
 	}
 |
@@ -263,10 +264,14 @@ statement_list:
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "Statement list cannot be null here");
-		Sequence_Ast * seq = $1;
+		Sequence_Ast * ast_seq = $1;
 		Ast * ast_stmt = $2;
-		seq->ast_push_back(ast_stmt);
-		$$ = seq;
+
+		CHECK_INVARIANT((ast_seq != NULL), "The assignment statement list cannot be null");
+		CHECK_INVARIANT((ast_stmt != NULL), "The assignment statement cannot be null");
+
+		ast_seq->ast_push_back(ast_stmt);
+		$$ = ast_seq;
 	}
 	}
 ;
@@ -281,7 +286,13 @@ assignment_statement:
 		//ADD YOUR CODE HERE
 		Ast * lhs = $1;
 		Ast * rhs = $3;
+
+		CHECK_INVARIANT((lhs != NULL), "The LHS of assignment statement cannot be null");
+		CHECK_INVARIANT((rhs != NULL), "The RHS of assignment statement cannot be null");
+
 		Ast * assignment_stmt = new Assignment_Ast(lhs, rhs, get_line_number());
+
+		$$ = assignment_stmt;
 	}
 	}
 |
@@ -294,7 +305,13 @@ assignment_statement:
 		//ADD YOUR CODE HERE
 		Ast * lhs = $1;
 		Ast * rhs = $3;
+
+		CHECK_INVARIANT((lhs != NULL), "The LHS of assignment statement cannot be null");
+		CHECK_INVARIANT((rhs != NULL), "The RHS of assignment statement cannot be null");
+
 		Ast * assignment_stmt = new Assignment_Ast(lhs, rhs, get_line_number());
+
+		$$ = assignment_stmt;
 	}
 	}
 ;
