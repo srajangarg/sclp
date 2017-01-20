@@ -21,7 +21,7 @@ void                        {return Parser::VOID;}
 \{  |
 \}                          {return matched()[0];}
 
-{digit}+                    {
+-?{digit}+                    {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->integer_value = atoi(matched().c_str());
                                 return Parser::INTEGER_NUMBER;
