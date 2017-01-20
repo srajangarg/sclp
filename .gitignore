@@ -8,6 +8,9 @@ sclp/sclp
 sclp/cscope.out
 sclp/tags
 sclp/a.out
+sclp/Examples16
+sclp/Examples/*.spim
+sclp/Examples/*.debug
 
 only-flexcpp-intro/*.o
 only-flexcpp-intro/scannerbase.h
