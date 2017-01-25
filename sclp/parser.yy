@@ -1,32 +1,29 @@
+%scanner scanner.h
 %scanner-token-function d_scanner.lex()
 %filenames parser
 %parsefun-source parser.cc
 
 %union 
 {
-	int integer_value;
-	std::string * string_value;
 	pair<Data_Type, string> * decl;
-	Sequence_Ast * sequence_ast;
-	Ast * ast;
 	Symbol_Table * symbol_table;
 	Symbol_Table_Entry * symbol_entry;
 	Procedure * procedure;
+	//ADD CODE HERE
 };
 
-%token <integer_value> INTEGER_NUMBER
-%token <string_value> NAME
-%token RETURN INTEGER 
-%token ASSIGN VOID
+//ADD TOKENS HERE
+
+%left '+' '-'
+%left '*' '/'
+%right UMINUS
+%nonassoc '('
 
 %type <symbol_table> optional_variable_declaration_list
 %type <symbol_table> variable_declaration_list
 %type <symbol_entry> variable_declaration
 %type <decl> declaration
-%type <sequence_ast> statement_list
-%type <ast> assignment_statement
-%type <ast> variable
-%type <ast> constant
+//ADD CODE HERE
 
 %start program
 
@@ -87,6 +84,8 @@ procedure_declaration:
 	{
 	if (NOT_ONLY_PARSE)
 	{
+		CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
+		CHECK_INVARIANT((*$2 == "main"), "Procedure name must be main in declaration");
 	}
 	}
 ;
@@ -97,10 +96,14 @@ procedure_definition:
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "Procedure name cannot be null");
+		CHECK_INVARIANT((*$1 == "main"), "Procedure name must be main");
 
 		string proc_name = *$1;
 
 		current_procedure = new Procedure(void_data_type, proc_name, get_line_number());
+
+		CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
+			"Procedure name cannot be same as global variable", get_line_number());
 	}
 	}
 
@@ -166,7 +169,7 @@ variable_declaration_list:
 		CHECK_INPUT ((program_object.variable_proc_name_check(decl_name) == false),
 				"Variable name cannot be same as the procedure name", get_line_number());
 
-		if (current_procedure != NULL)
+		if(current_procedure != NULL)
 		{
 			CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
 				"Variable name cannot be same as procedure name", get_line_number());
@@ -195,7 +198,7 @@ variable_declaration_list:
 		string decl_name = decl_stmt->get_variable_name();
 		CHECK_INPUT((program_object.variable_proc_name_check(decl_name) == false),
 			"Procedure name cannot be same as the variable name", get_line_number());
-		if (current_procedure != NULL)
+		if(current_procedure != NULL)
 		{
 			CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
 				"Variable name cannot be same as procedure name", get_line_number());
@@ -215,12 +218,12 @@ variable_declaration:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		pair<Data_Type, string> * decl_stmt = $1;
+		pair<Data_Type, string> * decl = $1;
 
-		CHECK_INVARIANT((decl_stmt != NULL), "Declaration cannot be null");
+		CHECK_INVARIANT((decl != NULL), "Declaration cannot be null");
 
-		Data_Type type = decl_stmt->first;
-		string decl_name = decl_stmt->second;
+		Data_Type type = decl->first;
+		string decl_name = decl->second;
 
 		Symbol_Table_Entry * decl_entry = new Symbol_Table_Entry(decl_name, type, get_line_number());
 
@@ -235,77 +238,80 @@ declaration:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
-
-		string name = *$2;
-		Data_Type type = int_data_type;
-
-		pair<Data_Type, string> * declar = new pair<Data_Type, string>(type, name);
-
-		$$ = declar;
+		//ADD CODE HERE
+	}
+	}
+|
+	FLOAT NAME
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		//ADD CODE HERE
 	}
 	}
 ;
 
+
 statement_list:
-	//ADD YOUR CODE HERE
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = NULL;
+		//ADD CODE HERE
 	}
 	}
 |
 	statement_list assignment_statement
-	//ADD YOUR CODE HERE
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		CHECK_INVARIANT(($2 != NULL), "The assignment statement cannot be null");
-		Sequence_Ast * ast_seq = $1;
-		Ast * ast_stmt = $2;
 
-		if (ast_seq == NULL)
-		{
-			ast_seq = new Sequence_Ast(get_line_number());
-		}
-
-		ast_seq->ast_push_back(ast_stmt);
-		$$ = ast_seq;
+		//ADD CODE HERE
+	}
+	}
+;
+// Make sure to call check_ast in assignment_statement and arith_expression
+// Refer to error_display.hh for displaying semantic errors if any
+assignment_statement:
+	variable ASSIGN arith_expression ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		//ADD CODE HERE
 	}
 	}
 ;
 
-assignment_statement:
-	variable ASSIGN variable ';'
+arith_expression:
+		//ADD RELEVANT CODE ALONG WITH GRAMMAR RULES HERE
+                // SUPPORT binary +, -, *, / operations, unary -, and allow parenthesization
+                // i.e. E -> (E)
+                // Connect the rules with the remaining rules given below
+;
+
+operand:
+	arith_expression
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+		//ADD CODE HERE
+	}
+	}
+;
 
-		//ADD YOUR CODE HERE
-		Ast * lhs = $1;
-		Ast * rhs = $3;
-
-		Ast * assignment_stmt = new Assignment_Ast(lhs, rhs, get_line_number());
-
-		$$ = assignment_stmt;
+expression_term:
+	variable
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		//ADD CODE HERE
 	}
 	}
 |
-	variable ASSIGN constant ';'
+	constant
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-
-		//ADD YOUR CODE HERE
-		Ast * lhs = $1;
-		Ast * rhs = $3;
-
-		Ast * assignment_stmt = new Assignment_Ast(lhs, rhs, get_line_number());
-
-		$$ = assignment_stmt;
+		//ADD CODE HERE
 	}
 	}
 ;
@@ -319,36 +325,36 @@ variable:
 
 		CHECK_INVARIANT(($1 != NULL), "Variable name cannot be null");
 
-		string var_name = *$1;
+		if (current_procedure->variable_in_symbol_list_check(*$1))
+			 var_table_entry = &(current_procedure->get_symbol_table_entry(*$1));
 
-		if (current_procedure->variable_in_symbol_list_check(var_name) == true)
-			 var_table_entry = &(current_procedure->get_symbol_table_entry(var_name));
-
-		else if (program_object.variable_in_symbol_list_check(var_name) == true)
-			var_table_entry = &(program_object.get_symbol_table_entry(var_name));
+		else if (program_object.variable_in_symbol_list_check(*$1))
+			var_table_entry = &(program_object.get_symbol_table_entry(*$1));
 
 		else
-			CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable has not been declared");
+			CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH, "Variable has not been declared", get_line_number());
 
-		Ast * name_ast = new Name_Ast(var_name, *var_table_entry, get_line_number());
+		$$ = new Name_Ast(*$1, *var_table_entry, get_line_number());
 
-		$$ = name_ast;
+		delete $1;
 	}
 	}
 ;
 
 constant:
 	INTEGER_NUMBER
-	//ADD YOUR CODE HERE
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		int num = $1;
-		Data_Type type = int_data_type;
-
-		Ast * num_ast = new Number_Ast<int> (num, type, get_line_number());
-
-		$$ = num_ast;
+		//ADD CODE HERE
+	}
+	}
+|
+	DOUBLE_NUMBER
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		//ADD CODE HERE
 	}
 	}
 ;
