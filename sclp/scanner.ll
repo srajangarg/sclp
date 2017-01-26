@@ -33,6 +33,12 @@ void                        {return Parser::VOID;}
                                 return Parser::INTEGER_NUMBER;
                             }
 
+-?{digit}*\.{digit}+        {
+                                ParserBase::STYPE__ *val = getSval();
+                                val->integer_value = atof(matched().c_str());
+                                return Parser::DOUBLE_NUMBER;
+                            }
+
 {char}({char}|{digit})*     {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->string_value = new std::string(matched());

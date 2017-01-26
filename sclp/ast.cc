@@ -79,6 +79,7 @@ bool Assignment_Ast::check_ast()
 	//ADD CODE HERE
 	if (rhs->get_data_type() == lhs->get_data_type())
 		return true;
+	// check whether lhs is of type Name_Ast*
 
 	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, 
 		"Assignment statement data type not compatible", lineno);
@@ -124,6 +125,7 @@ void Name_Ast::set_data_type(Data_Type dt)
 {
 	//ADD CODE HERE
 	node_data_type = dt;
+	variable_symbol_entry->set_data_type(dt);
 }
 
 void Name_Ast::print(ostream & file_buffer)

@@ -10,7 +10,7 @@
 	Symbol_Table_Entry * symbol_entry;
 	Procedure * procedure;
 	int integer_value;
-	double float_value;
+	double double_value;
 	std::string * string_value;
 	Sequence_Ast * sequence_ast;
 	Assignment_Ast * assignment_ast;
@@ -22,7 +22,7 @@
 //ADD TOKENS HERE
 
 %token <integer_value> INTEGER_NUMBER
-%token <float_value> FLOAT_NUMBER
+%token <double_value> DOUBLE_NUMBER
 %token <string_value> NAME
 %token RETURN INTEGER 
 %token ASSIGN VOID FLOAT
@@ -37,11 +37,11 @@
 %type <symbol_entry> variable_declaration
 %type <decl> declaration
 %type <sequence_ast> statement_list
-%type <assignment_ast> assignment_statement
+%type <ast> assignment_statement
 %type <ast> variable
 %type <ast> constant
-%type <arithmetic_expr_ast> arith_expression
-%type <ast> operand
+// %type <ast> arith_expression
+// %type <ast> operand
 %type <ast> expression_term
 
 %start program
@@ -258,6 +258,7 @@ declaration:
 	if (NOT_ONLY_PARSE)
 	{
 		//ADD CODE HERE
+		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
 		$$ = new pair<Data_Type, string>(int_data_type, *$2);
 	}
 	}
@@ -267,6 +268,7 @@ declaration:
 	if (NOT_ONLY_PARSE)
 	{
 		//ADD CODE HERE
+		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
 		$$ = new pair<Data_Type, string>(double_data_type, *$2);
 	}
 	}
@@ -289,7 +291,7 @@ statement_list:
 		//ADD CODE HERE
 		CHECK_INVARIANT(($2 != NULL), "The assignment statement cannot be null");
 		Sequence_Ast * ast_seq = $1;
-		Assignment_Ast * ast_stmt = $2;
+		Ast * ast_stmt = $2;
 
 		if (ast_seq == NULL)
 			ast_seq = new Sequence_Ast(get_line_number());
@@ -302,39 +304,41 @@ statement_list:
 // Make sure to call check_ast in assignment_statement and arith_expression
 // Refer to error_display.hh for displaying semantic errors if any
 assignment_statement:
-	variable ASSIGN arith_expression ';'
+	variable ASSIGN expression_term ';'
 	{
 	if (NOT_ONLY_PARSE)
 	{
 		//ADD CODE HERE
-		Assignment_Ast * assignment_stmt = new Assignment_Ast($1, $3, get_line_number());
+		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+		Ast * assignment_stmt = new Assignment_Ast($1, $3, get_line_number());
 		$$ = assignment_stmt;
 	}
 	}
 ;
 
-arith_expression:
-		//ADD RELEVANT CODE ALONG WITH GRAMMAR RULES HERE
-        // SUPPORT binary +, -, *, / operations, unary -, and allow parenthesization
-        // Connect the rules with the remaining rules given below
-        expression_term '+' expression_term
-        {
-        if (NOT_ONLY_PARSE)
-        {
-        	//ADD CODE HERE
-        }
-        }
-;
+// arith_expression:
+// 		//ADD RELEVANT CODE ALONG WITH GRAMMAR RULES HERE
+//         // SUPPORT binary +, -, *, / operations, unary -, and allow parenthesization
+//         // Connect the rules with the remaining rules given below
+//         expression_term
+//         {
+//         if (NOT_ONLY_PARSE)
+//         {
+//         	//ADD CODE HERE
+//         	$$ = $1;
+//         }
+//         }
+// ;
 
-operand:
-	arith_expression
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		//ADD CODE HERE
-	}
-	}
-;
+// operand:
+// 	arith_expression
+// 	{
+// 	if (NOT_ONLY_PARSE)
+// 	{
+// 		//ADD CODE HERE
+// 	}
+// 	}
+// ;
 
 expression_term:
 	variable
@@ -386,16 +390,18 @@ constant:
 	{
 	if (NOT_ONLY_PARSE)
 	{
+		//ADD CODE HERE
 		int num = $1;
 		Ast * num_ast = new Number_Ast<int> (num, int_data_type, get_line_number());
 		$$ = num_ast;
 	}
 	}
 |
-	FLOAT_NUMBER
+	DOUBLE_NUMBER
 	{
 	if (NOT_ONLY_PARSE)
 	{
+		//ADD CODE HERE
 		double num = $1;
 		Ast * num_ast = new Number_Ast<double> (num, double_data_type, get_line_number());
 		$$ = num_ast;
