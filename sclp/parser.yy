@@ -365,6 +365,7 @@ variable:
 	{
 	if (NOT_ONLY_PARSE)
 	{
+
 		Symbol_Table_Entry * var_table_entry;
 
 		CHECK_INVARIANT(($1 != NULL), "Variable name cannot be null");

@@ -94,13 +94,13 @@ void Assignment_Ast::print(ostream & file_buffer)
 
 Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line)
 {
-
-	CHECK_INVARIANT((variable_symbol_entry->get_variable_name() == name),
-		"Variable's symbol entry is not matching its name");
 	//ADD CODE HERE
 	variable_symbol_entry = &var_entry;
 	name = var_entry.get_variable_name();
 	lineno = line;
+
+	CHECK_INVARIANT((variable_symbol_entry->get_variable_name() == name),
+		"Variable's symbol entry is not matching its name");
 }
 
 Name_Ast::~Name_Ast()
