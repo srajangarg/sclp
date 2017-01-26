@@ -60,6 +60,9 @@ void Ast::set_data_type(Data_Type dt)
 Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line)
 {
 	//ADD CODE HERE
+	lhs = temp_lhs;
+	rhs = temp_rhs;
+	lineno = line;
 }
 
 Assignment_Ast::~Assignment_Ast()
@@ -74,6 +77,8 @@ bool Assignment_Ast::check_ast()
 
 	// use typeid(), get_data_type()
 	//ADD CODE HERE
+	if (rhs->get_data_type() == lhs->get_data_type())
+		return true;
 
 	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, 
 		"Assignment statement data type not compatible", lineno);
@@ -92,6 +97,9 @@ Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line)
 	CHECK_INVARIANT((variable_symbol_entry->get_variable_name() == name),
 		"Variable's symbol entry is not matching its name");
 	//ADD CODE HERE
+	variable_symbol_entry = &var_entry;
+	name = var_entry.get_variable_name();
+	lineno = line;
 }
 
 Name_Ast::~Name_Ast()
@@ -101,16 +109,21 @@ Data_Type Name_Ast::get_data_type()
 {
 	// refer to functions for Symbol_Table_Entry 
 	//ADD CODE HERE
+	CHECK_INVARIANT((variable_symbol_entry != NULL), "Symbol_Table_Entry should be non null");
+	return variable_symbol_entry->get_data_type();
 }
 
 Symbol_Table_Entry & Name_Ast::get_symbol_entry()
 {
 	//ADD CODE HERE
+	CHECK_INVARIANT((variable_symbol_entry != NULL), "Symbol_Table_Entry should be non null");
+	return *variable_symbol_entry;
 }
 
 void Name_Ast::set_data_type(Data_Type dt)
 {
 	//ADD CODE HERE
+	node_data_type = dt;
 }
 
 void Name_Ast::print(ostream & file_buffer)
@@ -125,6 +138,9 @@ Number_Ast<DATA_TYPE>::Number_Ast(DATA_TYPE number, Data_Type constant_data_type
 {
 	// use Ast_arity from ast.hh
 	//ADD CODE HERE
+	constant = number;
+	node_data_type = constant_data_type;
+	lineno = line;
 }
 
 template <class DATA_TYPE>
@@ -135,18 +151,21 @@ template <class DATA_TYPE>
 Data_Type Number_Ast<DATA_TYPE>::get_data_type()
 {
 	//ADD CODE HERE
+	return node_data_type;
 }
 
 template <class DATA_TYPE>
 void Number_Ast<DATA_TYPE>::set_data_type(Data_Type dt)
 {
 	//ADD CODE HERE
+	node_data_type = dt;
 }
 
 template <class DATA_TYPE>
 bool Number_Ast<DATA_TYPE>::is_value_zero()
 {
 	//ADD CODE HERE
+	return (constant == 0);
 }
 
 template <class DATA_TYPE>
@@ -160,11 +179,13 @@ void Number_Ast<DATA_TYPE>::print(ostream & file_buffer)
 Data_Type Arithmetic_Expr_Ast::get_data_type()
 {
 	//ADD CODE HERE
+	return node_data_type;
 }
 
 void Arithmetic_Expr_Ast::set_data_type(Data_Type dt)
 {
 	//ADD CODE HERE
+	node_data_type = dt;
 }
 
 bool Arithmetic_Expr_Ast::check_ast()
@@ -181,6 +202,9 @@ Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 {
 	// set arity and data type
 	//ADD CODE HERE
+	lhs = l;
+	rhs = r;
+	lineno = line;
 }
 
 void Plus_Ast::print(ostream & file_buffer)
@@ -193,6 +217,9 @@ void Plus_Ast::print(ostream & file_buffer)
 Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
+	lhs = l;
+	rhs = r;
+	lineno = line;
 }
 
 void Minus_Ast::print(ostream & file_buffer)
@@ -205,6 +232,9 @@ void Minus_Ast::print(ostream & file_buffer)
 Mult_Ast::Mult_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
+	lhs = l;
+	rhs = r;
+	lineno = line;
 }
 
 void Mult_Ast::print(ostream & file_buffer)
@@ -217,6 +247,9 @@ void Mult_Ast::print(ostream & file_buffer)
 Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
+	lhs = l;
+	rhs = r;
+	lineno = line;
 }
 
 void Divide_Ast::print(ostream & file_buffer)
@@ -229,6 +262,9 @@ void Divide_Ast::print(ostream & file_buffer)
 UMinus_Ast::UMinus_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
+	lhs = l;
+	rhs = r;
+	lineno = line;
 }
 
 void UMinus_Ast::print(ostream & file_buffer)
