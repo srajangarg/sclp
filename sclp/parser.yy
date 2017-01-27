@@ -286,7 +286,7 @@ statement_list:
 	statement_list assignment_statement
 	{
 	if (NOT_ONLY_PARSE)
-	{	
+	{
 		//ADD CODE HERE
 		CHECK_INVARIANT(($2 != NULL), "The assignment statement cannot be null");
 		Sequence_Ast * ast_seq = $1;
