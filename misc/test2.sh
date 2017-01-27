@@ -21,3 +21,6 @@ do
 	diff -w -i $MIPS$filename.txt $REFER$filename.txt >> comparison.txt
 	echo "-------------------------------------" >> comparison.txt
 done
+
+rm -rf $MIPS
+rm -rf $REFER

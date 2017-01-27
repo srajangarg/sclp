@@ -37,11 +37,10 @@
 %type <symbol_entry> variable_declaration
 %type <decl> declaration
 %type <sequence_ast> statement_list
-%type <ast> assignment_statement
+%type <assignment_ast> assignment_statement
 %type <ast> variable
 %type <ast> constant
-%type <ast> arith_expression
-// %type <ast> operand
+%type <arithmetic_expr_ast> arith_expression
 %type <ast> expression_term
 
 %start program
@@ -103,7 +102,6 @@ procedure_declaration:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		std::cout<<"declared procedure"<<std::endl;
 		CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
 		CHECK_INVARIANT((*$2 == "main"), "Procedure name must be main in declaration");
 	}
@@ -238,7 +236,6 @@ variable_declaration:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		std::cout<<"declared var"<<std::endl;
 		pair<Data_Type, string> * decl = $1;
 
 		CHECK_INVARIANT((decl != NULL), "Declaration cannot be null");
@@ -289,7 +286,7 @@ statement_list:
 	statement_list assignment_statement
 	{
 	if (NOT_ONLY_PARSE)
-	{
+	{	
 		//ADD CODE HERE
 		CHECK_INVARIANT(($2 != NULL), "The assignment statement cannot be null");
 		Sequence_Ast * ast_seq = $1;
@@ -310,10 +307,10 @@ assignment_statement:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		std::cout<<"assigned var"<<std::endl;
 		//ADD CODE HERE
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-		Ast * assignment_stmt = new Assignment_Ast($1, $3, get_line_number());
+		Assignment_Ast * assignment_stmt = new Assignment_Ast($1, $3, get_line_number());
+		CHECK_INVARIANT(assignment_stmt->check_ast(), "Assignment_Ast check failed");
 		$$ = assignment_stmt;
 	}
 	}
@@ -330,6 +327,7 @@ arith_expression:
             //ADD CODE HERE
             CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
             $$ = new Plus_Ast($1, $3, get_line_number());
+            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
         } 
         }
 |
@@ -339,6 +337,7 @@ arith_expression:
         {
             CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
             $$ = new Minus_Ast($1, $3, get_line_number());
+            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
         } 
         }
 |
@@ -348,6 +347,7 @@ arith_expression:
         {
             CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
             $$ = new Mult_Ast($1, $3, get_line_number());
+            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
         } 
         }
 |
@@ -357,6 +357,7 @@ arith_expression:
         {
             CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
             $$ = new Divide_Ast($1, $3, get_line_number());
+            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
         } 
         }
 |
@@ -364,9 +365,9 @@ arith_expression:
         {
         if (NOT_ONLY_PARSE)
         {
-        	std::cout<<"bracket"<<std::endl;
             //ADD CODE HERE
-            $$ = $2 ;
+            $$ = $2;
+            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
         } 
         }
 |
@@ -375,20 +376,20 @@ arith_expression:
         if (NOT_ONLY_PARSE)     
         {
         	//ADD CODE HERE
-        	$$ = $1;
+        	$$ = static_cast<Arithmetic_Expr_Ast*> ($1);
         }
         }
+|
+       	'-' arith_expression %prec UMINUS
+       	{
+       	if (NOT_ONLY_PARSE)
+   		{
+   			CHECK_INVARIANT(($2 != NULL), "lhs/rhs cannot be null");
+   			$$ = new UMinus_Ast($2, NULL, get_line_number());
+   			CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
+   		}
+       	}
 ;
-
-// operand:
-// 	arith_expression
-// 	{
-// 	if (NOT_ONLY_PARSE)
-// 	{
-// 		//ADD CODE HERE
-// 	}
-// 	}
-// ;
 
 expression_term:
 	variable

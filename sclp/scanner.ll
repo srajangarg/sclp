@@ -27,13 +27,13 @@ void                        {return Parser::VOID;}
 \*	|
 \/	                        {return matched()[0];}
 
-[-+]?{dig}+                 {
+-?{dig}+                    {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->integer_value = atoi(matched().c_str());
                                 return Parser::INTEGER_NUMBER;
                             }
 
-[-+]?{dig}*\.{dig}+(e[+-]{dig}+)? {
+(-?{dig}*\.{dig}+([eE][+-]{dig}+)?|-?{dig}+[eE][+-]{dig}+) {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->double_value = atof(matched().c_str());
                                 return Parser::DOUBLE_NUMBER;
