@@ -1,7 +1,7 @@
 %filenames="scanner"
 %lex-source="scanner.cc"
 
-digit [0-9]
+dig [0-9]
 char  [a-zA-Z_]
 
 %%
@@ -27,19 +27,19 @@ void                        {return Parser::VOID;}
 \*	|
 \/	                        {return matched()[0];}
 
--?{digit}+                  {
+[-+]?{dig}+                 {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->integer_value = atoi(matched().c_str());
                                 return Parser::INTEGER_NUMBER;
                             }
 
--?{digit}*\.{digit}+        {
+[-+]?{dig}*\.{dig}+(e[+-]{dig}+)? {
                                 ParserBase::STYPE__ *val = getSval();
-                                val->integer_value = atof(matched().c_str());
+                                val->double_value = atof(matched().c_str());
                                 return Parser::DOUBLE_NUMBER;
                             }
 
-{char}({char}|{digit})*     {
+{char}({char}|{dig})*       {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->string_value = new std::string(matched());
                                 return Parser::NAME;

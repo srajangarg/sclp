@@ -8,10 +8,10 @@ rm -rf comparison.txt
 
 MIPS='./MIPSCODE/'
 REFER='./REFERCODE/'
-FLAGS='-ast -eval -symtab -d'
+FLAGS='-d'
 mkdir MIPSCODE
 mkdir REFERCODE
-for f in ./Examples/*.c 
+for f in ./Examples-2/*.c 
 do
 	filename=$(echo $f | cut -d'/' -f 3)
 	filename=$(echo $filename | cut -d'.' -f 1)

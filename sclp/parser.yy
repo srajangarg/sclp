@@ -40,7 +40,7 @@
 %type <ast> assignment_statement
 %type <ast> variable
 %type <ast> constant
-// %type <ast> arith_expression
+%type <ast> arith_expression
 // %type <ast> operand
 %type <ast> expression_term
 
@@ -103,6 +103,7 @@ procedure_declaration:
 	{
 	if (NOT_ONLY_PARSE)
 	{
+		std::cout<<"declared procedure"<<std::endl;
 		CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
 		CHECK_INVARIANT((*$2 == "main"), "Procedure name must be main in declaration");
 	}
@@ -237,6 +238,7 @@ variable_declaration:
 	{
 	if (NOT_ONLY_PARSE)
 	{
+		std::cout<<"declared var"<<std::endl;
 		pair<Data_Type, string> * decl = $1;
 
 		CHECK_INVARIANT((decl != NULL), "Declaration cannot be null");
@@ -304,10 +306,11 @@ statement_list:
 // Make sure to call check_ast in assignment_statement and arith_expression
 // Refer to error_display.hh for displaying semantic errors if any
 assignment_statement:
-	variable ASSIGN expression_term ';'
+	variable ASSIGN arith_expression ';'
 	{
 	if (NOT_ONLY_PARSE)
 	{
+		std::cout<<"assigned var"<<std::endl;
 		//ADD CODE HERE
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Ast * assignment_stmt = new Assignment_Ast($1, $3, get_line_number());
@@ -316,19 +319,66 @@ assignment_statement:
 	}
 ;
 
-// arith_expression:
-// 		//ADD RELEVANT CODE ALONG WITH GRAMMAR RULES HERE
-//         // SUPPORT binary +, -, *, / operations, unary -, and allow parenthesization
-//         // Connect the rules with the remaining rules given below
-//         expression_term
-//         {
-//         if (NOT_ONLY_PARSE)
-//         {
-//         	//ADD CODE HERE
-//         	$$ = $1;
-//         }
-//         }
-// ;
+arith_expression:
+		//ADD RELEVANT CODE ALONG WITH GRAMMAR RULES HERE
+        // SUPPORT binary +, -, *, / operations, unary -, and allow parenthesization
+        // Connect the rules with the remaining rules given below
+        arith_expression '+' arith_expression
+        {
+        if (NOT_ONLY_PARSE)
+        {
+            //ADD CODE HERE
+            CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+            $$ = new Plus_Ast($1, $3, get_line_number());
+        } 
+        }
+|
+        arith_expression '-' arith_expression
+        {
+        if (NOT_ONLY_PARSE)
+        {
+            CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+            $$ = new Minus_Ast($1, $3, get_line_number());
+        } 
+        }
+|
+        arith_expression '*' arith_expression
+        {
+        if (NOT_ONLY_PARSE)
+        {
+            CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+            $$ = new Mult_Ast($1, $3, get_line_number());
+        } 
+        }
+|
+        arith_expression '/' arith_expression
+        {
+        if (NOT_ONLY_PARSE)
+        {
+            CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+            $$ = new Divide_Ast($1, $3, get_line_number());
+        } 
+        }
+|
+        '(' arith_expression ')'
+        {
+        if (NOT_ONLY_PARSE)
+        {
+        	std::cout<<"bracket"<<std::endl;
+            //ADD CODE HERE
+            $$ = $2 ;
+        } 
+        }
+|
+        expression_term
+        {
+        if (NOT_ONLY_PARSE)     
+        {
+        	//ADD CODE HERE
+        	$$ = $1;
+        }
+        }
+;
 
 // operand:
 // 	arith_expression

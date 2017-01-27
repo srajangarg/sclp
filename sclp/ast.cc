@@ -60,8 +60,11 @@ void Ast::set_data_type(Data_Type dt)
 Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line)
 {
 	//ADD CODE HERE
+
 	lhs = temp_lhs;
-	rhs = temp_rhs;
+	rhs = temp_rhs;	
+	node_data_type = rhs->get_data_type();
+	ast_num_child = binary_arity;
 	lineno = line;
 }
 
@@ -77,12 +80,15 @@ bool Assignment_Ast::check_ast()
 
 	// use typeid(), get_data_type()
 	//ADD CODE HERE
+
 	if (rhs->get_data_type() == lhs->get_data_type())
-		return true;
+		if (ast_num_child == binary_arity)
+				return true;
 	// check whether lhs is of type Name_Ast*
 
 	CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, 
 		"Assignment statement data type not compatible", lineno);
+	return false;
 }
 
 void Assignment_Ast::print(ostream & file_buffer)
@@ -97,6 +103,7 @@ Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line)
 	//ADD CODE HERE
 	variable_symbol_entry = &var_entry;
 	name = var_entry.get_variable_name();
+	node_data_type = variable_symbol_entry->get_data_type();
 	lineno = line;
 
 	CHECK_INVARIANT((variable_symbol_entry->get_variable_name() == name),
@@ -140,6 +147,7 @@ Number_Ast<DATA_TYPE>::Number_Ast(DATA_TYPE number, Data_Type constant_data_type
 {
 	// use Ast_arity from ast.hh
 	//ADD CODE HERE
+
 	constant = number;
 	node_data_type = constant_data_type;
 	lineno = line;
