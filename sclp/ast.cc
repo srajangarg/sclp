@@ -96,13 +96,13 @@ bool Assignment_Ast::check_ast()
 void Assignment_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
-	file_buffer<<"         Asgn:\n";
+	file_buffer<<"\n         Asgn:\n";
 	file_buffer<<"            LHS (";
 	lhs->print(file_buffer);
 	file_buffer<<")\n";
 	file_buffer<<"            RHS (";
 	rhs->print(file_buffer);
-	file_buffer<<")\n";
+	file_buffer<<")";
 }
 
 /////////////////////////////////////////////////////////////////
