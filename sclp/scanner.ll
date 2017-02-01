@@ -33,7 +33,7 @@ void                        {return Parser::VOID;}
                                 return Parser::INTEGER_NUMBER;
                             }
 
-(-?{dig}*\.{dig}+([eE][+-]{dig}+)?|-?{dig}+[eE][+-]{dig}+) {
+({dig}*\.{dig}+([eE][+-]{dig}+)?|{dig}+[eE][+-]{dig}+) {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->double_value = atof(matched().c_str());
                                 return Parser::DOUBLE_NUMBER;
