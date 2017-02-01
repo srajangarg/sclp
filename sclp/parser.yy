@@ -310,7 +310,7 @@ assignment_statement:
 		//ADD CODE HERE
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
 		Assignment_Ast * assignment_stmt = new Assignment_Ast($1, $3, get_line_number());
-		CHECK_INVARIANT(assignment_stmt->check_ast(), "Assignment_Ast check failed");
+		assignment_stmt->check_ast();
 		$$ = assignment_stmt;
 	}
 	}
@@ -327,7 +327,7 @@ arith_expression:
             //ADD CODE HERE
             CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
             $$ = new Plus_Ast($1, $3, get_line_number());
-            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
+            $$->check_ast();
         } 
         }
 |
@@ -337,7 +337,7 @@ arith_expression:
         {
             CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
             $$ = new Minus_Ast($1, $3, get_line_number());
-            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
+            $$->check_ast();
         } 
         }
 |
@@ -347,7 +347,7 @@ arith_expression:
         {
             CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
             $$ = new Mult_Ast($1, $3, get_line_number());
-            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
+            $$->check_ast();
         } 
         }
 |
@@ -357,7 +357,7 @@ arith_expression:
         {
             CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
             $$ = new Divide_Ast($1, $3, get_line_number());
-            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
+            $$->check_ast();
         } 
         }
 |
@@ -367,7 +367,7 @@ arith_expression:
         {
             //ADD CODE HERE
             $$ = $2;
-            CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
+            $$->check_ast();
         } 
         }
 |
@@ -386,7 +386,7 @@ arith_expression:
    		{
    			CHECK_INVARIANT(($2 != NULL), "lhs/rhs cannot be null");
    			$$ = new UMinus_Ast($2, NULL, get_line_number());
-   			CHECK_INVARIANT($$->check_ast(), "Arithmetic_Expr_Ast check failed");
+   			$$->check_ast();
    		}
        	}
 ;
