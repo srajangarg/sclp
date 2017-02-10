@@ -4,7 +4,6 @@
 dig [0-9]
 char  [a-zA-Z_]
 arith_operators [-+/\*]
-rel_operators < | "<=" | > | ">=" | "==" | "!="
 %%
 //ADD YOUR CODE HERE
 
@@ -89,10 +88,26 @@ do                          {
                                 return matched()[0];
                             }
 
-!+                          {
+!=                          {
                                 store_token_name("NE");
                                 return matched()[0];
                             }
+
+||                          {
+                                store_token_name("OR");
+                                return matched()[0];
+                            }
+
+&&                          {
+                                store_token_name("AND");
+                                return matched()[0];
+                            }
+
+!                           {
+                                store_token_name("NOT");
+                                return matched()[0];
+                            }
+
 
 {dig}+                      {
                                 ParserBase::STYPE__ *val = getSval();
