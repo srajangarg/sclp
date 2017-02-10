@@ -7,12 +7,12 @@ using namespace std;
 #include"common-classes.hh"
 #include"error-display.hh"
 #include"user-options.hh"
-#include"local-environment.hh"
 #include"symbol-table.hh"
 #include"ast.hh"
-#include"sequence-ast.hh"
 #include"procedure.hh"
 #include"program.hh"
+
+int Ast::labelCounter;
 
 Ast::Ast()
 {}
@@ -347,6 +347,97 @@ void UMinus_Ast::print(ostream & file_buffer)
 	file_buffer<<")";
 }
 
+//////////////////////////////////////////////////////////////////////
 
+Sequence_Ast::Sequence_Ast(int line)
+{
+	lineno = line;
+}
+
+Sequence_Ast::~Sequence_Ast()
+{}
+
+void Sequence_Ast::ast_push_back(Ast * ast)
+{
+	statement_list.push_back(ast);
+}
+
+void Sequence_Ast::print(ostream & file_buffer)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* c, Ast* l, Ast* r, int line)
+{
+	lineno = line;
+	lhs = l;
+	rhs = r;
+	cond = c;
+}
+
+void Conditional_Operator_Ast::print(ostream & file_buffer)
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * c, Ast* b, int line)
+{
+	lineno = line;
+	cond = c;
+	body = b;
+}
+
+Iteration_Statement_Ast::~Iteration_Statement_Ast()
+{}
+
+void Iteration_Statement_Ast::print(ostream & file_buffer)
+{
+}
+
+void Iteration_Statement_Ast::set_data_type(Data_Type dt)
+{
+}
+
+Data_Type Iteration_Statement_Ast::get_data_type()
+{
+}
+
+bool Iteration_Statement_Ast::check_ast()
+{
+}
+
+//////////////////////////////////////////////////////////////////////
+
+Selection_Statement_Ast::Selection_Statement_Ast(Ast * c, Ast* tp, Ast* ep, int line)
+{
+	lineno = line;
+	cond = c;
+	then_part = tp;
+	else_part = ep;
+}
+
+Selection_Statement_Ast::~Selection_Statement_Ast()
+{}
+
+void Selection_Statement_Ast::print(ostream & file_buffer)
+{
+}
+
+void Selection_Statement_Ast::set_data_type(Data_Type dt)
+{
+}
+
+Data_Type Selection_Statement_Ast::get_data_type()
+{
+}
+
+bool Selection_Statement_Ast::check_ast()
+{
+}
+
+//////////////////////////////////////////////////////////////////////
 template class Number_Ast<double>;
 template class Number_Ast<int>;
+// Ast::labelCounter = 1;
