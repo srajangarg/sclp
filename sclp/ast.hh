@@ -151,7 +151,7 @@ protected:
 	Ast* then_part;
 	Ast* else_part;
 public:
-	Selection_Statement_Ast(Ast * cond,Ast* then_part, Ast* else_part, int line);
+	Selection_Statement_Ast(Ast * cond, Ast* then_part, Ast* else_part, int line);
 	~Selection_Statement_Ast();
 
 	Data_Type get_data_type();
