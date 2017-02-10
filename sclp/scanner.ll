@@ -18,9 +18,6 @@ int                         {
                                 return Parser::INTEGER;
                             }
 
-return                      {return Parser::RETURN;}
-
-
 void                        {
                                 store_token_name("VOID");
                                 return Parser::VOID;
@@ -52,7 +49,9 @@ void                        {
                                 return Parser::INTEGER_NUMBER;
                             }
 
-({dig}*\.{dig}+([eE][+-]{dig}+)?|{dig}+[eE][+-]{dig}+) {
+{dig}+[eE][+-]?{dig}+             |
+{dig}+\.{dig}*([eE][+-]?{dig}+)?  |
+{dig}*\.{dig}+([eE][+-]?{dig}+)?  {
                                 ParserBase::STYPE__ *val = getSval();
                                 val->double_value = atof(matched().c_str());
                                 store_token_name("FNUM");

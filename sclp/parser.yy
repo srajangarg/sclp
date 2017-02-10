@@ -279,7 +279,8 @@ statement_list:
 	if (NOT_ONLY_PARSE)
 	{
 		//ADD CODE HERE
-		$$ = NULL;
+		Sequence_Ast * seq = new Sequence_Ast(get_line_number());
+		$$ = seq;
 	}
 	}
 |
@@ -288,15 +289,13 @@ statement_list:
 	if (NOT_ONLY_PARSE)
 	{
 		//ADD CODE HERE
-		CHECK_INVARIANT(($2 != NULL), "The assignment statement cannot be null");
-		Sequence_Ast * ast_seq = $1;
+		CHECK_INVARIANT(($1 != NULL), "Statement list cannot be null here");
+		
+		Sequence_Ast * seq = $1;
 		Ast * ast_stmt = $2;
-
-		if (ast_seq == NULL)
-			ast_seq = new Sequence_Ast(get_line_number());
-
-		ast_seq->ast_push_back(ast_stmt);
-		$$ = ast_seq;
+		
+		seq->ast_push_back(ast_stmt);
+		$$ = seq;
 	}
 	}
 ;
