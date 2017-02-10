@@ -3,8 +3,8 @@
 
 dig [0-9]
 char  [a-zA-Z_]
-operators [-+/\*]
-
+arith_operators [-+/\*]
+rel_operators < | "<=" | > | ">=" | "==" | "!="
 %%
 //ADD YOUR CODE HERE
 
@@ -23,6 +23,27 @@ void                        {
                                 return Parser::VOID;
                             }
 
+if                          {
+                                store_token_name("IF");
+                                return Parser::VOID;
+                            }
+
+else                        {
+                                store_token_name("ELSE");
+                                return Parser::VOID;
+                            }
+
+while                       {
+                                store_token_name("WHILE");
+                                return Parser::VOID;
+                            }
+
+do                          {
+                                store_token_name("DO");
+                                return Parser::VOID;
+                            }
+
+
 =                           {
                                 store_token_name("ASSIGN_OP");
                                 return Parser::ASSIGN;
@@ -32,13 +53,44 @@ void                        {
 \)  |
 \;  |
 \{  |
-\}                          {
+\}  |
+\,                          {
                                 store_token_name("META CHAR");
                                 return matched()[0];
                             }
 
-{operators}                 {
+{arith_operators}           {
                                 store_token_name("ARITHOP");
+                                return matched()[0];
+                            }
+
+<                           {
+                                store_token_name("LT");
+                                return matched()[0];
+                            }
+
+<=                          {
+                                store_token_name("LE");
+                                return matched()[0];
+                            }
+
+>                           {
+                                store_token_name("GT");
+                                return matched()[0];
+                            }
+
+>=                          {
+                                store_token_name("GE");
+                                return matched()[0];
+                            }
+
+==                          {
+                                store_token_name("EQ");
+                                return matched()[0];
+                            }
+
+!+                          {
+                                store_token_name("NE");
                                 return matched()[0];
                             }
 
