@@ -51,9 +51,9 @@
 %type <string_vector> id_list
 %type <sequence_ast> statement_list
 %type <assignment_ast> assignment_statement
-%type <ast> statement other_statement matched_statement
+%type <ast> statement matched_statement unmatched_statement
 %type <selection_statement_ast>  matched_selection_statement unmatched_selection_statement
-%type <iteration_statement_ast> while_statement do_while_statement
+%type <iteration_statement_ast> matched_while_statement unmatched_while_statement do_while_statement
 %type <ast> variable
 %type <ast> constant
 %type <arithmetic_expr_ast> arith_expression
@@ -372,7 +372,7 @@ statement_list:
 ;
 
 statement:
-	unmatched_selection_statement
+	matched_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -380,7 +380,7 @@ statement:
 	} 
 	}
 |
-	matched_statement
+	unmatched_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -398,17 +398,7 @@ matched_statement:
 	} 
 	}
 |
-	other_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-;
-
-other_statement:
-	assignment_statement
+	matched_while_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -416,7 +406,7 @@ other_statement:
 	} 
 	}
 |
-	while_statement
+	assignment_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -437,6 +427,24 @@ other_statement:
 	if (NOT_ONLY_PARSE)
 	{
 		$$ = $2;
+	} 
+	}
+;
+
+unmatched_statement:
+	unmatched_selection_statement
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	} 
+	}
+|
+	unmatched_while_statement
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
 	} 
 	}
 ;
@@ -467,7 +475,7 @@ unmatched_selection_statement:
 	}
 	}
 |
-	IF '(' boolean_expression ')' matched_statement ELSE unmatched_selection_statement
+	IF '(' boolean_expression ')' matched_statement ELSE unmatched_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -495,8 +503,22 @@ assignment_statement:
 	}
 ;
 
-while_statement:
-	WHILE '(' boolean_expression ')' statement
+matched_while_statement:
+	WHILE '(' boolean_expression ')' matched_statement
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($3 != NULL),"boolean expression cannot be null");
+		CHECK_INVARIANT(($5 != NULL),"statement cannot be null");
+		Iteration_Statement_Ast * while_stmt = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
+		while_stmt->check_ast();
+		$$ = while_stmt;
+	}
+	}
+;
+
+unmatched_while_statement:
+	WHILE '(' boolean_expression ')' unmatched_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{

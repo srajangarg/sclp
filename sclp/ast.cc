@@ -70,6 +70,8 @@ Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line)
 Assignment_Ast::~Assignment_Ast()
 {
 	//ADD CODE HERE
+	// delete lhs;
+	// delete rhs;
 }
 
 bool Assignment_Ast::check_ast()
@@ -121,7 +123,9 @@ Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line)
 }
 
 Name_Ast::~Name_Ast()
-{}
+{
+	// delete variable_symbol_entry;
+}
 
 Data_Type Name_Ast::get_data_type()
 {
@@ -199,7 +203,10 @@ void Number_Ast<DATA_TYPE>::print(ostream & file_buffer)
 ///////////////////////////////////////////////////////////////////////////////
 
 Arithmetic_Expr_Ast::~Arithmetic_Expr_Ast() 
-{}
+{
+	// delete lhs;
+	// delete rhs;
+}
 
 Data_Type Arithmetic_Expr_Ast::get_data_type()
 {
@@ -401,7 +408,9 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* c, Ast* l, Ast* r, int l
 }
 
 Conditional_Operator_Ast::~Conditional_Operator_Ast()
-{}
+{
+	// delete cond;
+}
 
 void Conditional_Operator_Ast::print(ostream & file_buffer)
 {
@@ -430,7 +439,10 @@ Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * c, Ast* b, int line, bool
 }
 
 Iteration_Statement_Ast::~Iteration_Statement_Ast()
-{}
+{
+	// delete cond;
+	// delete body;
+}
 
 void Iteration_Statement_Ast::print(ostream & file_buffer)
 {
@@ -446,10 +458,10 @@ void Iteration_Statement_Ast::print(ostream & file_buffer)
 	else
 	{
 		file_buffer<<"\n         WHILE :\n";
-		file_buffer<<"            CONDITION (";
+		file_buffer<<"         CONDITION (";
 		cond->print(file_buffer);
 		file_buffer<<")\n";
-		file_buffer<<"            BODY (";
+		file_buffer<<"         BODY (";
 		body->print(file_buffer);
 		file_buffer<<")";
 	}
@@ -484,7 +496,11 @@ Selection_Statement_Ast::Selection_Statement_Ast(Ast * c, Ast* tp, Ast* ep, int 
 }
 
 Selection_Statement_Ast::~Selection_Statement_Ast()
-{}
+{
+	// delete cond;
+	// delete then_part;
+	// delete else_part;
+}
 
 void Selection_Statement_Ast::print(ostream & file_buffer)
 {
@@ -536,6 +552,8 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs
 
 Relational_Expr_Ast::~Relational_Expr_Ast()
 {
+	// delete lhs_condition;
+	// delete rhs_condition;
 }
 
 Data_Type Relational_Expr_Ast::get_data_type()
@@ -609,6 +627,8 @@ Boolean_Expr_Ast::Boolean_Expr_Ast(Ast * lhs, Boolean_Op bop, Ast * rhs, int lin
 
 Boolean_Expr_Ast::~Boolean_Expr_Ast()
 {
+	// delete lhs_op;
+	// delete rhs_op;
 }
 
 Data_Type Boolean_Expr_Ast::get_data_type()

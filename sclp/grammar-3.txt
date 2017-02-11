@@ -51,53 +51,50 @@ statement_list:
 ;
 
 statement:
-	selection_statement
+	unmatched_statement
 |
-	other_statement
+	matched_statement
 
-other_statement:
-	assignment_statement
+unmatched_statement:
+	unmatched_selection_statement
 |
-	while_statement
+	unmatched_while_statement
+|
+	unmatched_do_while_statement
+;
+
+matched_statement:
+	matched_selection_statemnt
+|
+	matched_while_statement
 |
 	do_while_statement
 |
-	'{' statement_list '}'
+	assignment_statement
 |
-	';'
+	'{' statement_list '}'
+;
 
 assignment_statement:
 	variable ASSIGN arith_expression ';'
 ;
 
-selection_statement:
-	matched_selection_statement
-|
-	unmatched_selection_statement
-
 matched_selection_statement:
-	IF '(' boolean_expression ')'
-	matched_statement
-	ELSE
-	matched_statement
+	IF '(' boolean_expression ')' matched_statement	ELSE matched_statement
+;
 
 unmatched_selection_statement:
-	IF '(' boolean_expression ')'
-	statement
+	IF '(' boolean_expression ')' statement
 |
-	IF '(' boolean_expression ')'
-	matched_statement
-	ELSE
-	unmatched_selection_statement
+	IF '(' boolean_expression ')' matched_statement	ELSE unmatched_selection_statement
+;
 
-matched_statement:
-	matched_selection_statemnt
-|
-	other_statement
+matched_while_statement:
+	WHILE '(' boolean_expression ')' matched_statement
+;
 
-while_statement:
-	WHILE '(' boolean_expression ')'
-	statement
+unmatched_while_statement:
+	WHILE '(' boolean_expression ')' unmatched_statement
 
 do_while_statement:
 	DO statement WHILE '(' boolean_expression ')' ';'
