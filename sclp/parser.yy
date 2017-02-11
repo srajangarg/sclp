@@ -371,33 +371,15 @@ statement_list:
 ;
 
 statement:
-	selection_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-|
-	other_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-;
-
-selection_statement:
-	matched_selection_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-|
 	unmatched_selection_statement
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	} 
+	}
+|
+	matched_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -407,7 +389,7 @@ selection_statement:
 ;
 
 matched_statement:
-   matched_selection_statement
+    matched_selection_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{

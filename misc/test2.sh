@@ -11,7 +11,7 @@ REFER='./REFERCODE/'
 FLAGS='-d -ast'
 mkdir MIPSCODE
 mkdir REFERCODE
-for f in ./Examples-2/*.c 
+for f in ./Examples-3/*.c 
 do
 	filename=$(echo $f | cut -d'/' -f 3)
 	filename=$(echo $filename | cut -d'.' -f 1)
