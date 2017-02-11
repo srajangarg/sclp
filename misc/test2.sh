@@ -8,7 +8,7 @@ rm -rf comparison.txt
 
 MIPS='./MIPSCODE/'
 REFER='./REFERCODE/'
-FLAGS='-d -ast'
+FLAGS='-d -ast -icode'
 mkdir MIPSCODE
 mkdir REFERCODE
 for f in ./Examples-3/*.c 

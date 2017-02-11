@@ -198,6 +198,9 @@ void Number_Ast<DATA_TYPE>::print(ostream & file_buffer)
 
 ///////////////////////////////////////////////////////////////////////////////
 
+Arithmetic_Expr_Ast::~Arithmetic_Expr_Ast() 
+{}
+
 Data_Type Arithmetic_Expr_Ast::get_data_type()
 {
 	//ADD CODE HERE
@@ -226,6 +229,7 @@ bool Arithmetic_Expr_Ast::check_ast()
 
 /////////////////////////////////////////////////////////////////////
 
+
 Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 {
 	// set arity and data type
@@ -236,6 +240,9 @@ Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 	rhs = r;
 	lineno = line;
 }
+
+Plus_Ast::~Plus_Ast()
+{}
 
 void Plus_Ast::print(ostream & file_buffer)
 {
@@ -262,6 +269,9 @@ Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line)
 	lineno = line;
 }
 
+Minus_Ast::~Minus_Ast()
+{}
+
 void Minus_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
@@ -286,6 +296,9 @@ Mult_Ast::Mult_Ast(Ast * l, Ast * r, int line)
 	rhs = r;
 	lineno = line;
 }
+
+Mult_Ast::~Mult_Ast()
+{}
 
 void Mult_Ast::print(ostream & file_buffer)
 {
@@ -312,6 +325,9 @@ Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line)
 	lineno = line;
 }
 
+Divide_Ast::~Divide_Ast()
+{}
+
 void Divide_Ast::print(ostream & file_buffer)
 {
 	//ADD CODE HERE
@@ -336,6 +352,9 @@ UMinus_Ast::UMinus_Ast(Ast * l, Ast * r, int line)
 	rhs = r;
 	lineno = line;
 }
+
+UMinus_Ast::~UMinus_Ast()
+{}
 
 void UMinus_Ast::print(ostream & file_buffer)
 {
@@ -381,6 +400,9 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* c, Ast* l, Ast* r, int l
 	node_data_type = l->get_data_type();
 }
 
+Conditional_Operator_Ast::~Conditional_Operator_Ast()
+{}
+
 void Conditional_Operator_Ast::print(ostream & file_buffer)
 {
 	file_buffer<<"\n            Arith: Conditional\n";
@@ -397,13 +419,14 @@ void Conditional_Operator_Ast::print(ostream & file_buffer)
 
 //////////////////////////////////////////////////////////////////////
 
-Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * c, Ast* b, int line)
+Iteration_Statement_Ast::Iteration_Statement_Ast(Ast * c, Ast* b, int line, bool do_form)
 {
 	lineno = line;
 	cond = c;
 	body = b;
 	node_data_type = cond->get_data_type();
 	ast_num_child = zero_arity;
+	is_do_form = do_form;
 }
 
 Iteration_Statement_Ast::~Iteration_Statement_Ast()

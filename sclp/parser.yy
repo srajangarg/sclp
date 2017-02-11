@@ -493,7 +493,7 @@ while_statement:
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),"boolean expression/statement block cannot be null");
-		Iteration_Statement_Ast * while_stmt = new Iteration_Statement_Ast($3, $5, get_line_number());
+		Iteration_Statement_Ast * while_stmt = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
 		while_stmt->check_ast();
 		$$ = while_stmt;
 	}
