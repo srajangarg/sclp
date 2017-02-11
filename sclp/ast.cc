@@ -434,13 +434,25 @@ Iteration_Statement_Ast::~Iteration_Statement_Ast()
 
 void Iteration_Statement_Ast::print(ostream & file_buffer)
 {
-	file_buffer<<"\n         WHILE :\n";
-	file_buffer<<"            CONDITION (";
-	cond->print(file_buffer);
-	file_buffer<<")\n";
-	file_buffer<<"            BODY (";
-	body->print(file_buffer);
-	file_buffer<<")";
+	if(is_do_form)
+	{
+		file_buffer<<"\n         DO (";
+		body->print(file_buffer);
+		file_buffer<<")\n";
+		file_buffer<<"         WHILE CONDITION (";
+		cond->print(file_buffer);
+		file_buffer<<")";
+	}
+	else
+	{
+		file_buffer<<"\n         WHILE :\n";
+		file_buffer<<"            CONDITION (";
+		cond->print(file_buffer);
+		file_buffer<<")\n";
+		file_buffer<<"            BODY (";
+		body->print(file_buffer);
+		file_buffer<<")";
+	}
 }
 
 void Iteration_Statement_Ast::set_data_type(Data_Type dt)

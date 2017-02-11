@@ -29,7 +29,7 @@
 %token <integer_value> INTEGER_NUMBER
 %token <double_value> DOUBLE_NUMBER
 %token <string_value> NAME
-%token RETURN INTEGER VOID FLOAT
+%token INTEGER VOID FLOAT
 %token ASSIGN
 // %token LT LE GT GE EQ NE
 // %token OR AND NOT
@@ -52,8 +52,8 @@
 %type <sequence_ast> statement_list
 %type <assignment_ast> assignment_statement
 %type <ast> statement other_statement matched_statement
-%type <selection_statement_ast> selection_statement matched_selection_statement unmatched_selection_statement
-%type <iteration_statement_ast> while_statement
+%type <selection_statement_ast>  matched_selection_statement unmatched_selection_statement
+%type <iteration_statement_ast> while_statement do_while_statement
 %type <ast> variable
 %type <ast> constant
 %type <arithmetic_expr_ast> arith_expression
@@ -424,6 +424,14 @@ other_statement:
 	} 
 	}
 |
+	do_while_statement
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	} 
+	}
+|
 	'{' statement_list '}'
 	{
 	if (NOT_ONLY_PARSE)
@@ -492,10 +500,25 @@ while_statement:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),"boolean expression/statement block cannot be null");
+		CHECK_INVARIANT(($3 != NULL),"boolean expression cannot be null");
+		CHECK_INVARIANT(($5 != NULL),"statement cannot be null");
 		Iteration_Statement_Ast * while_stmt = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
 		while_stmt->check_ast();
 		$$ = while_stmt;
+	}
+	}
+;
+
+do_while_statement:
+	DO statement WHILE '(' boolean_expression ')' ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($2 != NULL),"statement cannot be null");
+		CHECK_INVARIANT(($5 != NULL),"boolean expression cannot be null");
+		Iteration_Statement_Ast * do_while_stmt = new Iteration_Statement_Ast($5, $2, get_line_number(), true);
+		do_while_stmt->check_ast();
+		$$ = do_while_stmt;
 	}
 	}
 ;
