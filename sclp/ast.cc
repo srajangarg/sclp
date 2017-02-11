@@ -214,7 +214,7 @@ bool Arithmetic_Expr_Ast::check_ast()
 {
 	// use get_data_type(), typeid()
 	//ADD CODE HERE
-	if (ast_num_child == binary_arity)
+	if (ast_num_child == binary_arity || ast_num_child == ternary_arity)
 		if (lhs->get_data_type() == rhs->get_data_type())
 			return true;
 
@@ -377,7 +377,7 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* c, Ast* l, Ast* r, int l
 	lhs = l;
 	rhs = r;
 	cond = c;
-	ast_num_child = binary_arity;
+	ast_num_child = ternary_arity;
 	node_data_type = l->get_data_type();
 }
 
@@ -496,7 +496,7 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs
 	lhs_condition = lhs;
 	rhs_condition = rhs;
 	rel_op = rop;
-	node_data_type = lhs->get_data_type();
+	node_data_type = int_data_type;
 }
 
 Relational_Expr_Ast::~Relational_Expr_Ast()
@@ -569,7 +569,7 @@ Boolean_Expr_Ast::Boolean_Expr_Ast(Ast * lhs, Boolean_Op bop, Ast * rhs, int lin
 	lhs_op = lhs;
 	rhs_op = rhs;
 	bool_op = bop;
-	node_data_type = lhs_op->get_data_type();
+	node_data_type = int_data_type;
 }
 
 Boolean_Expr_Ast::~Boolean_Expr_Ast()

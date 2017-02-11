@@ -23,7 +23,8 @@ protected:
 	{
 		zero_arity = 0,
 		unary_arity = 1,
-		binary_arity = 2
+		binary_arity = 2,
+		ternary_arity = 3
 	}Ast_Arity;
 
 	Data_Type node_data_type;

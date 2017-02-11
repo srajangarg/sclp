@@ -289,7 +289,7 @@ variable_declaration:
 
 		vector<Symbol_Table_Entry *> * decl_stmt = new vector<Symbol_Table_Entry *>;
 
-		for(int i = 0; i < name_list.size(); i++)
+		for(int i = name_list.size()-1; i>=0; i--)
 		{
 			Symbol_Table_Entry * decl_entry = new Symbol_Table_Entry(name_list[i], type, get_line_number());
 			decl_stmt->push_back(decl_entry);
@@ -320,6 +320,7 @@ declaration:
 	}
 ;
 
+// returns vector of ids in reverse order of their appearance
 id_list:
 	NAME
 	{
