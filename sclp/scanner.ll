@@ -24,26 +24,26 @@ void                        {
 
 if                          {
                                 store_token_name("IF");
-                                return Parser::VOID;
+                                return Parser::IF;
                             }
 
 else                        {
                                 store_token_name("ELSE");
-                                return Parser::VOID;
+                                return Parser::ELSE;
                             }
 
 while                       {
                                 store_token_name("WHILE");
-                                return Parser::VOID;
+                                return Parser::WHILE;
                             }
 
 do                          {
                                 store_token_name("DO");
-                                return Parser::VOID;
+                                return Parser::DO;
                             }
 
 
-=                           {
+"="                         {
                                 store_token_name("ASSIGN_OP");
                                 return Parser::ASSIGN;
                             }
@@ -63,49 +63,49 @@ do                          {
                                 return matched()[0];
                             }
 
-<                           {
+"<"                         {
                                 store_token_name("LT");
-                                return matched()[0];
+                                return Parser::LT;
                             }
 
-<=                          {
+"<="                        {
                                 store_token_name("LE");
-                                return matched()[0];
+                                return Parser::LE;
                             }
 
->                           {
+">"                         {
                                 store_token_name("GT");
-                                return matched()[0];
+                                return Parser::GT;
                             }
 
->=                          {
+">="                        {
                                 store_token_name("GE");
-                                return matched()[0];
+                                return Parser::GE;
                             }
 
-==                          {
+"=="                        {
                                 store_token_name("EQ");
-                                return matched()[0];
+                                return Parser::EQ;
                             }
 
-!=                          {
+"!="                        {
                                 store_token_name("NE");
-                                return matched()[0];
+                                return Parser::NE;
                             }
 
-||                          {
+"||"                        {
                                 store_token_name("OR");
-                                return matched()[0];
+                                return Parser::OR;
                             }
 
-&&                          {
+"&&"                        {
                                 store_token_name("AND");
-                                return matched()[0];
+                                return Parser::AND;
                             }
 
-!                           {
+"!"                         {
                                 store_token_name("NOT");
-                                return matched()[0];
+                                return Parser::NOT;
                             }
 
 

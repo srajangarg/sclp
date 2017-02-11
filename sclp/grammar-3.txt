@@ -48,16 +48,21 @@ id_list:
 statement_list:
 |
 	statement_list statement
-|
-	statement_list selection_statement
 ;
 
 statement:
+	selection_statement
+|
+	other_statement
+
+other_statement:
 	assignment_statement
 |
 	while_statement
 |
 	do_while_statement
+|
+	'{' statement_list '}'
 |
 	';'
 
@@ -66,46 +71,36 @@ assignment_statement:
 ;
 
 selection_statement:
-	matched_statement
+	matched_selection_statement
 |
-	unmatched_statement
+	unmatched_selection_statement
+
+matched_selection_statement:
+	IF '(' boolean_expression ')'
+	matched_statement
+	ELSE
+	matched_statement
+
+unmatched_selection_statement:
+	IF '(' boolean_expression ')'
+	statement
+|
+	IF '(' boolean_expression ')'
+	matched_statement
+	ELSE
+	unmatched_selection_statement
 
 matched_statement:
-	IF '(' boolean_expression ')'
-	matched_statement_block
-	ELSE
-	matched_statement_block
-
-unmatched_statement:
-	IF '(' boolean_expression ')'
-	statement_block
+	matched_selection_statemnt
 |
-	IF '(' boolean_expression ')'
-	matched_statement_block
-	ELSE
-	unmatched_statement
-
-
-matched_statement_block:
-	statement
-|
-	matched_statement
-|
-	'{' statement_list '}'
-
-statement_block:
-	statement
-|
-	selection_statement
-|
-	'{' statement_list '}'
+	other_statement
 
 while_statement:
 	WHILE '(' boolean_expression ')'
-	statement_block
+	statement
 
 do_while_statement:
-	DO statement_block WHILE '(' boolean_expression ')' ';'
+	DO statement WHILE '(' boolean_expression ')' ';'
 
 
 arith_expression:
@@ -127,6 +122,15 @@ arith_expression:
 boolean_expression:
 	'!' boolean_expression
 |
+	boolean_expresion '&&' boolean_expresion
+|
+	boolean_expresion '||' boolean_expresion
+|
+	'(' boolean_expression ')'
+|
+	relational_expression
+
+relational_expression:
 	operand '<' operand
 |
 	operand '<=' operand
@@ -138,10 +142,6 @@ boolean_expression:
 	operand '==' operand
 |
 	operand '!=' operand
-|
-	boolean_expresion '&&' boolean_expresion
-|
-	boolean_expresion '||' boolean_expresion
 
 operand:
 	arith_expression

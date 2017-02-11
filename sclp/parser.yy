@@ -14,7 +14,11 @@
 	std::string * string_value;
 	Sequence_Ast * sequence_ast;
 	Assignment_Ast * assignment_ast;
+	Iteration_Statement_Ast * iteration_statement_ast;
+	Selection_Statement_Ast * selection_statement_ast;
 	Arithmetic_Expr_Ast * arithmetic_expr_ast;
+	Relational_Expr_Ast * relational_expr_ast;
+	Boolean_Expr_Ast * boolean_expr_ast;
 	Ast * ast;
 	//ADD CODE HERE
 };
@@ -24,12 +28,18 @@
 %token <integer_value> INTEGER_NUMBER
 %token <double_value> DOUBLE_NUMBER
 %token <string_value> NAME
-%token RETURN INTEGER 
-%token ASSIGN VOID FLOAT
+%token RETURN INTEGER VOID FLOAT
+%token ASSIGN
+// %token LT LE GT GE EQ NE
+// %token OR AND NOT
+%token IF ELSE DO WHILE
 
+%left OR
+%left AND
+%left LT LE GT GE EQ NE
 %left '+' '-'
 %left '*' '/'
-%right UMINUS
+%right UMINUS NOT
 %nonassoc '('
 
 %type <symbol_table> optional_variable_declaration_list
@@ -38,9 +48,14 @@
 %type <decl> declaration
 %type <sequence_ast> statement_list
 %type <assignment_ast> assignment_statement
+%type <ast> statement other_statement matched_statement
+%type <selection_statement_ast> selection_statement matched_selection_statement unmatched_selection_statement
+%type <iteration_statement_ast> while_statement
 %type <ast> variable
 %type <ast> constant
 %type <arithmetic_expr_ast> arith_expression
+%type <ast> relational_expression
+%type <boolean_expr_ast> boolean_expression
 %type <ast> expression_term
 
 %start program
@@ -284,7 +299,7 @@ statement_list:
 	}
 	}
 |
-	statement_list assignment_statement
+	statement_list statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -299,6 +314,124 @@ statement_list:
 	}
 	}
 ;
+statement:
+    selection_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $1;
+    } 
+    }
+|
+    other_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $1;
+    } 
+    }
+;
+
+selection_statement:
+    matched_selection_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $1;
+    } 
+    }
+|
+    unmatched_selection_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $1;
+    } 
+    }
+;
+
+matched_statement:
+   matched_selection_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $1;
+    } 
+    }
+|
+    other_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $1;
+    } 
+    }
+;
+
+other_statement:
+    assignment_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $1;
+    } 
+    }
+|
+    while_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $1;
+    } 
+    }
+|
+    '{' statement_list '}'
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $2;
+    } 
+    }
+;
+
+matched_selection_statement:
+    IF '(' boolean_expression ')' matched_statement ELSE matched_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($3 != NULL) && ($5 != NULL) && ($7 != NULL)),"boolean expression/statement block cannot be null");
+        Selection_Statement_Ast * sel_stmt = new Selection_Statement_Ast($3, $5, $7, get_line_number());
+        sel_stmt->check_ast();
+        $$ = sel_stmt;
+    }
+    }
+;
+
+unmatched_selection_statement:
+    IF '(' boolean_expression ')' statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),"boolean expression/statement block cannot be null");
+        Sequence_Ast * empty_seq = new Sequence_Ast(get_line_number());
+        Selection_Statement_Ast * sel_stmt = new Selection_Statement_Ast($3, $5, empty_seq, get_line_number());
+        sel_stmt->check_ast();
+        $$ = sel_stmt;
+    }
+    }
+|
+    IF '(' boolean_expression ')' matched_statement ELSE unmatched_selection_statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($3 != NULL) && ($5 != NULL) && ($7 != NULL)),"boolean expression/statement block cannot be null");
+        Selection_Statement_Ast * sel_stmt = new Selection_Statement_Ast($3, $5, $7, get_line_number());
+        sel_stmt->check_ast();
+        $$ = sel_stmt;
+    }
+    }
+;
+
 // Make sure to call check_ast in assignment_statement and arith_expression
 // Refer to error_display.hh for displaying semantic errors if any
 assignment_statement:
@@ -313,6 +446,19 @@ assignment_statement:
 		$$ = assignment_stmt;
 	}
 	}
+;
+
+while_statement:
+    WHILE '(' boolean_expression ')' statement
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),"boolean expression/statement block cannot be null");
+        Iteration_Statement_Ast * while_stmt = new Iteration_Statement_Ast($3, $5, get_line_number());
+        while_stmt->check_ast();
+        $$ = while_stmt;
+    }
+    }
 ;
 
 arith_expression:
@@ -388,6 +534,117 @@ arith_expression:
    			$$->check_ast();
    		}
        	}
+;
+
+boolean_expression:
+    boolean_expression OR boolean_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+        $$ = new Boolean_Expr_Ast($1, boolean_or, $3, get_line_number());
+        $$->check_ast();
+    }
+    }
+|
+    boolean_expression AND boolean_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+        $$ = new Boolean_Expr_Ast($1, boolean_and, $3, get_line_number());
+        $$->check_ast();
+    }
+    }
+|
+    NOT boolean_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT(($2 != NULL), "lhs/rhs cannot be null");
+        $$ = new Boolean_Expr_Ast(NULL, boolean_not, $2, get_line_number());
+        $$->check_ast();
+    }
+    }
+    |
+    '(' boolean_expression ')'
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = $2;
+        $$->check_ast();
+    }
+    }
+|
+    relational_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = static_cast<Boolean_Expr_Ast*> ($1);
+    }
+    }
+;
+
+relational_expression:
+    arith_expression LT arith_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+        $$ = new Relational_Expr_Ast($1, less_than, $3, get_line_number());
+        $$->check_ast();
+    }
+    }
+|
+    arith_expression LE arith_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+        $$ = new Relational_Expr_Ast($1, less_equalto, $3, get_line_number());
+        $$->check_ast();
+    }
+    }
+|
+    arith_expression GT arith_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+        $$ = new Relational_Expr_Ast($1, greater_than, $3, get_line_number());
+        $$->check_ast();
+    }
+    }
+|
+    arith_expression GE arith_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+        $$ = new Relational_Expr_Ast($1, greater_equalto, $3, get_line_number());
+        $$->check_ast();
+    }
+    }
+|
+    arith_expression EQ arith_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+        $$ = new Relational_Expr_Ast($1, equalto, $3, get_line_number());
+        $$->check_ast();
+    }
+    }
+|
+    arith_expression NE arith_expression
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+        $$ = new Relational_Expr_Ast($1, not_equalto, $3, get_line_number());
+        $$->check_ast();
+    }
+    }
 ;
 
 expression_term:
