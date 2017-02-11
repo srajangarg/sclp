@@ -35,6 +35,7 @@
 // %token OR AND NOT
 %token IF ELSE DO WHILE
 
+%left CONDITIONAL
 %left OR
 %left AND
 %left LT LE GT GE EQ NE
@@ -586,6 +587,17 @@ arith_expression:
 		{
 			CHECK_INVARIANT(($2 != NULL), "lhs/rhs cannot be null");
 			$$ = new UMinus_Ast($2, NULL, get_line_number());
+			$$->check_ast();
+		}
+		}
+|
+		boolean_expression '?' arith_expression ':' arith_expression %prec CONDITIONAL
+		{
+		if (NOT_ONLY_PARSE)
+		{
+			CHECK_INVARIANT(($1 != NULL), "boolean expression cannot be null");
+			CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)), "lhs/rhs cannot be null");
+			$$ = new Conditional_Operator_Ast($1, $3, $5, get_line_number());
 			$$->check_ast();
 		}
 		}

@@ -377,10 +377,22 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* c, Ast* l, Ast* r, int l
 	lhs = l;
 	rhs = r;
 	cond = c;
+	ast_num_child = binary_arity;
+	node_data_type = l->get_data_type();
 }
 
 void Conditional_Operator_Ast::print(ostream & file_buffer)
 {
+	file_buffer<<"\n            Arith: Conditional\n";
+	file_buffer<<"               COND (";
+	cond->print(file_buffer);
+	file_buffer<<")\n";
+	file_buffer<<"               LHS (";
+	lhs->print(file_buffer);
+	file_buffer<<")\n";
+	file_buffer<<"               RHS (";
+	rhs->print(file_buffer);
+	file_buffer<<")";
 }
 
 //////////////////////////////////////////////////////////////////////

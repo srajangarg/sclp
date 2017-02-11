@@ -114,6 +114,8 @@ arith_expression:
 |
 	'-' operand %prec UMINUS
 |
+	boolean_expression '?' arith_expression ':' arith_expression
+|
 	'(' operand ')'
 |
 	expression_term
