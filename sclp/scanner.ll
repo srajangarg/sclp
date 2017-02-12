@@ -42,6 +42,11 @@ do                          {
                                 return Parser::DO;
                             }
 
+for                         {
+                                store_token_name("FOR");
+                                return Parser::FOR;
+                            }
+
 
 "="                         {
                                 store_token_name("ASSIGN_OP");

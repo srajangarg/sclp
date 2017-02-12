@@ -54,11 +54,14 @@ statement:
 	unmatched_statement
 |
 	matched_statement
+;
 
 unmatched_statement:
 	unmatched_selection_statement
 |
 	unmatched_while_statement
+|
+	unmatched_for_statement
 |
 	unmatched_do_while_statement
 ;
@@ -67,6 +70,8 @@ matched_statement:
 	matched_selection_statemnt
 |
 	matched_while_statement
+|
+	matched_for_statement
 |
 	do_while_statement
 |
@@ -95,10 +100,24 @@ matched_while_statement:
 
 unmatched_while_statement:
 	WHILE '(' boolean_expression ')' unmatched_statement
+;
 
 do_while_statement:
 	DO statement WHILE '(' boolean_expression ')' ';'
+;
 
+matched_for_statement:
+	FOR '(' for_decl ';' boolean_expression ';' for_decl ')' matched_statement
+;
+
+unmatched_while_statement:
+	FOR '(' for_decl ';' boolean_expression ';' for_decl ')' unmatched_statement
+;
+
+for_decl:
+|
+	variable ASSIGN arith_expression
+;
 
 arith_expression:
 	operand '+' operand
@@ -141,6 +160,7 @@ relational_expression:
 	operand '==' operand
 |
 	operand '!=' operand
+;
 
 operand:
 	arith_expression
