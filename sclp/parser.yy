@@ -702,7 +702,6 @@ arith_expression:
 		{
 			//ADD CODE HERE
 			$$ = $2;
-			$$->check_ast();
 		} 
 		}
 |
@@ -773,7 +772,6 @@ boolean_expression:
 	if (NOT_ONLY_PARSE)
 	{
 		$$ = $2;
-		$$->check_ast();
 	}
 	}
 |
