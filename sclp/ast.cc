@@ -416,10 +416,12 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast* c, Ast* l, Ast* r, int l
 	rhs = r;
 	cond = c;
 	ast_num_child = ternary_arity;
-	if(l->get_data_type() == r->get_data_type())
-		node_data_type = l->get_data_type();
-	else
-		node_data_type = void_data_type;
+	node_data_type = l->get_data_type();
+	
+	// if(l->get_data_type() == r->get_data_type())
+	// 	node_data_type = l->get_data_type();
+	// else
+	// 	node_data_type = void_data_type;
 }
 
 Conditional_Operator_Ast::~Conditional_Operator_Ast()

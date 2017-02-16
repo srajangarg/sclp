@@ -35,7 +35,7 @@
 // %token OR AND NOT
 %token IF ELSE DO WHILE FOR
 
-%left CONDITIONAL
+%right CONDITIONAL
 %left OR
 %left AND
 %left LT LE GT GE EQ NE

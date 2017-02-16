@@ -5,9 +5,9 @@ void main();
 main()
 {
 	int a;
-	for(a = 1;;a++)
+	for(a = 1;a < 10;a = a + 1)
 	{
 		if (a > 5)
-			return;
+			{}
 	}
 }
