@@ -1,0 +1,183 @@
+program:
+	declaration_list procedure_definition
+;
+
+declaration_list:
+	procedure_declaration
+|
+	variable_declaration_list procedure_declaration
+|
+	procedure_declaration variable_declaration_list
+;
+
+procedure_declaration:
+	VOID NAME '(' ')' ';'
+;
+
+procedure_definition:
+	NAME '(' ')'
+	'{' optional_variable_declaration_list statement_list '}'
+;
+
+optional_variable_declaration_list:
+	/* empty */
+|
+	variable_declaration_list
+;
+
+variable_declaration_list:
+	variable_declaration
+|
+	variable_declaration_list variable_declaration
+;
+
+variable_declaration:
+	declaration ';'
+;
+
+declaration:
+	INTEGER NAME id_list
+|
+	FLOAT NAME id_list
+;
+
+id_list:
+|
+	',' NAME id_list
+
+statement_list:
+|
+	statement_list statement
+;
+
+statement:
+	unmatched_statement
+|
+	matched_statement
+;
+
+unmatched_statement:
+	unmatched_selection_statement
+|
+	unmatched_while_statement
+|
+	unmatched_for_statement
+|
+	unmatched_do_while_statement
+;
+
+matched_statement:
+	matched_selection_statemnt
+|
+	matched_while_statement
+|
+	matched_for_statement
+|
+	do_while_statement
+|
+	assignment_statement
+|
+	'{' statement_list '}'
+;
+
+assignment_statement:
+	variable ASSIGN arith_expression ';'
+;
+
+matched_selection_statement:
+	IF '(' boolean_expression ')' matched_statement	ELSE matched_statement
+;
+
+unmatched_selection_statement:
+	IF '(' boolean_expression ')' statement
+|
+	IF '(' boolean_expression ')' matched_statement	ELSE unmatched_selection_statement
+;
+
+matched_while_statement:
+	WHILE '(' boolean_expression ')' matched_statement
+;
+
+unmatched_while_statement:
+	WHILE '(' boolean_expression ')' unmatched_statement
+;
+
+do_while_statement:
+	DO statement WHILE '(' boolean_expression ')' ';'
+;
+
+matched_for_statement:
+	FOR '(' for_decl ';' boolean_expression ';' for_decl ')' matched_statement
+;
+
+unmatched_while_statement:
+	FOR '(' for_decl ';' boolean_expression ';' for_decl ')' unmatched_statement
+;
+
+for_decl:
+|
+	variable ASSIGN arith_expression
+;
+
+arith_expression:
+	operand '+' operand
+|
+	operand '-' operand
+|
+	operand '*' operand
+|
+	operand '/' operand
+|
+	'-' operand %prec UMINUS
+|
+	boolean_expression '?' arith_expression ':' arith_expression
+|
+	'(' operand ')'
+|
+	expression_term
+;
+
+boolean_expression:
+	'!' boolean_expression
+|
+	boolean_expresion '&&' boolean_expresion
+|
+	boolean_expresion '||' boolean_expresion
+|
+	'(' boolean_expression ')'
+|
+	relational_expression
+
+relational_expression:
+	operand '<' operand
+|
+	operand '<=' operand
+|
+	operand '>' operand
+|
+	operand '>=' operand
+|
+	operand '==' operand
+|
+	operand '!=' operand
+;
+
+operand:
+	arith_expression
+;
+
+expression_term:
+	variable
+|
+	constant
+;
+
+variable:
+	NAME
+;
+
+constant:
+	INTEGER_NUMBER
+|
+	DOUBLE_NUMBER
+;

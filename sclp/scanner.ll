@@ -3,8 +3,7 @@
 
 dig [0-9]
 char  [a-zA-Z_]
-operators [-+/\*]
-
+arith_operators [-+/\*]
 %%
 //ADD YOUR CODE HERE
 
@@ -23,7 +22,33 @@ void                        {
                                 return Parser::VOID;
                             }
 
-=                           {
+if                          {
+                                store_token_name("IF");
+                                return Parser::IF;
+                            }
+
+else                        {
+                                store_token_name("ELSE");
+                                return Parser::ELSE;
+                            }
+
+while                       {
+                                store_token_name("WHILE");
+                                return Parser::WHILE;
+                            }
+
+do                          {
+                                store_token_name("DO");
+                                return Parser::DO;
+                            }
+
+for                         {
+                                store_token_name("FOR");
+                                return Parser::FOR;
+                            }
+
+
+"="                         {
                                 store_token_name("ASSIGN_OP");
                                 return Parser::ASSIGN;
                             }
@@ -32,15 +57,64 @@ void                        {
 \)  |
 \;  |
 \{  |
-\}                          {
+\}  |
+\,  |
+\?  |
+\:                          {
                                 store_token_name("META CHAR");
                                 return matched()[0];
                             }
 
-{operators}                 {
+{arith_operators}           {
                                 store_token_name("ARITHOP");
                                 return matched()[0];
                             }
+
+"<"                         {
+                                store_token_name("LT");
+                                return Parser::LT;
+                            }
+
+"<="                        {
+                                store_token_name("LE");
+                                return Parser::LE;
+                            }
+
+">"                         {
+                                store_token_name("GT");
+                                return Parser::GT;
+                            }
+
+">="                        {
+                                store_token_name("GE");
+                                return Parser::GE;
+                            }
+
+"=="                        {
+                                store_token_name("EQ");
+                                return Parser::EQ;
+                            }
+
+"!="                        {
+                                store_token_name("NE");
+                                return Parser::NE;
+                            }
+
+"||"                        {
+                                store_token_name("OR");
+                                return Parser::OR;
+                            }
+
+"&&"                        {
+                                store_token_name("AND");
+                                return Parser::AND;
+                            }
+
+"!"                         {
+                                store_token_name("NOT");
+                                return Parser::NOT;
+                            }
+
 
 {dig}+                      {
                                 ParserBase::STYPE__ *val = getSval();
