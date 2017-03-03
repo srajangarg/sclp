@@ -31,9 +31,10 @@
 %token <string_value> NAME
 %token INTEGER VOID FLOAT
 %token ASSIGN
-// %token LT LE GT GE EQ NE
-// %token OR AND NOT
-%token IF ELSE DO WHILE FOR
+%token IF DO WHILE FOR
+
+%nonassoc THEN
+%nonassoc ELSE
 
 %right CONDITIONAL
 %left OR
@@ -50,18 +51,12 @@
 %type <decl> declaration
 %type <string_vector> id_list
 %type <sequence_ast> statement_list
-%type <assignment_ast> assignment_statement for_decl
-%type <ast> statement matched_statement unmatched_statement
-%type <selection_statement_ast>  matched_selection_statement unmatched_selection_statement
-%type <iteration_statement_ast> matched_while_statement unmatched_while_statement
-%type <iteration_statement_ast> do_while_statement
-%type <ast> matched_for_statement unmatched_for_statement
-%type <ast> variable
-%type <ast> constant
+%type <assignment_ast> assignment_statement
+%type <iteration_statement_ast> do_while_statement while_statement
+%type <ast> variable constant relational_expression expression_term statement
 %type <arithmetic_expr_ast> arith_expression
-%type <ast> relational_expression
 %type <boolean_expr_ast> boolean_expression
-%type <ast> expression_term
+%type <selection_statement_ast> if_else_statement
 
 %start program
 
@@ -374,7 +369,8 @@ statement_list:
 ;
 
 statement:
-	matched_statement
+	
+	if_else_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -382,41 +378,7 @@ statement:
 	} 
 	}
 |
-	unmatched_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-;
-
-matched_statement:
-    matched_selection_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-|
-	matched_while_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-|
-	matched_for_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-|
-	assignment_statement
+	while_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -425,6 +387,14 @@ matched_statement:
 	}
 |
 	do_while_statement
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	} 
+	}
+|
+	assignment_statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -441,47 +411,37 @@ matched_statement:
 	}
 ;
 
-unmatched_statement:
-	unmatched_selection_statement
+do_while_statement:
+	DO statement WHILE '(' boolean_expression ')' ';'
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = $1;
-	} 
-	}
-|
-	unmatched_while_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-|
-	unmatched_for_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-	} 
-	}
-;
-
-matched_selection_statement:
-	IF '(' boolean_expression ')' matched_statement ELSE matched_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL) && ($7 != NULL)),"boolean expression/statement block cannot be null");
-		Selection_Statement_Ast * sel_stmt = new Selection_Statement_Ast($3, $5, $7, get_line_number());
-		sel_stmt->check_ast();
-		$$ = sel_stmt;
+		CHECK_INVARIANT(($2 != NULL),"statement cannot be null");
+		CHECK_INVARIANT(($5 != NULL),"boolean expression cannot be null");
+		Iteration_Statement_Ast * do_while_stmt = new Iteration_Statement_Ast($5, $2, get_line_number(), true);
+		do_while_stmt->check_ast();
+		$$ = do_while_stmt;
 	}
 	}
 ;
 
-unmatched_selection_statement:
-	IF '(' boolean_expression ')' statement
+while_statement:
+	WHILE '(' boolean_expression ')' statement
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($3 != NULL),"boolean expression cannot be null");
+		CHECK_INVARIANT(($5 != NULL),"statement cannot be null");
+		Iteration_Statement_Ast * while_stmt = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
+		while_stmt->check_ast();
+		$$ = while_stmt;
+	}
+	}
+;
+
+if_else_statement:
+
+	IF '(' boolean_expression ')' statement 	%prec THEN
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -492,8 +452,8 @@ unmatched_selection_statement:
 		$$ = sel_stmt;
 	}
 	}
-|
-	IF '(' boolean_expression ')' matched_statement ELSE unmatched_statement
+|	
+	IF '(' boolean_expression ')' statement ELSE statement
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -521,135 +481,93 @@ assignment_statement:
 	}
 ;
 
-matched_while_statement:
-	WHILE '(' boolean_expression ')' matched_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($3 != NULL),"boolean expression cannot be null");
-		CHECK_INVARIANT(($5 != NULL),"statement cannot be null");
-		Iteration_Statement_Ast * while_stmt = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
-		while_stmt->check_ast();
-		$$ = while_stmt;
-	}
-	}
-;
-
-unmatched_while_statement:
-	WHILE '(' boolean_expression ')' unmatched_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($3 != NULL),"boolean expression cannot be null");
-		CHECK_INVARIANT(($5 != NULL),"statement cannot be null");
-		Iteration_Statement_Ast * while_stmt = new Iteration_Statement_Ast($3, $5, get_line_number(), false);
-		while_stmt->check_ast();
-		$$ = while_stmt;
-	}
-	}
-;
-
-do_while_statement:
-	DO statement WHILE '(' boolean_expression ')' ';'
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($2 != NULL),"statement cannot be null");
-		CHECK_INVARIANT(($5 != NULL),"boolean expression cannot be null");
-		Iteration_Statement_Ast * do_while_stmt = new Iteration_Statement_Ast($5, $2, get_line_number(), true);
-		do_while_stmt->check_ast();
-		$$ = do_while_stmt;
-	}
-	}
-;
-
-matched_for_statement:
-	FOR '(' for_decl ';' boolean_expression ';' for_decl ')' matched_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($5 != NULL),"boolean expression cannot be null");
-		CHECK_INVARIANT(($9 != NULL),"statement cannot be null");
+// matched_for_statement:
+// 	FOR '(' for_decl ';' boolean_expression ';' for_decl ')' matched_statement
+// 	{
+// 	if (NOT_ONLY_PARSE)
+// 	{
+// 		CHECK_INVARIANT(($5 != NULL),"boolean expression cannot be null");
+// 		CHECK_INVARIANT(($9 != NULL),"statement cannot be null");
 		
-		Ast * init = $3;
-		Ast * update = $7;
-		Ast * body = $9;
-		Sequence_Ast * for_seq = new Sequence_Ast(get_line_number());
-		Sequence_Ast * body_seq = new Sequence_Ast(get_line_number());
+// 		Ast * init = $3;
+// 		Ast * update = $7;
+// 		Ast * body = $9;
+// 		Sequence_Ast * for_seq = new Sequence_Ast(get_line_number());
+// 		Sequence_Ast * body_seq = new Sequence_Ast(get_line_number());
 
-		if(init != NULL)
-		{
-			for_seq->ast_push_back(init);
-		}
+// 		if(init != NULL)
+// 		{
+// 			for_seq->ast_push_back(init);
+// 		}
 
-		body_seq->ast_push_back(body);
+// 		body_seq->ast_push_back(body);
 
-		if(update != NULL)
-		{
-			body_seq->ast_push_back(update);
-		}
+// 		if(update != NULL)
+// 		{
+// 			body_seq->ast_push_back(update);
+// 		}
 
-		Iteration_Statement_Ast * for_stmt = new Iteration_Statement_Ast($5, body_seq, get_line_number(), false);
-		for_stmt->check_ast();
-		for_seq->ast_push_back(for_stmt);
-		$$ = for_seq;
-	}
-	}
-;
+// 		Iteration_Statement_Ast * for_stmt = new Iteration_Statement_Ast($5, body_seq, get_line_number(), false);
+// 		for_stmt->check_ast();
+// 		for_seq->ast_push_back(for_stmt);
+// 		$$ = for_seq;
+// 	}
+// 	}
+// ;
 
-unmatched_for_statement:
-	FOR '(' for_decl ';' boolean_expression ';' for_decl ')' unmatched_statement
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($5 != NULL),"boolean expression cannot be null");
-		CHECK_INVARIANT(($9 != NULL),"statement cannot be null");
+// unmatched_for_statement:
+// 	FOR '(' for_decl ';' boolean_expression ';' for_decl ')' unmatched_statement
+// 	{
+// 	if (NOT_ONLY_PARSE)
+// 	{
+// 		CHECK_INVARIANT(($5 != NULL),"boolean expression cannot be null");
+// 		CHECK_INVARIANT(($9 != NULL),"statement cannot be null");
 		
-		Ast * init = $3;
-		Ast * update = $7;
-		Ast * body = $9;
-		Sequence_Ast * for_seq = new Sequence_Ast(get_line_number());
-		Sequence_Ast * body_seq = new Sequence_Ast(get_line_number());
+// 		Ast * init = $3;
+// 		Ast * update = $7;
+// 		Ast * body = $9;
+// 		Sequence_Ast * for_seq = new Sequence_Ast(get_line_number());
+// 		Sequence_Ast * body_seq = new Sequence_Ast(get_line_number());
 
-		if(init != NULL)
-		{
-			for_seq->ast_push_back(init);
-		}
+// 		if(init != NULL)
+// 		{
+// 			for_seq->ast_push_back(init);
+// 		}
 
-		body_seq->ast_push_back(body);
+// 		body_seq->ast_push_back(body);
 
-		if(update != NULL)
-		{
-			body_seq->ast_push_back(update);
-		}
+// 		if(update != NULL)
+// 		{
+// 			body_seq->ast_push_back(update);
+// 		}
 
-		Iteration_Statement_Ast * for_stmt = new Iteration_Statement_Ast($5, body_seq, get_line_number(), false);
-		for_stmt->check_ast();
-		for_seq->ast_push_back(for_stmt);
-		$$ = for_seq;
-	}
-	}
-;
+// 		Iteration_Statement_Ast * for_stmt = new Iteration_Statement_Ast($5, body_seq, get_line_number(), false);
+// 		for_stmt->check_ast();
+// 		for_seq->ast_push_back(for_stmt);
+// 		$$ = for_seq;
+// 	}
+// 	}
+// ;
 
-for_decl:
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		$$ = NULL;
-	}
-	}
-|
-	variable ASSIGN arith_expression
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-		Assignment_Ast * assignment_stmt = new Assignment_Ast($1, $3, get_line_number());
-		assignment_stmt->check_ast();
-		$$ = assignment_stmt;
-	}
-	}
-;
+// for_decl:
+// 	{
+// 	if (NOT_ONLY_PARSE)
+// 	{
+// 		$$ = NULL;
+// 	}
+// 	}
+// |
+// 	variable ASSIGN arith_expression
+// 	{
+// 	if (NOT_ONLY_PARSE)
+// 	{
+// 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
+// 		Assignment_Ast * assignment_stmt = new Assignment_Ast($1, $3, get_line_number());
+// 		assignment_stmt->check_ast();
+// 		$$ = assignment_stmt;
+// 	}
+// 	}
+// ;
 
 arith_expression:
 		//ADD RELEVANT CODE ALONG WITH GRAMMAR RULES HERE
