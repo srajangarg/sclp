@@ -54,19 +54,12 @@ Code_For_Ast & Assignment_Ast::compile()
 	load_register->reset_use_for_expr_result();
 
 	// Store the statement in ic_list
-
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
-	if (load_stmt.get_icode_list().empty() == false)
-		ic_list = load_stmt.get_icode_list();
+	ic_list = load_stmt.get_icode_list();
+	ic_list.splice(ic_list.end(), store_stmt.get_icode_list());
 
-	if (store_stmt.get_icode_list().empty() == false)
-		ic_list.splice(ic_list.end(), store_stmt.get_icode_list());
-
-	Code_For_Ast * assign_stmt;
-	if (ic_list.empty() == false)
-		assign_stmt = new Code_For_Ast(ic_list, load_register);
-
+	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, load_register);
 	return *assign_stmt;
 }
 
@@ -75,12 +68,32 @@ Code_For_Ast & Assignment_Ast::compile()
 
 Code_For_Ast & Name_Ast::compile()
 {
-	
+	CHECK_INVARIANT((variable_symbol_entry != NULL), "variable_symbol_entry cannot be null in Name_Ast");
+
+	Code_For_Ast *cfa = new Code_For_Ast();
+	machine_desc_object.clear_local_register_mappings();
+	cfa->set_reg(machine_desc_object.get_new_register<gp_data>());
+	return *cfa;
 }
 
 Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 {
-	
+	CHECK_INVARIANT((variable_symbol_entry != NULL), "variable_symbol_entry cannot be null in Name_Ast");
+
+	Code_For_Ast *cfa = new Code_For_Ast();
+	Tgt_Op op;
+	machine_desc_object.clear_local_register_mappings();
+
+	if (get_data_type() == int_data_type)
+		op = store;
+	else
+		op = store_d;
+
+	Move_IC_Stmt *m = new Move_IC_Stmt(op, new Register_Addr_Opd(store_register),
+										   new Mem_Addr_Opd(*variable_symbol_entry));
+	cfa->append_ics(*m);
+	cfa->set_reg(store_register);
+	return *cfa;
 }
 
 
@@ -89,7 +102,30 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 template <class DATA_TYPE>
 Code_For_Ast & Number_Ast<DATA_TYPE>::compile()
 {
-	
+	Code_For_Ast *cfa = new Code_For_Ast();
+
+	Register_Descriptor * reg;
+	Ics_Opd * opd;
+	Tgt_Op op;
+	machine_desc_object.clear_local_register_mappings();
+
+	if (get_data_type() == int_data_type)
+	{
+		reg = machine_desc_object.get_new_register<gp_data>();
+		opd = new Const_Opd<int>(constant);
+		op = imm_load;
+	}
+	else
+	{
+		reg = machine_desc_object.get_new_register<float_reg>();
+		opd = new Const_Opd<double>(constant);
+		op = imm_load_d;
+	}
+
+	Move_IC_Stmt *m = new Move_IC_Stmt(op, opd, new Register_Addr_Opd(reg));
+	cfa->append_ics(*m);
+	cfa->set_reg(reg);
+	return *cfa;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -166,18 +202,24 @@ Code_For_Ast & UMinus_Ast::compile()
 //////////////////////////////////////////////////////////////////////////////
 
 Code_For_Ast & Sequence_Ast::compile()
-{
-	
+{	
+	for (list<Ast*>::iterator it = statement_list.begin(); it != statement_list.end(); it++)
+	{	
+		list<Icode_Stmt *>& ic_list = (*it)->compile().get_icode_list();
+		sa_icode_list.insert(sa_icode_list.end(), ic_list.begin(), ic_list.end());
+	}
 }
 
 void Sequence_Ast::print_assembly(ostream & file_buffer)
 {
-	
+	for (list<Icode_Stmt*>::iterator it = sa_icode_list.begin(); it != sa_icode_list.end(); it++)
+		(*it)->print_assembly(file_buffer);
 }
 
 void Sequence_Ast::print_icode(ostream & file_buffer)
 {
-	
+	for (list<Icode_Stmt*>::iterator it = sa_icode_list.begin(); it != sa_icode_list.end(); it++)
+		(*it)->print_icode(file_buffer);
 }
 
 //////////////////////////////////////////////////////////////////////////////

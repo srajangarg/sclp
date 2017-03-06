@@ -20,6 +20,7 @@ using namespace std;
 Register_Descriptor * Ics_Opd::get_reg()
 {
 	//TODO
+	return NULL;
 }
 
 /****************************** Class Mem_Addr_Opd *****************************/
@@ -27,16 +28,24 @@ Register_Descriptor * Ics_Opd::get_reg()
 Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se) 
 {
 	//TODO
+	symbol_entry = &se;
 }
 
 Mem_Addr_Opd & Mem_Addr_Opd::operator=(const Mem_Addr_Opd & rhs)
 {
 	//TODO
+	symbol_entry = rhs.symbol_entry;
+	return *this;
 }
 
 void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer) 
 {
 	//TODO
+	Table_Scope symbol_scope = symbol_entry->get_symbol_scope();
+	CHECK_INVARIANT(((symbol_scope == local) || (symbol_scope == global)),
+			"Wrong scope value");
+
+	file_buffer << symbol_entry->get_variable_name();
 }
 
 void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer) 
@@ -60,26 +69,31 @@ void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
 Register_Addr_Opd::Register_Addr_Opd(Register_Descriptor * reg) 
 {
 	//TODO
+	register_description = reg;
 }
 
 Register_Descriptor * Register_Addr_Opd::get_reg()    
 { 
-	//TODO 
+	//TODO
+	return register_description;
 }
 
 Register_Addr_Opd& Register_Addr_Opd::operator=(const Register_Addr_Opd& rhs)
 {
 	//TODO
+	register_description = rhs.register_description;
 }
 
 void Register_Addr_Opd::print_ics_opd(ostream & file_buffer) 
 {
 	//TODO
+	file_buffer << register_description->get_name();
 }
 
 void Register_Addr_Opd::print_asm_opd(ostream & file_buffer) 
 {
 	//TODO
+	file_buffer << "$" << register_description->get_name();
 }
 
 /****************************** Class Const_Opd *****************************/
@@ -88,24 +102,29 @@ template <class DATA_TYPE>
 Const_Opd<DATA_TYPE>::Const_Opd(DATA_TYPE n) 
 {
 	//TODO
+	num = n;
 }
 
 template <class DATA_TYPE>
 Const_Opd<DATA_TYPE> & Const_Opd<DATA_TYPE>::operator=(const Const_Opd<DATA_TYPE> & rhs)
 {
 	//TODO
+	num = rhs.num;
+	return *this;
 }
 
 template <class DATA_TYPE>
 void Const_Opd<DATA_TYPE>::print_ics_opd(ostream & file_buffer) 
 {
 	//TODO
+	file_buffer << num;
 }
 
 template <class DATA_TYPE>
 void Const_Opd<DATA_TYPE>::print_asm_opd(ostream & file_buffer) 
 {
 	//TODO
+	file_buffer << num;
 }
 
 /****************************** Class Icode_Stmt *****************************/
@@ -237,36 +256,46 @@ void Move_IC_Stmt::print_assembly(ostream & file_buffer)
 Code_For_Ast::Code_For_Ast()
 {
 	//TODO
+	result_register = NULL;
 }
 
 Code_For_Ast::Code_For_Ast(list<Icode_Stmt *> & ic_l, Register_Descriptor * reg)
 {
 	//TODO
+	ics_list = ic_l;
+	result_register = reg;
 }
 
 void Code_For_Ast::append_ics(Icode_Stmt & ic_stmt)
 {
 	//TODO
+	ics_list.push_back(&ic_stmt);
 }
 
 list<Icode_Stmt *> & Code_For_Ast::get_icode_list()  
 { 
 	//TODO 
+	return ics_list;
 }
 
 Register_Descriptor * Code_For_Ast::get_reg()
 {
 	//TODO
+	return result_register;
 }
 
 void Code_For_Ast::set_reg(Register_Descriptor * reg)
 {
 	//TODO
+	result_register = reg;
 }
 
 Code_For_Ast& Code_For_Ast::operator=(const Code_For_Ast& rhs)
 {
 	//TODO
+	result_register = rhs.result_register;
+	ics_list = rhs.ics_list;
+	return *this;
 }
 
 /************************ class Instruction_Descriptor ********************************/

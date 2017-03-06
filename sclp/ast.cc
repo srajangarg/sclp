@@ -660,15 +660,6 @@ void Boolean_Expr_Ast::set_data_type(Data_Type dt)
 
 bool Boolean_Expr_Ast::check_ast()
 {
-	// TO be done
-	// if (ast_num_child == binary_arity)
-	// 	if (lhs_condition->get_data_type() == rhs_condition->get_data_type())
-	// 		return true;
-
-	// if (ast_num_child == unary_arity)
-	// 	return true;
-
-	// CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Relational statement data type not compatible", lineno);
 	return true;
 }
 
