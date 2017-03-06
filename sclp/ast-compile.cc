@@ -55,8 +55,7 @@ Code_For_Ast & Assignment_Ast::compile()
 
 	// Store the statement in ic_list
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
-
-	ic_list = load_stmt.get_icode_list();
+	ic_list.splice(ic_list.end(), load_stmt.get_icode_list());
 	ic_list.splice(ic_list.end(), store_stmt.get_icode_list());
 
 	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, load_register);
@@ -72,7 +71,24 @@ Code_For_Ast & Name_Ast::compile()
 
 	Code_For_Ast *cfa = new Code_For_Ast();
 	machine_desc_object.clear_local_register_mappings();
-	cfa->set_reg(machine_desc_object.get_new_register<gp_data>());
+	Register_Descriptor * reg;
+	Tgt_Op op;
+
+	if (get_data_type() == int_data_type)
+	{
+		op = load;
+		reg = machine_desc_object.get_new_register<gp_data>();
+	}
+	else
+	{
+		op = load_d;
+		reg = machine_desc_object.get_new_register<float_reg>();
+	}
+
+	Move_IC_Stmt *m = new Move_IC_Stmt(op, new Mem_Addr_Opd(*variable_symbol_entry),
+										   new Register_Addr_Opd(reg));
+	cfa->append_ics(*m);
+	cfa->set_reg(reg);
 	return *cfa;
 }
 
@@ -159,7 +175,45 @@ Code_For_Ast & Iteration_Statement_Ast::compile()
 
 Code_For_Ast & Plus_Ast::compile()
 {
-	
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null in Plus_Ast");
+	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null in Plus_Ast");
+
+	Code_For_Ast & lhs_s = lhs->compile();
+	Code_For_Ast & rhs_s = rhs->compile();
+
+	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "lhs register cannot be null in Plus_Ast");
+	CHECK_INVARIANT((rhs_s.get_reg() != NULL), "rhs register cannot be null in Plus_Ast");
+
+	// Store the statement in ic_list
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
+	ic_list.splice(ic_list.end(), rhs_s.get_icode_list());
+
+	machine_desc_object.clear_local_register_mappings();
+	Register_Descriptor * reg;
+	Tgt_Op op;
+
+	if (get_data_type() == int_data_type)
+	{
+		op = add;
+		reg = machine_desc_object.get_new_register<gp_data>();
+	}
+	else
+	{
+		op = add_d;
+		reg = machine_desc_object.get_new_register<float_reg>();
+	}
+
+	lhs_s.get_reg()->reset_use_for_expr_result();
+	rhs_s.get_reg()->reset_use_for_expr_result();
+
+	Compute_IC_Stmt * c = new Compute_IC_Stmt(op, new Register_Addr_Opd(reg),
+												  new Register_Addr_Opd(lhs_s.get_reg()),
+												  new Register_Addr_Opd(rhs_s.get_reg()));
+	ic_list.push_back(c);
+
+	Code_For_Ast * plus_stmt = new Code_For_Ast(ic_list, reg);
+	return *plus_stmt;
 }
 
 /////////////////////////////////////////////////////////////////
