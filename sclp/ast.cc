@@ -242,10 +242,7 @@ Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 	// set arity and data type
 	//ADD CODE HERE
 	ast_num_child = binary_arity;
-	if(l->get_data_type() == r->get_data_type())
-		node_data_type = l->get_data_type();
-	else
-		node_data_type = void_data_type;
+	node_data_type = l->get_data_type();
 	lhs = l;
 	rhs = r;
 	lineno = line;
@@ -273,10 +270,7 @@ Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
 	ast_num_child = binary_arity;
-	if(l->get_data_type() == r->get_data_type())
-		node_data_type = l->get_data_type();
-	else
-		node_data_type = void_data_type;
+	node_data_type = l->get_data_type();
 	lhs = l;
 	rhs = r;
 	lineno = line;
@@ -304,10 +298,7 @@ Mult_Ast::Mult_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
 	ast_num_child = binary_arity;
-	if(l->get_data_type() == r->get_data_type())
-		node_data_type = l->get_data_type();
-	else
-		node_data_type = void_data_type;
+	node_data_type = l->get_data_type();
 	lhs = l;
 	rhs = r;
 	lineno = line;
@@ -335,10 +326,7 @@ Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
 	ast_num_child = binary_arity;
-	if(l->get_data_type() == r->get_data_type())
-		node_data_type = l->get_data_type();
-	else
-		node_data_type = void_data_type;
+	node_data_type = l->get_data_type();
 	lhs = l;
 	rhs = r;
 	lineno = line;
