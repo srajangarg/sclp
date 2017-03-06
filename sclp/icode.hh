@@ -287,30 +287,30 @@ public:
 	void set_Offset(string label);
 
 	void print_icode(ostream & file_buffer);
-     	void print_assembly(ostream & file_buffer);
+    void print_assembly(ostream & file_buffer);
 };
 
 class Label_IC_Stmt: public Icode_Stmt
 {
-        Ics_Opd * opd1;
-        string offset;
+    Ics_Opd * opd1;
+    string offset;
 
 public:
-        Label_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, string offset);
-        ~Label_IC_Stmt() {}
+    Label_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, string offset);
+    ~Label_IC_Stmt() {}
 
-        Label_IC_Stmt& operator=(const Label_IC_Stmt& rhs);
+    Label_IC_Stmt& operator=(const Label_IC_Stmt& rhs);
 
-        Instruction_Descriptor & get_inst_op_of_ics();
+    Instruction_Descriptor & get_inst_op_of_ics();
 
-        Ics_Opd * get_opd1();
-        void set_opd1(Ics_Opd * io);
+    Ics_Opd * get_opd1();
+    void set_opd1(Ics_Opd * io);
 
-        string get_offset();
-        void set_offset(string label);
+    string get_offset();
+    void set_offset(string label);
 
-        void print_icode(ostream & file_buffer);
-        void print_assembly(ostream & file_buffer);
+    void print_icode(ostream & file_buffer);
+    void print_assembly(ostream & file_buffer);
 };
 
 //////////////////////// Intermediate code for Ast statements ////////////////////////

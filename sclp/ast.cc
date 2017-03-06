@@ -12,7 +12,7 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 
-int Ast::labelCounter;
+int Ast::labelCounter = 0;
 
 Ast::Ast()
 {}
@@ -540,8 +540,6 @@ bool Selection_Statement_Ast::check_ast()
 //////////////////////////////////////////////////////////////////////
 template class Number_Ast<double>;
 template class Number_Ast<int>;
-// Ast::labelCounter = 1;
-
 ///////////////////////////////////////////////////////////////////////////////
 
 
