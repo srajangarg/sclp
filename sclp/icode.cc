@@ -281,7 +281,6 @@ Compute_IC_Stmt& Compute_IC_Stmt::operator=(const Compute_IC_Stmt& rhs)
 void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 {	
 	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a compute IC Stmt");
-	CHECK_INVARIANT (opd2, "Opd2 cannot be NULL for a compute IC Stmt");
 	CHECK_INVARIANT (result, "Result cannot be NULL for a compute IC Stmt");
 
 	string operation_name = op_desc.get_name();
@@ -297,9 +296,19 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 		opd2->print_ics_opd(file_buffer);
 		file_buffer << "\n";
 
-		break; 
+		break;
+
+	case i_r_op_o1:
+		file_buffer << "\t" << operation_name << ":    \t";
+		result->print_ics_opd(file_buffer);
+		file_buffer << " <- ";
+		opd1->print_ics_opd(file_buffer);
+		file_buffer << "\n";
+
+		break;
 
 	default: 
+		cout<<op_desc.get_ic_format()<<endl;
 		CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Intermediate code format not supported");
 		break;
 	}
@@ -336,12 +345,27 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 
 		break;
 
+	case a_op_r_o1:
+		file_buffer << "\t" << op_name << " ";
+		result->print_asm_opd(file_buffer);
+		file_buffer << ", ";
+		opd1->print_asm_opd(file_buffer);
+		file_buffer << "\n";
+		break;
+
+	case a_op_o1_r:
+		file_buffer << "\t" << op_name << " ";
+		opd1->print_asm_opd(file_buffer);
+		file_buffer << ", ";
+		result->print_asm_opd(file_buffer);
+		file_buffer << "\n";
+		break;
+	
 	default: 
 		CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Intermediate code format not supported");
 		break;
 	}
 }
-
 
 /******************************* Class Code_For_Ast ****************************/
 

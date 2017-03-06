@@ -1,15 +1,6 @@
 void main(); main ()
 {
-  float f;
-  float e;
-  float d;
-  int c;
-  int b;
   int a;
-  a = 3;
-  b = 4;
-  c = 2;
-  e = 1.22;
-  f = 0.0;
-  d = 7.0;
+  a + 6;
 }
+

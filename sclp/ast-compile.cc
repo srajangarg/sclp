@@ -173,16 +173,16 @@ Code_For_Ast & Iteration_Statement_Ast::compile()
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Plus_Ast::compile()
+Code_For_Ast & ArithTwoOp(Ast* lhs, Ast* rhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 {
-	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null in Plus_Ast");
-	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null in Plus_Ast");
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
 
 	Code_For_Ast & lhs_s = lhs->compile();
 	Code_For_Ast & rhs_s = rhs->compile();
 
-	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "lhs register cannot be null in Plus_Ast");
-	CHECK_INVARIANT((rhs_s.get_reg() != NULL), "rhs register cannot be null in Plus_Ast");
+	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "Lhs register cannot be null");
+	CHECK_INVARIANT((rhs_s.get_reg() != NULL), "Rhs register cannot be null");
 
 	// Store the statement in ic_list
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
@@ -193,14 +193,14 @@ Code_For_Ast & Plus_Ast::compile()
 	Register_Descriptor * reg;
 	Tgt_Op op;
 
-	if (get_data_type() == int_data_type)
+	if (dt == int_data_type)
 	{
-		op = add;
+		op = opint;
 		reg = machine_desc_object.get_new_register<gp_data>();
 	}
 	else
 	{
-		op = add_d;
+		op = opdou;
 		reg = machine_desc_object.get_new_register<float_reg>();
 	}
 
@@ -212,22 +212,27 @@ Code_For_Ast & Plus_Ast::compile()
 												  new Register_Addr_Opd(rhs_s.get_reg()));
 	ic_list.push_back(c);
 
-	Code_For_Ast * plus_stmt = new Code_For_Ast(ic_list, reg);
-	return *plus_stmt;
+	Code_For_Ast * arith = new Code_For_Ast(ic_list, reg);
+	return *arith;
+}
+
+Code_For_Ast & Plus_Ast::compile()
+{
+	return ArithTwoOp(lhs, rhs, get_data_type(), add, add_d);
 }
 
 /////////////////////////////////////////////////////////////////
 
 Code_For_Ast & Minus_Ast::compile()
 {
-	
+	return ArithTwoOp(lhs, rhs, get_data_type(), sub, sub_d);
 }
 
 //////////////////////////////////////////////////////////////////
 
 Code_For_Ast & Mult_Ast::compile()
 {
-	
+	return ArithTwoOp(lhs, rhs, get_data_type(), mult, mult_d);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -242,7 +247,7 @@ Code_For_Ast & Conditional_Operator_Ast::compile()
 
 Code_For_Ast & Divide_Ast::compile()
 {
-	
+	return ArithTwoOp(lhs, rhs, get_data_type(), divd, div_d);
 }
 
 
@@ -250,7 +255,40 @@ Code_For_Ast & Divide_Ast::compile()
 
 Code_For_Ast & UMinus_Ast::compile()
 {
-	
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+
+	Code_For_Ast & lhs_s = lhs->compile();
+
+	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "Lhs register cannot be null");
+
+	// Store the statement in ic_list
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
+
+	machine_desc_object.clear_local_register_mappings();
+	Register_Descriptor * reg;
+	Tgt_Op op;
+
+	if (get_data_type() == int_data_type)
+	{
+		op = uminus;
+		reg = machine_desc_object.get_new_register<gp_data>();
+	}
+	else
+	{
+		op = uminus_d;
+		reg = machine_desc_object.get_new_register<float_reg>();
+	}
+
+	lhs_s.get_reg()->reset_use_for_expr_result();
+
+	Compute_IC_Stmt * c = new Compute_IC_Stmt(op, new Register_Addr_Opd(reg),
+												  new Register_Addr_Opd(lhs_s.get_reg()),
+												  NULL);
+	ic_list.push_back(c);
+
+	Code_For_Ast * arith = new Code_For_Ast(ic_list, reg);
+	return *arith;
 }
 
 //////////////////////////////////////////////////////////////////////////////
