@@ -14,7 +14,7 @@ using namespace std;
 #include "procedure.hh"
 #include "program.hh"
 
-Code_For_Ast & Ast::create_store_stmt(Register_Descriptor * store_register)
+CFA & Ast::create_store_stmt(RD * store_register)
 {
 	stringstream msg;
 	msg << "No create_store_stmt() function for " << typeid(*this).name();
@@ -37,41 +37,41 @@ void Ast::print_icode()
 
 ////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Assignment_Ast::compile()
+CFA & Assignment_Ast::compile()
 {
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null in Assignment_Ast");
 	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null in Assignment_Ast");
 
-	Code_For_Ast & load_stmt = rhs->compile();
+	CFA & load_stmt = rhs->compile();
 
-	Register_Descriptor * load_register = load_stmt.get_reg();
-	CHECK_INVARIANT(load_register, "Load register cannot be null in Assignment_Ast");
-	load_register->set_use_for_expr_result();
+	RD * l_reg = load_stmt.get_reg();
+	CHECK_INVARIANT(l_reg, "Load register cannot be null in Assignment_Ast");
+	l_reg->set_use_for_expr_result();
 
-	Code_For_Ast store_stmt = lhs->create_store_stmt(load_register);
+	CFA store_stmt = lhs->create_store_stmt(l_reg);
 
-	CHECK_INVARIANT((load_register != NULL), "Load register cannot be null in Assignment_Ast");
-	load_register->reset_use_for_expr_result();
+	CHECK_INVARIANT((l_reg != NULL), "Load register cannot be null in Assignment_Ast");
+	l_reg->reset_use_for_expr_result();
 
 	// Store the statement in ic_list
-	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+	list<ICS *>& ic_list = *new list<ICS *>;
 	ic_list.splice(ic_list.end(), load_stmt.get_icode_list());
 	ic_list.splice(ic_list.end(), store_stmt.get_icode_list());
 
-	Code_For_Ast * assign_stmt = new Code_For_Ast(ic_list, load_register);
+	CFA * assign_stmt = new CFA(ic_list, l_reg);
 	return *assign_stmt;
 }
 
 
 /////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Name_Ast::compile()
+CFA & Name_Ast::compile()
 {
 	CHECK_INVARIANT((variable_symbol_entry != NULL), "variable_symbol_entry cannot be null in Name_Ast");
 
-	Code_For_Ast *cfa = new Code_For_Ast();
+	CFA *cfa = new CFA();
 	machine_desc_object.clear_local_register_mappings();
-	Register_Descriptor * reg;
+	RD * reg;
 	Tgt_Op op;
 
 	if (get_data_type() == int_data_type)
@@ -85,18 +85,18 @@ Code_For_Ast & Name_Ast::compile()
 		reg = machine_desc_object.get_new_register<float_reg>();
 	}
 
-	Move_IC_Stmt *m = new Move_IC_Stmt(op, new Mem_Addr_Opd(*variable_symbol_entry),
-										   new Register_Addr_Opd(reg));
+	MovS *m = new MovS(op, new MA_Opd(*variable_symbol_entry),
+										   new RA_Opd(reg));
 	cfa->append_ics(*m);
 	cfa->set_reg(reg);
 	return *cfa;
 }
 
-Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
+CFA & Name_Ast::create_store_stmt(RD * store_register)
 {
 	CHECK_INVARIANT((variable_symbol_entry != NULL), "variable_symbol_entry cannot be null in Name_Ast");
 
-	Code_For_Ast *cfa = new Code_For_Ast();
+	CFA *cfa = new CFA();
 	Tgt_Op op;
 	machine_desc_object.clear_local_register_mappings();
 
@@ -105,32 +105,32 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 	else
 		op = store_d;
 
-	Move_IC_Stmt *m = new Move_IC_Stmt(op, new Register_Addr_Opd(store_register),
-										   new Mem_Addr_Opd(*variable_symbol_entry));
+	MovS *m = new MovS(op, new RA_Opd(store_register),
+										   new MA_Opd(*variable_symbol_entry));
 	cfa->append_ics(*m);
-	cfa->set_reg(store_register);
 	return *cfa;
 }
 
+// CompS* getCompute(RD* res, RD* )
 
-Code_For_Ast & ArithTwoOp(Ast* lhs, Ast* rhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
+
+CFA & ArithTwoOp(Ast* lhs, Ast* rhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 {
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
 	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
 
-	Code_For_Ast & lhs_s = lhs->compile();
-	Code_For_Ast & rhs_s = rhs->compile();
+	CFA & lhs_s = lhs->compile();
+	CFA & rhs_s = rhs->compile();
 
 	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "Lhs register cannot be null");
 	CHECK_INVARIANT((rhs_s.get_reg() != NULL), "Rhs register cannot be null");
 
-	// Store the statement in ic_list
-	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+	list<ICS *>& ic_list = *new list<ICS *>;
 	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
 	ic_list.splice(ic_list.end(), rhs_s.get_icode_list());
 
 	machine_desc_object.clear_local_register_mappings();
-	Register_Descriptor * reg;
+	RD * reg;
 	Tgt_Op op;
 
 	if (dt == int_data_type or void_data_type)
@@ -146,30 +146,27 @@ Code_For_Ast & ArithTwoOp(Ast* lhs, Ast* rhs, Data_Type dt, Tgt_Op opint, Tgt_Op
 
 	lhs_s.get_reg()->reset_use_for_expr_result();
 	rhs_s.get_reg()->reset_use_for_expr_result();
-
-	Compute_IC_Stmt * c = new Compute_IC_Stmt(op, new Register_Addr_Opd(reg),
-												  new Register_Addr_Opd(lhs_s.get_reg()),
-												  new Register_Addr_Opd(rhs_s.get_reg()));
+	CompS * c = new CompS(op, new RA_Opd(reg), new RA_Opd(lhs_s.get_reg()), new RA_Opd(rhs_s.get_reg()));
 	ic_list.push_back(c);
 
-	Code_For_Ast * arith = new Code_For_Ast(ic_list, reg);
+	CFA * arith = new CFA(ic_list, reg);
 	return *arith;
 }
 
-Code_For_Ast & ArithOneOp(Ast* lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
+CFA & ArithOneOp(Ast* lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 {
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
 
-	Code_For_Ast & lhs_s = lhs->compile();
+	CFA & lhs_s = lhs->compile();
 
 	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "Lhs register cannot be null");
 
 	// Store the statement in ic_list
-	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+	list<ICS *>& ic_list = *new list<ICS *>;
 	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
 
 	machine_desc_object.clear_local_register_mappings();
-	Register_Descriptor * reg;
+	RD * reg;
 	Tgt_Op op;
 
 	if (dt == int_data_type)
@@ -184,24 +181,67 @@ Code_For_Ast & ArithOneOp(Ast* lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 	}
 
 	lhs_s.get_reg()->reset_use_for_expr_result();
-
-	Compute_IC_Stmt * c = new Compute_IC_Stmt(op, new Register_Addr_Opd(reg),
-												  new Register_Addr_Opd(lhs_s.get_reg()),
-												  NULL);
+	CompS * c = new CompS(op, new RA_Opd(reg), new RA_Opd(lhs_s.get_reg()), NULL);
 	ic_list.push_back(c);
 
-	Code_For_Ast * arith = new Code_For_Ast(ic_list, reg);
+	CFA * arith = new CFA(ic_list, reg);
 	return *arith;
 }
 
+CFA & CondOp(CFA& cond_s, CFA& then_s, Ast* rhs, string flabel, string slabel, bool need_reg)
+{
+	RD * reg = NULL;
+
+	ContS * bq = new ContS(beq, new RA_Opd(cond_s.get_reg()),
+						  new RA_Opd(machine_desc_object.spim_register_table[zero]), flabel);
+
+	list<ICS *>& ic1 = *new list<ICS *>, ic2 = *new list<ICS *>;
+	ic1.splice(ic1.end(), cond_s.get_icode_list());
+	ic1.push_back(bq);
+	ic1.splice(ic1.end(), then_s.get_icode_list());
+
+	ContS * jj = new ContS(j, NULL, NULL, slabel);
+	LabS * l0 = new LabS(j, NULL, flabel);
+	LabS * l1 = new LabS(j, NULL, slabel);
+
+	ic2.push_back(jj);
+	ic2.push_back(l0);
+
+	if (rhs != NULL)
+	{
+		CFA & else_s = rhs->compile();
+		ic2.splice(ic2.end(), else_s.get_icode_list());
+
+		if (need_reg)
+		{
+			machine_desc_object.clear_local_register_mappings();
+			reg = machine_desc_object.get_new_register<gp_data>();
+			CompS * or1 = new CompS(or_t, new RA_Opd(reg), new RA_Opd(then_s.get_reg()),
+									new RA_Opd(machine_desc_object.spim_register_table[zero]));
+			ic1.push_back(or1);
+
+			CompS * or2 = new CompS(or_t, new RA_Opd(reg), new RA_Opd(else_s.get_reg()),
+									new RA_Opd(machine_desc_object.spim_register_table[zero]));
+			ic2.push_back(or2);
+
+			then_s.get_reg()->reset_use_for_expr_result();
+			else_s.get_reg()->reset_use_for_expr_result();
+		}
+	}
+
+	ic2.push_back(l1);
+	ic1.splice(ic1.end(), ic2);
+	CFA * selection = new CFA(ic1, reg);
+	return *selection;
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 template <class DATA_TYPE>
-Code_For_Ast & Number_Ast<DATA_TYPE>::compile()
+CFA & Number_Ast<DATA_TYPE>::compile()
 {
-	Code_For_Ast *cfa = new Code_For_Ast();
+	CFA *cfa = new CFA();
 
-	Register_Descriptor * reg;
+	RD * reg;
 	Ics_Opd * opd;
 	Tgt_Op op;
 	machine_desc_object.clear_local_register_mappings();
@@ -219,7 +259,7 @@ Code_For_Ast & Number_Ast<DATA_TYPE>::compile()
 		op = imm_load_d;
 	}
 
-	Move_IC_Stmt *m = new Move_IC_Stmt(op, opd, new Register_Addr_Opd(reg));
+	MovS *m = new MovS(op, opd, new RA_Opd(reg));
 	cfa->append_ics(*m);
 	cfa->set_reg(reg);
 	return *cfa;
@@ -227,7 +267,7 @@ Code_For_Ast & Number_Ast<DATA_TYPE>::compile()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Relational_Expr_Ast::compile()
+CFA & Relational_Expr_Ast::compile()
 {
 	switch(rel_op)
 	{
@@ -250,7 +290,7 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 
 //////////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Boolean_Expr_Ast::compile()
+CFA & Boolean_Expr_Ast::compile()
 {
 	switch(bool_op)
 	{
@@ -266,79 +306,56 @@ Code_For_Ast & Boolean_Expr_Ast::compile()
 }
 ///////////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Selection_Statement_Ast::compile()
-{
-	Code_For_Ast & then_s = then_part->compile();
-	Code_For_Ast & cond_s = cond->compile();
-
+CFA & Selection_Statement_Ast::compile()
+{	
+	CFA & cond_s = cond->compile();
+	CFA & then_s = then_part->compile();
 	string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
-
-	Control_Flow_IC_Stmt * bq = new Control_Flow_IC_Stmt(beq, new Register_Addr_Opd(cond_s.get_reg()),
-						  new Register_Addr_Opd(machine_desc_object.spim_register_table[zero]), flabel);
-
-	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
-	ic_list.splice(ic_list.end(), cond_s.get_icode_list());
-	ic_list.push_back(bq);
-	ic_list.splice(ic_list.end(), then_s.get_icode_list());
-
-	Control_Flow_IC_Stmt * jj = new Control_Flow_IC_Stmt(j, NULL, NULL, slabel);
-	Label_IC_Stmt * l0 = new Label_IC_Stmt(j, NULL, flabel);
-	Label_IC_Stmt * l1 = new Label_IC_Stmt(j, NULL, slabel);
-
-	ic_list.push_back(jj);
-	ic_list.push_back(l0);
-
-	if (else_part != NULL)
-	{
-		Code_For_Ast & else_s = else_part->compile();
-		ic_list.splice(ic_list.end(), else_s.get_icode_list());
-	}
-
-	ic_list.push_back(l1);
-	Code_For_Ast * selection = new Code_For_Ast(ic_list, NULL);
-	return *selection;
+	return CondOp(cond_s, then_s, else_part, flabel, slabel, false);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Iteration_Statement_Ast::compile()
+CFA & Iteration_Statement_Ast::compile()
 {
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-Code_For_Ast & Plus_Ast::compile()
+CFA & Plus_Ast::compile()
 {
 	return ArithTwoOp(lhs, rhs, get_data_type(), add, add_d);
 }
 
 /////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Minus_Ast::compile()
+CFA & Minus_Ast::compile()
 {
 	return ArithTwoOp(lhs, rhs, get_data_type(), sub, sub_d);
 }
 
 //////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Mult_Ast::compile()
+CFA & Mult_Ast::compile()
 {
 	return ArithTwoOp(lhs, rhs, get_data_type(), mult, mult_d);
 }
 
 ////////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Conditional_Operator_Ast::compile()
+CFA & Conditional_Operator_Ast::compile()
 {
-	
+	CFA & cond_s = cond->compile();
+	CFA & then_s = lhs->compile();
+	string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
+	return CondOp(cond_s, then_s, rhs, flabel, slabel, true);
 }
 
 
 ////////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Divide_Ast::compile()
+CFA & Divide_Ast::compile()
 {
 	return ArithTwoOp(lhs, rhs, get_data_type(), divd, div_d);
 }
@@ -346,31 +363,32 @@ Code_For_Ast & Divide_Ast::compile()
 
 //////////////////////////////////////////////////////////////////////
 
-Code_For_Ast & UMinus_Ast::compile()
+CFA & UMinus_Ast::compile()
 {
 	return ArithOneOp(lhs, get_data_type(), uminus, uminus_d);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-Code_For_Ast & Sequence_Ast::compile()
+CFA & Sequence_Ast::compile()
 {	
 	for (list<Ast*>::iterator it = statement_list.begin(); it != statement_list.end(); it++)
 	{	
-		list<Icode_Stmt *>& ic_list = (*it)->compile().get_icode_list();
+		list<ICS *>& ic_list = (*it)->compile().get_icode_list();
 		sa_icode_list.insert(sa_icode_list.end(), ic_list.begin(), ic_list.end());
 	}
+	return *(new CFA(sa_icode_list, NULL));
 }
 
 void Sequence_Ast::print_assembly(ostream & file_buffer)
 {
-	for (list<Icode_Stmt*>::iterator it = sa_icode_list.begin(); it != sa_icode_list.end(); it++)
+	for (list<ICS*>::iterator it = sa_icode_list.begin(); it != sa_icode_list.end(); it++)
 		(*it)->print_assembly(file_buffer);
 }
 
 void Sequence_Ast::print_icode(ostream & file_buffer)
 {
-	for (list<Icode_Stmt*>::iterator it = sa_icode_list.begin(); it != sa_icode_list.end(); it++)
+	for (list<ICS*>::iterator it = sa_icode_list.begin(); it != sa_icode_list.end(); it++)
 		(*it)->print_icode(file_buffer);
 }
 

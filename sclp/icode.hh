@@ -342,4 +342,14 @@ public:
 	Code_For_Ast & operator=(const Code_For_Ast & rhs);
 };
 
+using RD = Register_Descriptor;
+using CFA = Code_For_Ast;
+using MA_Opd = Mem_Addr_Opd;
+using RA_Opd = Register_Addr_Opd;
+using CompS = Compute_IC_Stmt;
+using ContS = Control_Flow_IC_Stmt;
+using MovS = Move_IC_Stmt;
+using LabS = Label_IC_Stmt;
+using ICS = Icode_Stmt;
+
 #endif

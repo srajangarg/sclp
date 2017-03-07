@@ -17,7 +17,7 @@ using namespace std;
 
 /****************************** Class Ics_Opd *****************************/
 
-Register_Descriptor * Ics_Opd::get_reg()
+RD * Ics_Opd::get_reg()
 {
 	//TODO
 	return NULL;
@@ -31,7 +31,7 @@ Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se)
 	symbol_entry = &se;
 }
 
-Mem_Addr_Opd & Mem_Addr_Opd::operator=(const Mem_Addr_Opd & rhs)
+MA_Opd & Mem_Addr_Opd::operator=(const MA_Opd & rhs)
 {
 	//TODO
 	symbol_entry = rhs.symbol_entry;
@@ -66,19 +66,19 @@ void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
 
 /****************************** Class Register_Addr_Opd *****************************/
 
-Register_Addr_Opd::Register_Addr_Opd(Register_Descriptor * reg) 
+Register_Addr_Opd::Register_Addr_Opd(RD * reg) 
 {
 	//TODO
 	register_description = reg;
 }
 
-Register_Descriptor * Register_Addr_Opd::get_reg()    
+RD * Register_Addr_Opd::get_reg()    
 { 
 	//TODO
 	return register_description;
 }
 
-Register_Addr_Opd& Register_Addr_Opd::operator=(const Register_Addr_Opd& rhs)
+RA_Opd& Register_Addr_Opd::operator=(const RA_Opd& rhs)
 {
 	//TODO
 	register_description = rhs.register_description;
@@ -182,7 +182,7 @@ Ics_Opd * Move_IC_Stmt::get_result()        { return result; }
 void Move_IC_Stmt::set_opd1(Ics_Opd * io)   { opd1 = io; }
 void Move_IC_Stmt::set_result(Ics_Opd * io) { result = io; }
 
-Move_IC_Stmt& Move_IC_Stmt::operator=(const Move_IC_Stmt& rhs)
+MovS& Move_IC_Stmt::operator=(const MovS& rhs)
 {
 	op_desc = rhs.op_desc;
 	opd1 = rhs.opd1;
@@ -268,7 +268,7 @@ void Compute_IC_Stmt::set_opd1(Ics_Opd * io)   { opd1 = io; }
 void Compute_IC_Stmt::set_opd2(Ics_Opd * io)   { opd2 = io; }
 void Compute_IC_Stmt::set_result(Ics_Opd * io) { result = io; }
 
-Compute_IC_Stmt& Compute_IC_Stmt::operator=(const Compute_IC_Stmt& rhs)
+CompS& Compute_IC_Stmt::operator=(const CompS& rhs)
 {
 	op_desc = rhs.op_desc;
 	opd1 = rhs.opd1;
@@ -386,7 +386,7 @@ void Control_Flow_IC_Stmt::set_opd1(Ics_Opd * io)   { opd1 = io; }
 void Control_Flow_IC_Stmt::set_opd2(Ics_Opd * io)   { opd2 = io; }
 void Control_Flow_IC_Stmt::set_Offset(string s) { offset = s; }
 
-Control_Flow_IC_Stmt& Control_Flow_IC_Stmt::operator=(const Control_Flow_IC_Stmt& rhs)
+ContS& Control_Flow_IC_Stmt::operator=(const ContS& rhs)
 {
 	op_desc = rhs.op_desc;
 	opd1 = rhs.opd1;
@@ -465,7 +465,7 @@ string Label_IC_Stmt::get_offset()          { return offset; }
 void Label_IC_Stmt::set_opd1(Ics_Opd * io)   { opd1 = io; }
 void Label_IC_Stmt::set_offset(string off)   { offset = off; }
 
-Label_IC_Stmt& Label_IC_Stmt::operator=(const Label_IC_Stmt& rhs)
+LabS& Label_IC_Stmt::operator=(const LabS& rhs)
 {
 	op_desc = rhs.op_desc;
 	opd1 = rhs.opd1;
@@ -492,38 +492,38 @@ Code_For_Ast::Code_For_Ast()
 	result_register = NULL;
 }
 
-Code_For_Ast::Code_For_Ast(list<Icode_Stmt *> & ic_l, Register_Descriptor * reg)
+Code_For_Ast::Code_For_Ast(list<ICS *> & ic_l, RD * reg)
 {
 	//TODO
 	ics_list = ic_l;
 	result_register = reg;
 }
 
-void Code_For_Ast::append_ics(Icode_Stmt & ic_stmt)
+void Code_For_Ast::append_ics(ICS & ic_stmt)
 {
 	//TODO
 	ics_list.push_back(&ic_stmt);
 }
 
-list<Icode_Stmt *> & Code_For_Ast::get_icode_list()  
+list<ICS *> & Code_For_Ast::get_icode_list()  
 { 
 	//TODO 
 	return ics_list;
 }
 
-Register_Descriptor * Code_For_Ast::get_reg()
+RD * Code_For_Ast::get_reg()
 {
 	//TODO
 	return result_register;
 }
 
-void Code_For_Ast::set_reg(Register_Descriptor * reg)
+void Code_For_Ast::set_reg(RD * reg)
 {
 	//TODO
 	result_register = reg;
 }
 
-Code_For_Ast& Code_For_Ast::operator=(const Code_For_Ast& rhs)
+CFA& Code_For_Ast::operator=(const CFA& rhs)
 {
 	//TODO
 	result_register = rhs.result_register;
