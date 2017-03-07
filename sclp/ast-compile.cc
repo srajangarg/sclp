@@ -94,8 +94,7 @@ CFA& Name_Ast::create_store_stmt(RD *store_register)
 {
 	CHECK_INVARIANT((variable_symbol_entry != NULL), "variable_symbol_entry cannot be null in Name_Ast");
 
-	CFA *cfa = new CFA();
-	Tgt_Op op;
+	CFA *cfa = new CFA(); Tgt_Op op;
 	machine_desc_object.clear_local_register_mappings();
 
 	if (get_data_type() == int_data_type)
@@ -103,8 +102,7 @@ CFA& Name_Ast::create_store_stmt(RD *store_register)
 	else
 		op = store_d;
 
-	MovS *m = new MovS(op, new RA_Opd(store_register),
-										   new MA_Opd(*variable_symbol_entry));
+	MovS *m = new MovS(op, new RA_Opd(store_register), new MA_Opd(*variable_symbol_entry));
 	cfa->append_ics(*m);
 	return *cfa;
 }
@@ -125,8 +123,7 @@ CFA& ArithTwoOp(Ast*lhs, Ast*rhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 	ic_list.splice(ic_list.end(), rhs_s.get_icode_list());
 
 	machine_desc_object.clear_local_register_mappings();
-	RD *reg;
-	Tgt_Op op;
+	RD *reg; Tgt_Op op;
 
 	if (dt == int_data_type or void_data_type)
 	{
@@ -148,22 +145,25 @@ CFA& ArithTwoOp(Ast*lhs, Ast*rhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 	return *arith;
 }
 
-CFA& ArithOneOp(Ast*lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
+CFA& ArithOneOp(Ast*lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou, bool is_not_type = false)
 {
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
 
-	CFA& lhs_s = lhs->compile();
+	RD *reg, *one = NULL; Tgt_Op op;	
+	list<ICS *>& ic_list = *new list<ICS *>;
 
+	if (is_not_type)
+	{
+		machine_desc_object.clear_local_register_mappings();
+		one = machine_desc_object.get_new_register<gp_data>();
+		ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(1), new RA_Opd(one)));
+	}
+
+	CFA& lhs_s = lhs->compile();
+	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
 	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "Lhs register cannot be null");
 
-	// Store the statement in ic_list
-	list<ICS *>& ic_list = *new list<ICS *>;
-	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
-
 	machine_desc_object.clear_local_register_mappings();
-	RD *reg;
-	Tgt_Op op;
-
 	if (dt == int_data_type)
 	{
 		op = opint;
@@ -175,8 +175,12 @@ CFA& ArithOneOp(Ast*lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 		reg = machine_desc_object.get_new_register<float_reg>();
 	}
 
+	if (is_not_type)
+		one->reset_use_for_expr_result();
+
 	lhs_s.get_reg()->reset_use_for_expr_result();
-	CompS *c = new CompS(op, new RA_Opd(reg), new RA_Opd(lhs_s.get_reg()), NULL);
+	CompS *c = new CompS(op, new RA_Opd(reg), new RA_Opd(lhs_s.get_reg()),
+							 (one == NULL) ? NULL : new RA_Opd(one));
 	ic_list.push_back(c);
 
 	CFA *arith = new CFA(ic_list, reg);
@@ -232,7 +236,6 @@ CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel, string s
 								new RA_Opd(machine_desc_object.spim_register_table[zero]));
 		ic2.push_back(or2);
 
-		cond_s.get_reg()->reset_use_for_expr_result();
 		then_s.get_reg()->reset_use_for_expr_result();
 		else_s.get_reg()->reset_use_for_expr_result();
 	}
@@ -249,9 +252,7 @@ CFA& Number_Ast<DATA_TYPE>::compile()
 {
 	CFA *cfa = new CFA();
 
-	RD *reg;
-	Ics_Opd *opd;
-	Tgt_Op op;
+	RD *reg; Ics_Opd *opd; Tgt_Op op;
 	machine_desc_object.clear_local_register_mappings();
 
 	if (get_data_type() == int_data_type)
@@ -303,7 +304,7 @@ CFA& Boolean_Expr_Ast::compile()
 	switch(bool_op)
 	{
 		case boolean_not:
-			return ArithOneOp(lhs_op, get_data_type(), not_t, not_t);
+			return ArithOneOp(rhs_op, get_data_type(), not_t, not_t, true);
 		case boolean_and:
 			return ArithTwoOp(lhs_op, rhs_op, get_data_type(), and_t, and_t);
 		case boolean_or:
@@ -319,6 +320,8 @@ CFA& Selection_Statement_Ast::compile()
 {	
 	CFA& cond_s = cond->compile();
 	CFA& then_s = then_part->compile();
+	
+	cond_s.get_reg()->reset_use_for_expr_result();
 
 	if (else_part != NULL)
 	{
@@ -352,6 +355,7 @@ CFA& Iteration_Statement_Ast::compile()
 	ContS *bq = new ContS(bne, new RA_Opd(cond_s.get_reg()),
 						  new RA_Opd(machine_desc_object.spim_register_table[zero]), flabel);
 	ic_list.push_back(bq);
+	cond_s.get_reg()->reset_use_for_expr_result();
 
 	CFA *selection = new CFA(ic_list, NULL);
 	return *selection;
@@ -384,6 +388,8 @@ CFA& Mult_Ast::compile()
 CFA& Conditional_Operator_Ast::compile()
 {
 	CFA& cond_s = cond->compile();
+	cond_s.get_reg()->reset_use_for_expr_result();
+
 	CFA& then_s = lhs->compile();
 	CFA& else_s = rhs->compile();
 	string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
