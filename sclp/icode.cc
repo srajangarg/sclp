@@ -321,7 +321,7 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 
 	switch (op_desc.get_assembly_format())
 	{
-	case a_op_r_o1_o2: 
+	case a_op_r_o1_o2:
 		file_buffer << "\t" << op_name << " ";
 		result->print_asm_opd(file_buffer);
 		file_buffer << ", ";

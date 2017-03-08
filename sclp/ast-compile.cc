@@ -207,7 +207,8 @@ CFA& CondOpIf(CFA& cond_s, CFA& then_s, string flabel, string slabel)
 }
 
 
-CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel, string slabel, bool need_reg)
+CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel, 
+				  string slabel, Data_Type dt, bool need_reg = false)
 {
 	RD *reg = NULL;
 
@@ -227,7 +228,12 @@ CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel, string s
 	if (need_reg)
 	{
 		machine_desc_object.clear_local_register_mappings();
-		reg = machine_desc_object.get_new_register<gp_data>();
+
+		if (dt == int_data_type or dt == void_data_type)
+			reg = machine_desc_object.get_new_register<gp_data>();
+		else
+			reg = machine_desc_object.get_new_register<float_reg>();
+
 		CompS *or1 = new CompS(or_t, new RA_Opd(reg), new RA_Opd(then_s.get_reg()),
 								new RA_Opd(machine_desc_object.spim_register_table[zero]));
 		ic1.push_back(or1);
@@ -327,7 +333,7 @@ CFA& Selection_Statement_Ast::compile()
 	{
 		CFA& else_s = else_part->compile();
 		string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
-		return CondOpIfElse(cond_s, then_s, else_s, flabel, slabel, false);
+		return CondOpIfElse(cond_s, then_s, else_s, flabel, slabel, int_data_type);
 	}
 
 	string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
@@ -393,7 +399,7 @@ CFA& Conditional_Operator_Ast::compile()
 	CFA& then_s = lhs->compile();
 	CFA& else_s = rhs->compile();
 	string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
-	return CondOpIfElse(cond_s, then_s, else_s, flabel, slabel, true);
+	return CondOpIfElse(cond_s, then_s, else_s, flabel, slabel, lhs->get_data_type(), true);
 }
 
 
