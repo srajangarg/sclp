@@ -188,25 +188,6 @@ CFA& ArithOneOp(Ast*lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou, bool is_not_t
 }
 
 
-CFA& CondOpIf(CFA& cond_s, CFA& then_s, string flabel, string slabel)
-{
-	ContS *bq = new ContS(beq, new RA_Opd(cond_s.get_reg()),
-						  new RA_Opd(machine_desc_object.spim_register_table[zero]), flabel);
-
-	list<ICS *>& ic_list = *new list<ICS *>;
-	ic_list.splice(ic_list.end(), cond_s.get_icode_list());
-	ic_list.push_back(bq);
-	ic_list.splice(ic_list.end(), then_s.get_icode_list());
-
-	ic_list.push_back(new ContS(j, NULL, NULL, slabel));
-	ic_list.push_back(new LabS(j, NULL, flabel));
-	ic_list.push_back(new LabS(j, NULL, slabel));
-
-	CFA *selection = new CFA(ic_list, NULL);
-	return *selection;
-}
-
-
 CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel, 
 				  string slabel, Data_Type dt, bool need_reg = false)
 {
@@ -245,6 +226,8 @@ CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel,
 		then_s.get_reg()->reset_use_for_expr_result();
 		else_s.get_reg()->reset_use_for_expr_result();
 	}
+
+	cond_s.get_reg()->reset_use_for_expr_result();
 
 	ic2.push_back(new LabS(j, NULL, slabel));
 	ic1.splice(ic1.end(), ic2);
@@ -326,18 +309,10 @@ CFA& Selection_Statement_Ast::compile()
 {	
 	CFA& cond_s = cond->compile();
 	CFA& then_s = then_part->compile();
-	
-	cond_s.get_reg()->reset_use_for_expr_result();
-
-	if (else_part != NULL)
-	{
-		CFA& else_s = else_part->compile();
-		string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
-		return CondOpIfElse(cond_s, then_s, else_s, flabel, slabel, int_data_type);
-	}
+	CFA& else_s = else_part->compile();
 
 	string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
-	return CondOpIf(cond_s, then_s, flabel, slabel);
+	return CondOpIfElse(cond_s, then_s, else_s, flabel, slabel, cond->get_data_type());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -394,10 +369,9 @@ CFA& Mult_Ast::compile()
 CFA& Conditional_Operator_Ast::compile()
 {
 	CFA& cond_s = cond->compile();
-	cond_s.get_reg()->reset_use_for_expr_result();
-
 	CFA& then_s = lhs->compile();
 	CFA& else_s = rhs->compile();
+
 	string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
 	return CondOpIfElse(cond_s, then_s, else_s, flabel, slabel, lhs->get_data_type(), true);
 }

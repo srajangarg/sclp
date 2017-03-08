@@ -454,7 +454,8 @@ if_else_statement:
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT((($3 != NULL) && ($5 != NULL)),"boolean expression/statement block cannot be null");
-		Selection_Statement_Ast * sel_stmt = new Selection_Statement_Ast($3, $5, NULL, get_line_number());
+		Sequence_Ast * empty_seq = new Sequence_Ast(get_line_number());
+		Selection_Statement_Ast * sel_stmt = new Selection_Statement_Ast($3, $5, empty_seq, get_line_number());
 		sel_stmt->check_ast();
 		$$ = sel_stmt;
 	}

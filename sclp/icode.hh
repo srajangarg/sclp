@@ -287,7 +287,7 @@ public:
 	void set_Offset(string label);
 
 	void print_icode(ostream & file_buffer);
-    void print_assembly(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
 };
 
 class Label_IC_Stmt: public Icode_Stmt
