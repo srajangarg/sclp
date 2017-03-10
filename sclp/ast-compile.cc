@@ -320,8 +320,8 @@ CFA& Selection_Statement_Ast::compile()
 CFA& Iteration_Statement_Ast::compile()
 {
 	CFA& cond_s = cond->compile();
-	CFA& body_s = body->compile();
 	string flabel = Ast::get_new_label(), slabel = Ast::get_new_label();
+	CFA& body_s = body->compile();
 
 	list<ICS *>& ic_list = *new list<ICS *>;
 
