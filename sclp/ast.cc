@@ -12,7 +12,7 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 
-int Ast::labelCounter;
+int Ast::labelCounter = 0;
 
 Ast::Ast()
 {}
@@ -242,10 +242,7 @@ Plus_Ast::Plus_Ast(Ast * l, Ast * r, int line)
 	// set arity and data type
 	//ADD CODE HERE
 	ast_num_child = binary_arity;
-	if(l->get_data_type() == r->get_data_type())
-		node_data_type = l->get_data_type();
-	else
-		node_data_type = void_data_type;
+	node_data_type = l->get_data_type();
 	lhs = l;
 	rhs = r;
 	lineno = line;
@@ -273,10 +270,7 @@ Minus_Ast::Minus_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
 	ast_num_child = binary_arity;
-	if(l->get_data_type() == r->get_data_type())
-		node_data_type = l->get_data_type();
-	else
-		node_data_type = void_data_type;
+	node_data_type = l->get_data_type();
 	lhs = l;
 	rhs = r;
 	lineno = line;
@@ -304,10 +298,7 @@ Mult_Ast::Mult_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
 	ast_num_child = binary_arity;
-	if(l->get_data_type() == r->get_data_type())
-		node_data_type = l->get_data_type();
-	else
-		node_data_type = void_data_type;
+	node_data_type = l->get_data_type();
 	lhs = l;
 	rhs = r;
 	lineno = line;
@@ -335,10 +326,7 @@ Divide_Ast::Divide_Ast(Ast * l, Ast * r, int line)
 {
 	//ADD CODE HERE
 	ast_num_child = binary_arity;
-	if(l->get_data_type() == r->get_data_type())
-		node_data_type = l->get_data_type();
-	else
-		node_data_type = void_data_type;
+	node_data_type = l->get_data_type();
 	lhs = l;
 	rhs = r;
 	lineno = line;
@@ -552,8 +540,6 @@ bool Selection_Statement_Ast::check_ast()
 //////////////////////////////////////////////////////////////////////
 template class Number_Ast<double>;
 template class Number_Ast<int>;
-// Ast::labelCounter = 1;
-
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -660,15 +646,6 @@ void Boolean_Expr_Ast::set_data_type(Data_Type dt)
 
 bool Boolean_Expr_Ast::check_ast()
 {
-	// TO be done
-	// if (ast_num_child == binary_arity)
-	// 	if (lhs_condition->get_data_type() == rhs_condition->get_data_type())
-	// 		return true;
-
-	// if (ast_num_child == unary_arity)
-	// 	return true;
-
-	// CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Relational statement data type not compatible", lineno);
 	return true;
 }
 
