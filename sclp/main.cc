@@ -15,6 +15,7 @@ using namespace std;
 #include "procedure.hh"
 #include "program.hh"
 #include "parser.h"
+#include "cfg.hh"
 
 #include "dirent.h"
 
@@ -48,6 +49,11 @@ int main(int argc, char * argv[])
 		{
 		#ifdef COMPILE
 			program_object.compile();
+			CFG xxx;
+
+			list<Icode_Stmt*> ll = program_object.get_procedure()->get_seqast()->get_icode_list();
+			xxx.construct_from_icode(ll);
+			xxx.print();
 
 			if (command_options.is_show_symtab_selected())
 				program_object.print_sym();
