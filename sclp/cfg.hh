@@ -23,7 +23,7 @@ struct CFGNode
     void add_in_gen(Ics_Opd* opd);
     void add_in_kill(Ics_Opd* opd);
     void computeGenKill();
-    void removeDeadStmt();
+    int removeDeadStmt();
 };
 
 struct CFG

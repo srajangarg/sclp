@@ -53,17 +53,26 @@ void CFGNode::computeGenKill()
     kill.clear();
     for (auto &ic : icode_list)
     {
-        switch(ic->get_op().get_ic_format())
+        switch (ic->get_op().get_ic_format())
         {
+            case i_op_o1_r:                              // extra not used
+            case i_op_r_o1:                              // extra not used
             case i_r_op_o1:
-            // case i_op_r_o1:                              // extra not used
-            // case i_op_o1_r:                              // extra not used
 
-                add_in_gen(ic->get_opd2());
+                add_in_gen(ic->get_opd1());
+                add_in_kill(ic->get_result());
+                break;
+
+            case i_r_r_op_o1:                           // extra not used
+                add_in_gen(ic->get_opd1());
+                add_in_gen(ic->get_result());
+                add_in_kill(ic->get_result());
+                break;
 
             case i_r_o1_op_o2:
 
                 add_in_gen(ic->get_opd1());
+                add_in_gen(ic->get_opd2());
                 add_in_kill(ic->get_result());
                 break;
 
@@ -71,13 +80,84 @@ void CFGNode::computeGenKill()
 
                 add_in_gen(ic->get_opd1());
                 add_in_gen(ic->get_opd2());
+                break;
+            
+            default:
+                break;
         }
     }
 }
 
-bool CFGNode::removeDeadStmt()
+int CFGNode::removeDeadStmt()
 {
+    int count = 0;
+    set<string> live_vars = out;
+    for (auto rit = icode_list.rbegin(); rit != icode_list.rend(); rit++)
+    {
+        Icode_Stmt* ic = (*rit);
+        string var;
+        switch (ic->get_op().get_ic_format())
+        {
+            case i_op_o1_r:                              // extra not used
+            case i_op_r_o1:                              // extra not used
+            case i_r_op_o1:
 
+                var = get_opd_variable(ic->get_result());
+                if(live_vars.find(var) == live_vars.end())
+                {
+                    auto it = rit.base();
+                    icode_list.erase(--it);
+                    count++;
+                }
+                else
+                {
+                    live_vars.insert(get_opd_variable(ic->get_opd1()));
+                }
+                break;
+
+            case i_r_r_op_o1:                           // extra not used
+
+                var = get_opd_variable(ic->get_result());
+                if(live_vars.find(var) == live_vars.end())
+                {
+                    auto it = rit.base();
+                    icode_list.erase(--it);
+                    count++;
+                }
+                else
+                {
+                    live_vars.insert(get_opd_variable(ic->get_opd1()));
+                    live_vars.insert(var);
+                }
+                break;
+
+            case i_r_o1_op_o2:
+
+                var = get_opd_variable(ic->get_result());
+                if(live_vars.find(var) == live_vars.end())
+                {
+                    auto it = rit.base();
+                    icode_list.erase(--it);
+                    count++;
+                }
+                else
+                {
+                    live_vars.insert(get_opd_variable(ic->get_opd1()));
+                    live_vars.insert(get_opd_variable(ic->get_opd2()));
+                }
+                break;
+
+            case i_op_o1_o2_st:
+
+                live_vars.insert(get_opd_variable(ic->get_opd1()));
+                live_vars.insert(get_opd_variable(ic->get_opd2()));
+                break;
+
+            default:
+                break;
+        }
+    }
+    return count;
 }
 
 void  CFG::construct_from_icode(list<Icode_Stmt *> &ic_list)
@@ -228,15 +308,16 @@ void CFG::print()
 
 void CFG::deadCodeElimination()
 {
-    bool changed;
+    int count;
 
     do
     {
+        count = 0;
         computeInOut();
         for(auto& node : nodes)
         {
-            bool deleted = node.removeDeadStmt();
-            changed = changed ^ deleted;
+            count += node.removeDeadStmt();
         }
-    } while (changed);
+        cout<<"Deleted Number of lines : "<<count<<endl;
+    } while (count > 0);
 }
