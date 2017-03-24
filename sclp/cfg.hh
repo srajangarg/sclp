@@ -37,9 +37,9 @@ struct CFG
     int getCFGNode(string name);
     int getNumNodes();
     void print();
-    void computeInOut();
+    void computeInOut(set<string> global_vars);
     void calcIn(int k, vector<bool>& visited, bool& changed);
-    void deadCodeElimination();
+    void deadCodeElimination(set<string> global_vars);
     list<Icode_Stmt *> getIcodeList();
 };
 

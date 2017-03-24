@@ -282,7 +282,7 @@ public:
 	Code_For_Ast & compile();
 	void print_assembly(ostream & file_buffer);
 	void print_icode(ostream & file_buffer);
-	void deadCodeElimination();
+	void deadCodeElimination(Symbol_Table global_symbol_tableS);
 
 	list<Icode_Stmt*> get_icode_list()
 	{

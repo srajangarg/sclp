@@ -233,13 +233,17 @@ void  CFG::construct_from_icode(list<Icode_Stmt *> &ic_list)
     }
 }
 
-void CFG::computeInOut()
+void CFG::computeInOut(set<string> global_vars)
 {
     for (auto& node:nodes)
     {
         node.computeGenKill();
         node.in.clear();
         node.out.clear();
+        if(node.children.empty())
+        {
+            node.out.insert(global_vars.begin(), global_vars.end());
+        }
     }
 
     bool changed;
@@ -323,14 +327,14 @@ void CFG::print()
     }
 }
 
-void CFG::deadCodeElimination()
+void CFG::deadCodeElimination(set<string> global_vars)
 {
     int count;
 
     do
     {
         count = 0;
-        computeInOut();
+        computeInOut(global_vars);
         for(auto& node : nodes)
         {
             count += node.removeDeadStmt();

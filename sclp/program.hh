@@ -44,7 +44,7 @@ public:
 	void print_assembly();
 	void deadCodeElimination()
 	{
-		procedure->get_seqast()->deadCodeElimination();
+		procedure->get_seqast()->deadCodeElimination(global_symbol_table);
 	}
 };
 

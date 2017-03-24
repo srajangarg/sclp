@@ -678,10 +678,17 @@ void Boolean_Expr_Ast::print(ostream & file_buffer)
 	file_buffer<<")";
 }
 
-void Sequence_Ast::deadCodeElimination()
+void Sequence_Ast::deadCodeElimination(Symbol_Table global_symbol_table)
 {
 	CFG cfg;
 	cfg.construct_from_icode(sa_icode_list);
-	cfg.deadCodeElimination();
+
+	list<Symbol_Table_Entry *> global_entries = global_symbol_table.get_entries_list();
+	set<string> global_vars;
+	for(auto e : global_entries)
+	{
+		global_vars.insert(e->get_variable_name());
+	}
+	cfg.deadCodeElimination(global_vars);
 	sa_icode_list = cfg.getIcodeList();
 }
