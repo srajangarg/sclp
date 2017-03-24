@@ -3,7 +3,7 @@
 #define PROGRAM_HH
 
 #include <string>
-
+#include "procedure.hh"
 #define GLOB_SPACE "   "
 
 using namespace std;
@@ -42,6 +42,10 @@ public:
 	// compile
 	void compile();
 	void print_assembly();
+	void deadCodeElimination()
+	{
+		procedure->get_seqast()->deadCodeElimination();
+	}
 };
 
 #endif

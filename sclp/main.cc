@@ -49,8 +49,18 @@ int main(int argc, char * argv[])
 		{
 		#ifdef COMPILE
 			program_object.compile();
-			program_object.get_procedure()->get_seqast()->deadCodeElimination();
-			program_object.get_procedure()->print_icode(cout);
+			program_object.deadCodeElimination();
+			// program_object.get_procedure()->get_seqast()->deadCodeElimination();
+			
+			if(command_options.is_demo_mode_selected())
+				program_object.get_procedure()->print_icode(cout);
+			else
+			{
+				filebuf fb;
+				fb.open(command_options.get_file_name()+".dce",ios::out);
+				ostream os(&fb);
+				program_object.get_procedure()->print_icode(os);
+			}
 			// CFG cfg;
 
 			// list<Icode_Stmt*> ll = program_object.get_procedure()->get_seqast()->get_icode_list();
