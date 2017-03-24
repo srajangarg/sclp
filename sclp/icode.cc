@@ -23,6 +23,12 @@ RD * Ics_Opd::get_reg()
 	return NULL;
 }
 
+Symbol_Table_Entry * Ics_Opd::get_symbol_entry()
+{
+	//TODO
+	return NULL;
+}
+
 /****************************** Class Mem_Addr_Opd *****************************/
 
 Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se) 
@@ -36,6 +42,11 @@ MA_Opd & Mem_Addr_Opd::operator=(const MA_Opd & rhs)
 	//TODO
 	symbol_entry = rhs.symbol_entry;
 	return *this;
+}
+
+Symbol_Table_Entry * Mem_Addr_Opd::get_symbol_entry()
+{
+	return symbol_entry;
 }
 
 void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer) 

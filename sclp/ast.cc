@@ -687,7 +687,7 @@ void Sequence_Ast::deadCodeElimination(Symbol_Table global_symbol_table)
 	set<string> global_vars;
 	for(auto e : global_entries)
 	{
-		global_vars.insert(e->get_variable_name());
+		global_vars.insert("_g_" + e->get_variable_name());
 	}
 	cfg.deadCodeElimination(global_vars);
 	sa_icode_list = cfg.getIcodeList();

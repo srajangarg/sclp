@@ -26,3 +26,4 @@ rm -rf $REFER
 
 rm ./Examples-5/*.spim
 rm ./Examples-5/*.ic
+rm ./Examples-5/*.dce

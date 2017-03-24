@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <typeinfo>
 #include"common-classes.hh"
 #include"cfg.hh"
 
@@ -23,6 +24,17 @@ string CFGNode::get_opd_variable(Ics_Opd* opd)
     {
         opd->print_ics_opd(sstr);
         sstr>>s;
+        if(typeid(*opd) == typeid(Mem_Addr_Opd))
+        {
+            if(opd->get_symbol_entry()->get_symbol_scope() == global)
+                s = "_g_" + s;
+            else
+                s = "_l_" + s;
+        }
+        else if(typeid(*opd) == typeid(Register_Addr_Opd))
+        {
+            s = "$" + s;
+        }
     }   
         // return opd->symbol_entry->get_variable_name();
     if(s == "zero")
