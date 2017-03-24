@@ -92,10 +92,15 @@ int CFGNode::removeDeadStmt()
 {
     int count = 0;
     set<string> live_vars = out;
-    for (auto rit = icode_list.rbegin(); rit != icode_list.rend(); rit++)
+
+    auto rit = icode_list.rbegin();
+    while (rit != icode_list.rend())
     {
         Icode_Stmt* ic = (*rit);
         string var;
+        // cout<<"Checking ";
+        // ic->print_icode(cout);
+        bool eliminate = false;
         switch (ic->get_op().get_ic_format())
         {
             case i_op_o1_r:                              // extra not used
@@ -105,12 +110,11 @@ int CFGNode::removeDeadStmt()
                 var = get_opd_variable(ic->get_result());
                 if(live_vars.find(var) == live_vars.end())
                 {
-                    auto it = rit.base();
-                    icode_list.erase(--it);
-                    count++;
+                    eliminate = true;
                 }
                 else
                 {
+                    live_vars.erase(get_opd_variable(ic->get_result()));
                     live_vars.insert(get_opd_variable(ic->get_opd1()));
                 }
                 break;
@@ -120,9 +124,7 @@ int CFGNode::removeDeadStmt()
                 var = get_opd_variable(ic->get_result());
                 if(live_vars.find(var) == live_vars.end())
                 {
-                    auto it = rit.base();
-                    icode_list.erase(--it);
-                    count++;
+                    eliminate = true;
                 }
                 else
                 {
@@ -136,12 +138,11 @@ int CFGNode::removeDeadStmt()
                 var = get_opd_variable(ic->get_result());
                 if(live_vars.find(var) == live_vars.end())
                 {
-                    auto it = rit.base();
-                    icode_list.erase(--it);
-                    count++;
+                    eliminate = true;
                 }
                 else
                 {
+                    live_vars.erase(get_opd_variable(ic->get_result()));
                     live_vars.insert(get_opd_variable(ic->get_opd1()));
                     live_vars.insert(get_opd_variable(ic->get_opd2()));
                 }
@@ -155,6 +156,17 @@ int CFGNode::removeDeadStmt()
 
             default:
                 break;
+        }
+        if(eliminate)
+        {
+            auto it = rit.base();
+            icode_list.erase(--it);
+            count++;
+            // cout<<"Eliminating ";
+        }
+        else
+        {
+            rit++;
         }
     }
     return count;
@@ -173,45 +185,50 @@ void  CFG::construct_from_icode(list<Icode_Stmt *> &ic_list)
     for (auto &ic : ic_list)
     {
         string name;
-
+        int nextNode;
         switch(ic->get_op().get_op())
         {
-        case j:
+            case j:
 
-            nodes[curr].icode_list.push_back(ic);
-            name = static_cast<ContS*>(ic)->get_Offset();
-            nodes[curr].children.push_back(getCFGNode(name));
-            aftergoto = true;
-            break;
+                nodes[curr].icode_list.push_back(ic);
+                name = static_cast<ContS*>(ic)->get_Offset();
+                nodes[curr].children.push_back(getCFGNode(name));
+                aftergoto = true;
+                break;
 
-        case beq:
-        case bne:
+            case beq:
+            case bne:
 
-            nodes[curr].icode_list.push_back(ic);
-            name = static_cast<ContS*>(ic)->get_Offset();
-            nodes[curr].children.push_back(getCFGNode(name));
-            niche = getCFGNode(to_string(++exec));
-            nodes[curr].children.push_back(niche);
+                nodes[curr].icode_list.push_back(ic);
+                name = static_cast<ContS*>(ic)->get_Offset();
+                nodes[curr].children.push_back(getCFGNode(name));
+                niche = getCFGNode(to_string(++exec));
+                nodes[curr].children.push_back(niche);
 
-            curr = niche;
-            node_order.push_back(curr);
-            
-            break;
-        case label:
+                curr = niche;
+                node_order.push_back(curr);
+                
+                break;
+            case label:
 
-            name = static_cast<LabS*>(ic)->get_offset();
-            curr = getCFGNode(name);
-            nodes[curr].icode_list.push_back(ic);
-            node_order.push_back(curr);
-            aftergoto = false;
-            break;
+                name = static_cast<LabS*>(ic)->get_offset();
+                nextNode = getCFGNode(name);
+                if (!aftergoto)
+                {
+                    nodes[curr].children.push_back(nextNode);
+                }
+                curr = nextNode;
+                nodes[curr].icode_list.push_back(ic);
+                node_order.push_back(curr);
+                aftergoto = false;
+                break;
 
-        default:
+            default:
 
-            if (aftergoto)
-                continue;
+                if (aftergoto)
+                    continue;
 
-            nodes[curr].icode_list.push_back(ic);
+                nodes[curr].icode_list.push_back(ic);
         }
     }
 }
@@ -287,19 +304,19 @@ void CFG::print()
 {   
     std::ostream out(std::cout.rdbuf());
     int i = 0;
-    for (auto &node : nodes)
+    for (auto &index : node_order)
     {
-        cout<<i++<<" ----- node "<<node.name<<endl;
-        for (auto &ic : node.icode_list)
+        cout<<i++<<" ----- node "<<nodes[index].name<<endl;
+        for (auto &ic : nodes[index].icode_list)
             ic->print_icode(out);
 
-        printSet("Gen ", node.gen);
-        printSet("Kill", node.kill);
-        printSet("In  ", node.in);
-        printSet("Out ", node.out);
+        printSet("Gen ", nodes[index].gen);
+        printSet("Kill", nodes[index].kill);
+        printSet("In  ", nodes[index].in);
+        printSet("Out ", nodes[index].out);
         
         cout<<"children : ";
-        for (auto &i : node.children)
+        for (auto &i : nodes[index].children)
             cout<<i<<" ";
         cout<<endl;
         cout<<endl;
@@ -318,6 +335,19 @@ void CFG::deadCodeElimination()
         {
             count += node.removeDeadStmt();
         }
-        cout<<"Deleted Number of lines : "<<count<<endl;
+        // cout<<"Deleted Number of lines : "<<count<<endl;
     } while (count > 0);
+}
+
+list<Icode_Stmt *> CFG::getIcodeList()
+{
+    list<Icode_Stmt *> result;
+
+    for (auto &index : node_order)
+    {
+        list<Icode_Stmt *> temp (nodes[index].icode_list);
+        result.splice(result.end(), temp);
+    }
+
+    return result;
 }

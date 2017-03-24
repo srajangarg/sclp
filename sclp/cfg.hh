@@ -13,7 +13,7 @@ struct CFGNode
     }
 
     string name;
-    vector<Icode_Stmt *> icode_list;
+    list<Icode_Stmt *> icode_list;
 
     vector<int> children;
     // vector<int> parents;
@@ -40,7 +40,7 @@ struct CFG
     void computeInOut();
     void calcIn(int k, vector<bool>& visited, bool& changed);
     void deadCodeElimination();
-
+    list<Icode_Stmt *> getIcodeList();
 };
 
 #endif

@@ -49,12 +49,14 @@ int main(int argc, char * argv[])
 		{
 		#ifdef COMPILE
 			program_object.compile();
-			CFG xxx;
+			program_object.get_procedure()->get_seqast()->deadCodeElimination();
+			program_object.get_procedure()->print_icode(cout);
+			// CFG cfg;
 
-			list<Icode_Stmt*> ll = program_object.get_procedure()->get_seqast()->get_icode_list();
-			xxx.construct_from_icode(ll);
-			xxx.deadCodeElimination();
-			xxx.print();
+			// list<Icode_Stmt*> ll = program_object.get_procedure()->get_seqast()->get_icode_list();
+			// cfg.construct_from_icode(ll);
+			// cfg.deadCodeElimination();
+			// cfg.print();
 
 			if (command_options.is_show_symtab_selected())
 				program_object.print_sym();

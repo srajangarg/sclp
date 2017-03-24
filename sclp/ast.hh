@@ -270,7 +270,8 @@ public:
 	Code_For_Ast & compile();
 };
 
-class Sequence_Ast: public Ast{
+class Sequence_Ast: public Ast
+{
 	list<Ast *> statement_list;
 	list<Icode_Stmt *> sa_icode_list;
 public:
@@ -281,6 +282,7 @@ public:
 	Code_For_Ast & compile();
 	void print_assembly(ostream & file_buffer);
 	void print_icode(ostream & file_buffer);
+	void deadCodeElimination();
 
 	list<Icode_Stmt*> get_icode_list()
 	{

@@ -11,6 +11,7 @@ using namespace std;
 #include"ast.hh"
 #include"procedure.hh"
 #include"program.hh"
+#include"cfg.hh"
 
 int Ast::labelCounter = 0;
 
@@ -675,4 +676,12 @@ void Boolean_Expr_Ast::print(ostream & file_buffer)
 	file_buffer<<"\n                  RHS (";
 	rhs_op->print(file_buffer);
 	file_buffer<<")";
+}
+
+void Sequence_Ast::deadCodeElimination()
+{
+	CFG cfg;
+	cfg.construct_from_icode(sa_icode_list);
+	cfg.deadCodeElimination();
+	sa_icode_list = cfg.getIcodeList();
 }
