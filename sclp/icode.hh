@@ -7,8 +7,7 @@
 #include <vector>
 #include <list>
 #include <map>
-
-#include"symbol-table.hh"
+#include "symbol-table.hh"
 
 /* 
 	This file defines classes for intermediate form of the code generated 

@@ -93,6 +93,12 @@ public:
 
 	void assign_offsets();
 	int get_size();
+
+	list<Symbol_Table_Entry *> get_entries_list()
+	{
+		return variable_table;
+	}
+
 	void set_size(int n);
 
 	void print_assembly(ostream & file_buffer);
