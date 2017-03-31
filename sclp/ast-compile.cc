@@ -203,7 +203,7 @@ CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel,
 	ic1.splice(ic1.end(), then_s.get_icode_list());
 
 	ic2.push_back(new ContS(j, NULL, NULL, slabel));
-	ic2.push_back(new LabS(j, NULL, flabel));
+	ic2.push_back(new LabS(label, NULL, flabel));
 	ic2.splice(ic2.end(), else_s.get_icode_list());
 
 	if (need_reg)
@@ -229,7 +229,7 @@ CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel,
 
 	cond_s.get_reg()->reset_use_for_expr_result();
 
-	ic2.push_back(new LabS(j, NULL, slabel));
+	ic2.push_back(new LabS(label, NULL, slabel));
 	ic1.splice(ic1.end(), ic2);
 	CFA *selection = new CFA(ic1, reg);
 	return *selection;
@@ -328,9 +328,9 @@ CFA& Iteration_Statement_Ast::compile()
 	if (not is_do_form)
 		ic_list.push_back(new ContS(j, NULL, NULL, slabel));
 
-	ic_list.push_back(new LabS(j, NULL, flabel));
+	ic_list.push_back(new LabS(label, NULL, flabel));
 	ic_list.splice(ic_list.end(), body_s.get_icode_list());
-	ic_list.push_back(new LabS(j, NULL, slabel));
+	ic_list.push_back(new LabS(label, NULL, slabel));
 	ic_list.splice(ic_list.end(), cond_s.get_icode_list());
 
 	ContS *bq = new ContS(bne, new RA_Opd(cond_s.get_reg()),

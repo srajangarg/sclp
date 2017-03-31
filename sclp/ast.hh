@@ -270,17 +270,24 @@ public:
 	Code_For_Ast & compile();
 };
 
-class Sequence_Ast: public Ast{
+class Sequence_Ast: public Ast
+{
 	list<Ast *> statement_list;
 	list<Icode_Stmt *> sa_icode_list;
 public:
 	Sequence_Ast(int line);
 	~Sequence_Ast();
-  void ast_push_back(Ast * ast);
+	void ast_push_back(Ast * ast);
 	void print(ostream & file_buffer);
 	Code_For_Ast & compile();
 	void print_assembly(ostream & file_buffer);
 	void print_icode(ostream & file_buffer);
+	void deadCodeElimination(Symbol_Table global_symbol_tableS);
+
+	list<Icode_Stmt*> get_icode_list()
+	{
+		return sa_icode_list;
+	}
 };
 
 #endif

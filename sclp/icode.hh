@@ -134,6 +134,7 @@ class Ics_Opd
 
 public:
 	virtual Register_Descriptor * get_reg();
+	virtual Symbol_Table_Entry * get_symbol_entry();
 
 	/* Operands are printed differently in icode and assembly code */
 
@@ -152,6 +153,7 @@ public:
 	void print_ics_opd(ostream & file_buffer);
 	void print_asm_opd(ostream & file_buffer);
 
+	Symbol_Table_Entry * get_symbol_entry();
 	Mem_Addr_Opd & operator= (const Mem_Addr_Opd & rhs);
 };
 

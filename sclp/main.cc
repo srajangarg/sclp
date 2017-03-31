@@ -15,6 +15,7 @@ using namespace std;
 #include "procedure.hh"
 #include "program.hh"
 #include "parser.h"
+#include "cfg.hh"
 
 #include "dirent.h"
 
@@ -48,6 +49,27 @@ int main(int argc, char * argv[])
 		{
 		#ifdef COMPILE
 			program_object.compile();
+			// program_object.get_procedure()->get_seqast()->deadCodeElimination();
+			
+			if(command_options.is_show_ic_selected())
+			{
+				program_object.deadCodeElimination();
+				if(command_options.is_demo_mode_selected())
+					program_object.get_procedure()->print_icode(cout);
+				else
+				{
+					filebuf fb;
+					fb.open(command_options.get_file_name()+".dce",ios::out);
+					ostream os(&fb);
+					program_object.get_procedure()->print_icode(os);
+				}
+			}
+			// CFG cfg;
+
+			// list<Icode_Stmt*> ll = program_object.get_procedure()->get_seqast()->get_icode_list();
+			// cfg.construct_from_icode(ll);
+			// cfg.deadCodeElimination();
+			// cfg.print();
 
 			if (command_options.is_show_symtab_selected())
 				program_object.print_sym();

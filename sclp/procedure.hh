@@ -26,6 +26,11 @@ public:
 	Procedure(Data_Type proc_return_type, string proc_name, int line);
 	~Procedure();
 
+	Sequence_Ast* get_seqast()
+	{
+		return sequence_ast;
+	}
+
 	string get_proc_name();
   	void set_sequence_ast(Sequence_Ast & sa);
 	void set_local_list(Symbol_Table & new_list);

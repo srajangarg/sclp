@@ -1,4 +1,4 @@
-OBJ_GEN = scanner.o parser.o ast.o ast-compile.o icode.o
+OBJ_GEN = scanner.o parser.o ast.o ast-compile.o icode.o cfg.o
 OBJ_CORE = main.o
 OBJ = $(OBJ_GEN) $(OBJ_CORE) 
 
