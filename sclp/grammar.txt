@@ -3,20 +3,52 @@ program:
 ;
 
 declaration_list:
-	procedure_declaration
+	procedure_declaration_list
 |
-	variable_declaration_list procedure_declaration
+	variable_declaration_list procedure_declaration_list
 |
 	procedure_declaration variable_declaration_list
 ;
 
+procedure_declaration_list:
+	procedure_declaration
+|
+	procedure_declaration_list procedure_declaration
+;
+
 procedure_declaration:
-	VOID NAME '(' ')' ';'
+	procedure_return_type NAME '(' optional_procedure_argument_list ')' ';'
+;
+
+optional_procedure_argument_list:
+	/* empty */
+|
+	procedure_argument_list
+;
+
+procedure_argument_list:
+	var_type NAME
+|
+	procedure_argument_list ',' var_type NAME
 ;
 
 procedure_definition:
 	NAME '(' ')'
-	'{' optional_variable_declaration_list statement_list '}'
+	'{' optional_variable_declaration_list statement_list return_statement '}'
+;
+
+procedure_return_type:
+	VOID
+|
+	INTEGER
+|
+	FLOAT
+;
+
+var_type:
+	INTEGER
+|
+	FLOAT
 ;
 
 optional_variable_declaration_list:
@@ -36,9 +68,7 @@ variable_declaration:
 ;
 
 declaration:
-	INTEGER NAME id_list
-|
-	FLOAT NAME id_list
+	var_type NAME id_list 
 ;
 
 id_list:
@@ -64,6 +94,10 @@ statement:
 	assignment_statement
 |
 	'{' statement_list '}'
+|
+	procedure_call ';'
+|
+	return_statement
 ;
 
 assignment_statement:
@@ -146,6 +180,8 @@ expression_term:
 	variable
 |
 	constant
+|
+	procedure_call
 ;
 
 variable:
@@ -156,4 +192,26 @@ constant:
 	INTEGER_NUMBER
 |
 	DOUBLE_NUMBER
+;
+
+procedure_call:
+	NAME '(' optional_argument_list')'
+;
+
+optional_argument_list:
+	/* empty */
+|
+	argument_list
+;
+
+argument_list:
+	NAME
+|
+	argument_list ',' NAME
+;
+
+return_statement:
+	RETURN ';'
+|
+	RETURN arith_expression
 ;

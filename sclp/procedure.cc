@@ -39,6 +39,8 @@ void Procedure::set_sequence_ast(Sequence_Ast & sa)
 void Procedure::set_local_list(Symbol_Table & new_list)
 {
 	local_symbol_table = new_list;
+	local_symbol_table.set_table_scope(local);
+	local_symbol_table.assign_offsets();
 }
 
 Data_Type Procedure::get_return_type()
