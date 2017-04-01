@@ -106,6 +106,12 @@ public:
 	map<Tgt_Op, Instruction_Descriptor *> spim_instruction_table;
 	map<Spim_Register, Register_Descriptor *> spim_register_table;
 
+	Machine_Description()
+	{
+		initialize_instruction_table();
+		initialize_register_table();
+	}
+
 	void initialize_instruction_table();
 	void initialize_register_table();
 

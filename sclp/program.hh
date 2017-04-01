@@ -38,14 +38,11 @@ public:
 	bool variable_proc_name_check(string symbol);
 	bool variable_in_symbol_list_check(string variable);
 	void global_list_in_proc_check();
+	void variable_in_proc_map_check(string var);
 
 	// compile
 	void compile();
 	void print_assembly();
-	void deadCodeElimination()
-	{
-		procedure->get_seqast()->deadCodeElimination(global_symbol_table);
-	}
 };
 
 #endif
