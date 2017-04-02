@@ -29,9 +29,13 @@ optional_procedure_argument_list:
 ;
 
 procedure_argument_list:
-	var_data_type NAME
+	procedure_argument
 |
-	procedure_argument_list ',' var_type NAME
+	procedure_argument_list ',' procedure_argument
+;
+
+procedure_argument:
+	var_data_type NAME
 ;
 
 procedure_definition_list:
@@ -41,7 +45,7 @@ procedure_definition_list:
 ;
 
 procedure_definition:
-	NAME '(' ')'
+	NAME '(' optional_procedure_argument_list ')'
 	'{' optional_variable_declaration_list statement_list return_statement '}'
 ;
 
@@ -205,13 +209,13 @@ optional_argument_list:
 ;
 
 argument_list:
-	NAME
+	arith_expression
 |
-	argument_list ',' NAME
+	argument_list ',' arith_expression
 ;
 
 return_statement:
 	RETURN ';'
 |
-	RETURN arith_expression
+	RETURN arith_expression ';'
 ;

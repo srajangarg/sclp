@@ -44,6 +44,14 @@ void Procedure::set_local_list(Symbol_Table & new_list)
 	local_symbol_table.assign_offsets();
 }
 
+void Procedure::set_formal_list(Symbol_Table & new_list)
+{
+	formal_symbol_table = new_list;
+	formal_symbol_table.set_table_scope(formal);
+	formal_symbol_table.set_start_offset_of_first_symbol(8);
+	formal_symbol_table.assign_offsets();
+}
+
 void Procedure::set_defined()
 {
 	is_defined = true;	
@@ -59,9 +67,16 @@ Data_Type Procedure::get_return_type()
 	return return_type;
 }
 
-Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
+Symbol_Table_Entry & Procedure::get_local_symbol_table_entry(string variable_name)
 {
+
 	return local_symbol_table.get_symbol_table_entry(variable_name);
+}
+
+Symbol_Table_Entry & Procedure::get_formal_symbol_table_entry(string variable_name)
+{
+	
+	return formal_symbol_table.get_symbol_table_entry(variable_name);
 }
 
 void Procedure::print(ostream & file_buffer)
@@ -74,9 +89,14 @@ void Procedure::print_sym(ostream & file_buffer)
 	print_assembly(file_buffer);
 }
 
-bool Procedure::variable_in_symbol_list_check(string variable)
+bool Procedure::variable_in_local_symbol_list_check(string variable)
 {
-	local_symbol_table.variable_in_symbol_list_check(variable);
+	return local_symbol_table.variable_in_symbol_list_check(variable);
+}
+
+bool Procedure::variable_in_formal_symbol_list_check(string variable)
+{
+	return formal_symbol_table.variable_in_symbol_list_check(variable);
 }
 
 // compile

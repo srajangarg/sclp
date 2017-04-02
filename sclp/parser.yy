@@ -8,6 +8,7 @@
 	pair<Data_Type, vector<string> * > * decl;
 	vector<string> * string_vector;
 	Symbol_Table * symbol_table;
+	Symbol_Table_Entry * symbol_entry;
 	vector<Symbol_Table_Entry *> * symbol_entry_vector;
 	Procedure * procedure;
 	int integer_value;
@@ -59,6 +60,8 @@
 %type <boolean_expr_ast> boolean_expression
 %type <selection_statement_ast> if_else_statement
 %type <dt> var_data_type
+%type <symbol_table> optional_procedure_argument_list procedure_argument_list
+%type <symbol_entry> procedure_argument
 
 %start program
 
@@ -71,6 +74,12 @@ program:
 	{
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 
+		CHECK_INVARIANT((program_object.variable_in_proc_map_check("main")), "Procedure main is not declared");
+		
+		Procedure* main_proc = program_object.get_procedure("main");
+		CHECK_INVARIANT((main_proc->check_defined()), "Procedure main is not defined");
+
+		
 		// program_object.set_procedure(current_procedure, get_line_number());
 		// program_object.global_list_in_proc_check();
 	}
@@ -133,7 +142,7 @@ procedure_declaration_list:
 ;
 
 procedure_declaration:
-	var_data_type NAME '(' ')' ';'
+	var_data_type NAME '(' optional_procedure_argument_list ')' ';'
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -145,10 +154,13 @@ procedure_declaration:
 		// remove line number
 		Procedure * proc = new Procedure($1, proc_name, get_line_number());
 		program_object.add_procedure(proc, get_line_number());
+
+		Symbol_Table * formal_table = $4;
+		proc->set_formal_list(*formal_table);
 	}
 	}
 |
-	VOID NAME '(' ')' ';'
+	VOID NAME '(' optional_procedure_argument_list ')' ';'
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -159,6 +171,69 @@ procedure_declaration:
 		// remove line number
 		Procedure * proc = new Procedure(void_data_type, proc_name, get_line_number());
 		program_object.add_procedure(proc, get_line_number());
+		
+		Symbol_Table * formal_table = $4;
+		proc->set_formal_list(*formal_table);
+	}
+	}
+;
+
+optional_procedure_argument_list:
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		Symbol_Table * arg_list = new Symbol_Table();
+		$$ = arg_list;
+	}
+	}
+|
+	procedure_argument_list
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		Symbol_Table * arg_list = new Symbol_Table();
+		$$ = $1;
+	}
+	}
+;
+
+procedure_argument_list:
+	procedure_argument
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		Symbol_Table * arg_list = new Symbol_Table();
+		Symbol_Table_Entry * arg_entry = $1;
+		arg_list->push_symbol(arg_entry);
+		$$ = arg_list;
+	}
+	}
+|
+	procedure_argument_list ',' procedure_argument
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		Symbol_Table * arg_list = $1;
+		Symbol_Table_Entry * arg_entry = $3;
+
+		CHECK_INPUT((arg_list->variable_in_symbol_list_check(arg_entry->get_variable_name()) == false), 
+					"Formal Parameter declared twice", get_line_number());
+		
+		arg_list->push_symbol(arg_entry);
+		$$ = arg_list;
+	}
+	}
+;
+
+procedure_argument:
+	var_data_type NAME
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($2 != NULL), "Argument name cannot be null");
+		string arg_name = *$2;
+		Symbol_Table_Entry * arg_entry = new Symbol_Table_Entry(arg_name, $1, get_line_number());
+		$$ = arg_entry;
 	}
 	}
 ;
@@ -169,6 +244,7 @@ procedure_definition_list:
 	procedure_definition_list procedure_definition
 ;
 
+// TODO : argument list
 procedure_definition:
 	NAME '(' ')'
 	{
@@ -183,6 +259,7 @@ procedure_definition:
 		CHECK_INVARIANT((current_procedure != NULL), "Procedure corresponding to the name is not found");
 		CHECK_INVARIANT((current_procedure->check_defined() == false), "Procedure has already been defined before");
 		// TODO : formal symbol table
+		current_procedure->set_defined();
 		CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
 			"Procedure name cannot be same as global variable", get_line_number());
 	}
@@ -271,10 +348,14 @@ variable_declaration_list:
 			{
 				CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
 					"Variable name cannot be same as procedure name", get_line_number());
+	
+				CHECK_INPUT((current_procedure->variable_in_formal_symbol_list_check(decl_name) == false), 
+					"Formal parameter and local variable name cannot be same", get_line_number());
 			}
 
 			CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
 					"Variable is declared twice", get_line_number());
+			
 
 			decl_list->push_symbol(decl_stmt[i]);
 		}
@@ -307,6 +388,9 @@ variable_declaration_list:
 			{
 				CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
 					"Variable name cannot be same as procedure name", get_line_number());
+
+				CHECK_INPUT((current_procedure->variable_in_formal_symbol_list_check(decl_name) == false), 
+					"Formal parameter and local variable name cannot be same", get_line_number());
 			}
 
 			CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
@@ -456,6 +540,14 @@ statement:
 		$$ = $2;
 	} 
 	}
+// |
+// 	procedure_call ';'
+// 	{
+// 	if (NOT_ONLY_PARSE)
+// 	{
+// 		$$ = $1;
+// 	} 
+// 	}
 ;
 
 do_while_statement:
@@ -795,6 +887,14 @@ expression_term:
 		$$ = $1;
 	}
 	}
+// |
+// 	procedure_call
+// 	{
+// 	if (NOT_ONLY_PARSE)
+// 	{
+// 		$$ = $1;
+// 	} 
+// 	}
 ;
 
 variable:
@@ -807,8 +907,11 @@ variable:
 
 		CHECK_INVARIANT(($1 != NULL), "Variable name cannot be null");
 
-		if (current_procedure->variable_in_symbol_list_check(*$1))
-			 var_table_entry = &(current_procedure->get_symbol_table_entry(*$1));
+		if (current_procedure->variable_in_local_symbol_list_check(*$1))
+			var_table_entry = &(current_procedure->get_local_symbol_table_entry(*$1));
+
+		else if (current_procedure->variable_in_formal_symbol_list_check(*$1))
+			var_table_entry = &(current_procedure->get_formal_symbol_table_entry(*$1));
 
 		else if (program_object.variable_in_symbol_list_check(*$1))
 			var_table_entry = &(program_object.get_symbol_table_entry(*$1));
@@ -864,3 +967,19 @@ var_data_type:
 	}
 	}
 ;
+
+// procedure_call:
+// 	NAME '(' optional_argument_list ')' 
+// ;
+
+// optional_argument_list:
+
+// |
+// 	argument_list
+// ;
+
+// argument_list:
+// 	arith_expression
+// |
+// 	argument_list arith_expression
+// ;
