@@ -19,7 +19,7 @@ class Procedure
 	string name;
 	Symbol_Table local_symbol_table;
 	Sequence_Ast * sequence_ast;
-
+	bool is_defined;
 	int lineno;
 
 public:
@@ -34,6 +34,8 @@ public:
 	string get_proc_name();
   	void set_sequence_ast(Sequence_Ast & sa);
 	void set_local_list(Symbol_Table & new_list);
+	void set_defined();
+	bool check_defined();
 	Data_Type get_return_type();
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 

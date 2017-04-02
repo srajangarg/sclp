@@ -29,9 +29,9 @@ void Program::delete_all()
 
 }
 
-void Program::set_procedure(Procedure * proc, int line)
+void Program::add_procedure(Procedure * proc, int line)
 {
-	procedure = proc;
+	procedures.push_back(proc);
 	// line??
 }
 
@@ -45,6 +45,16 @@ Symbol_Table_Entry & Program::get_symbol_table_entry(string variable)
 	return global_symbol_table.get_symbol_table_entry(variable);
 }
 
+Procedure * Program::get_procedure(string name)
+{
+	for (auto proc : procedures)
+	{
+		if (proc->get_proc_name() == name)
+			return proc;
+	}
+	return NULL;
+}
+
 void Program::print_sym()
 {
 }
@@ -55,9 +65,10 @@ void Program::print()
 
 bool Program::variable_proc_name_check(string symbol)
 {	
-	if (procedure == NULL)
-		return false;
-	return (procedure->get_proc_name() != symbol);
+	// if (procedure == NULL)
+	// 	return false;
+	// return (procedure->get_proc_name() != symbol);
+	return false;
 }
 
 bool Program::variable_in_symbol_list_check(string variable)
@@ -70,18 +81,26 @@ void Program::global_list_in_proc_check()
 	global_symbol_table.global_list_in_proc_map_check();
 }
 
-void Program::variable_in_proc_map_check(string var)
+bool Program::variable_in_proc_map_check(string var)
 {
+	for (auto proc : procedures)
+	{
+		if (proc->get_proc_name() == var)
+			return true;
+	}
+	return false;
 	// global_symbol_table.global_list_in_proc_map_check();
 }
 
 void Program::compile()
 {
-	procedure->compile();
+	for (auto proc : procedures)
+		proc->compile();
 	print_assembly();
 }
 
 void Program::print_assembly()
 {
-	procedure->print_assembly(command_options.get_output_buffer());
+	for (auto proc : procedures)
+		proc->print_assembly(command_options.get_output_buffer());
 }

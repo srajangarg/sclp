@@ -21,6 +21,7 @@
 	Relational_Expr_Ast * relational_expr_ast;
 	Boolean_Expr_Ast * boolean_expr_ast;
 	Ast * ast;
+	Data_Type dt;
 	//ADD CODE HERE
 };
 
@@ -30,7 +31,7 @@
 %token <double_value> DOUBLE_NUMBER
 %token <string_value> NAME
 %token INTEGER VOID FLOAT
-%token ASSIGN
+%token ASSIGN RETURN
 %token IF DO WHILE FOR
 
 %nonassoc THEN
@@ -57,26 +58,27 @@
 %type <arithmetic_expr_ast> arith_expression
 %type <boolean_expr_ast> boolean_expression
 %type <selection_statement_ast> if_else_statement
+%type <dt> var_data_type
 
 %start program
 
 %%
 
 program:
-	declaration_list procedure_definition
+	declaration_list procedure_definition_list
 	{
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 
-		program_object.set_procedure(current_procedure, get_line_number());
-		program_object.global_list_in_proc_check();
+		// program_object.set_procedure(current_procedure, get_line_number());
+		// program_object.global_list_in_proc_check();
 	}
 	}
 ;
 
 declaration_list:
-	procedure_declaration
+	procedure_declaration_list
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -86,7 +88,7 @@ declaration_list:
 	}
 |
 	variable_declaration_list
-	procedure_declaration
+	procedure_declaration_list
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -98,7 +100,7 @@ declaration_list:
 	}
 	}
 |
-	procedure_declaration
+	procedure_declaration_list
 	variable_declaration_list
 	{
 	if (NOT_ONLY_PARSE)
@@ -112,15 +114,59 @@ declaration_list:
 	}
 ;
 
+procedure_declaration_list:
+	procedure_declaration
+	// {
+	// if (NOT_ONLY_PARSE)
+	// {
+	// 	CHECK_INVARIANT((program_object.variable_in_proc_map_check("main")), "Procedure main is not defined");
+	// }
+	// }
+|
+	procedure_declaration_list procedure_declaration
+	// {
+	// if (NOT_ONLY_PARSE)
+	// {
+	// 	CHECK_INVARIANT((program_object.variable_in_proc_map_check("main")), "Procedure main is not defined");
+	// }
+	// }
+;
+
 procedure_declaration:
+	var_data_type NAME '(' ')' ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
+		string proc_name = *$2;
+		CHECK_INVARIANT((program_object.variable_in_proc_map_check(proc_name) == false), "Overloading of the procedure is not allowed");
+		// CHECK_INVARIANT((program_object.variable_in_symbol_list_check(proc_name) == false), "Overloading of the procedure is not allowed");
+		
+		// remove line number
+		Procedure * proc = new Procedure($1, proc_name, get_line_number());
+		program_object.add_procedure(proc, get_line_number());
+	}
+	}
+|
 	VOID NAME '(' ')' ';'
 	{
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
-		CHECK_INVARIANT((*$2 == "main"), "Procedure name must be main in declaration");
+		string proc_name = *$2;
+		CHECK_INVARIANT((program_object.variable_in_proc_map_check(proc_name) == false), "Overloading of the procedure is not allowed");
+		
+		// remove line number
+		Procedure * proc = new Procedure(void_data_type, proc_name, get_line_number());
+		program_object.add_procedure(proc, get_line_number());
 	}
 	}
+;
+
+procedure_definition_list:
+	procedure_definition
+|
+	procedure_definition_list procedure_definition
 ;
 
 procedure_definition:
@@ -129,12 +175,14 @@ procedure_definition:
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "Procedure name cannot be null");
-		CHECK_INVARIANT((*$1 == "main"), "Procedure name must be main");
-
+		
 		string proc_name = *$1;
+		
+		current_procedure = program_object.get_procedure(proc_name);		
 
-		current_procedure = new Procedure(void_data_type, proc_name, get_line_number());
-
+		CHECK_INVARIANT((current_procedure != NULL), "Procedure corresponding to the name is not found");
+		CHECK_INVARIANT((current_procedure->check_defined() == false), "Procedure has already been defined before");
+		// TODO : formal symbol table
 		CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
 			"Procedure name cannot be same as global variable", get_line_number());
 	}
@@ -298,21 +346,12 @@ variable_declaration:
 ;
 
 declaration:
-	INTEGER id_list
+	var_data_type id_list
 	{
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($2 != NULL), "id_list cannot be null");
-		$$ = new pair<Data_Type, vector<string> * >(int_data_type, $2);
-	}
-	}
-|
-	FLOAT id_list
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT(($2 != NULL), "id_list cannot be null");
-		$$ = new pair<Data_Type, vector<string> * >(double_data_type, $2);
+		$$ = new pair<Data_Type, vector<string> * >($1, $2);
 	}
 	}
 ;
@@ -804,6 +843,24 @@ constant:
 		double num = $1;
 		Ast * num_ast = new Number_Ast<double> (num, double_data_type, get_line_number());
 		$$ = num_ast;
+	}
+	}
+;
+
+var_data_type:
+	INTEGER
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = int_data_type;
+	}
+	}
+|
+	FLOAT
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = double_data_type;
 	}
 	}
 ;

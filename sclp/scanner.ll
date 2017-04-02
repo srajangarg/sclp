@@ -21,6 +21,10 @@ void                        {
                                 store_token_name("VOID");
                                 return Parser::VOID;
                             }
+return                      {
+                                store_token_name("RETURN");
+                                return Parser::RETURN;
+                            }
 
 if                          {
                                 store_token_name("IF");
