@@ -176,7 +176,7 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[store_d] = new Instruction_Descriptor(store_d, "store.d", "s.d", "", i_r_op_o1, a_op_o1_r);
 	spim_instruction_table[load_d] = new Instruction_Descriptor(load_d, "load.d", "l.d", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[imm_load_d] = new Instruction_Descriptor(imm_load_d, "iLoad.d", "li.d", "", i_r_op_o1, a_op_r_o1);
-	spim_instruction_table[move_d] = new Instruction_Descriptor(move_d, "move.d", "mov.d", "", i_r_op_o1, a_op_r_o1);
+	spim_instruction_table[mov_d] = new Instruction_Descriptor(move_d, "move.d", "mov.d", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[add_d] = new Instruction_Descriptor(add_d, "add.d", "add.d", "", i_r_o1_op_o2, a_op_r_o1_o2);
 	spim_instruction_table[sub_d] = new Instruction_Descriptor(sub_d, "sub.d", "sub.d", "", i_r_o1_op_o2, a_op_r_o1_o2);
 	spim_instruction_table[mult_d] = new Instruction_Descriptor(mult_d, "mul.d", "mul.d", "", i_r_o1_op_o2, a_op_r_o1_o2);

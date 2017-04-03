@@ -316,10 +316,12 @@ public:
 class Return_Statement_Ast : public Ast
 {
 	Ast* return_val;
+	Procedure* proc;
 public:
-	Return_Statement_Ast(Ast * val, int line);
+	Return_Statement_Ast(Ast * val, Procedure* p, int line);
 	~Return_Statement_Ast();
 
+	bool check_ast();
 	void print(ostream & file_buffer);
 	Code_For_Ast & compile();
 };

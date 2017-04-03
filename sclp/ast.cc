@@ -721,11 +721,28 @@ void Print_Ast::print(ostream & file_buffer)
 
 //////////////////////////////////////////////////////////////////////
 
-Return_Statement_Ast::Return_Statement_Ast(Ast * val, int line)
+Return_Statement_Ast::Return_Statement_Ast(Ast * val, Procedure* p, int line)
 {
 	return_val = val;
+	proc = p;
 	lineno = line;
 	ast_num_child = unary_arity;
+}
+
+bool Return_Statement_Ast::check_ast()
+{	
+	if (return_val != NULL)
+	{
+		if (proc->get_return_type() != return_val->get_data_type())
+			return false;
+	}
+	else
+	{
+		if(proc->get_return_type() != void_data_type)
+			return false;
+	}
+
+	return true;
 }
 
 Return_Statement_Ast::~Return_Statement_Ast()

@@ -993,8 +993,8 @@ procedure_call:
 		CHECK_INVARIANT((proc != NULL), "Procedure corresponding to the name is not found");
 		
 		Call_Ast * proc_call = new Call_Ast(proc, arg_list, get_line_number());
+		CHECK_INVARIANT(proc_call->check_ast(), "xxx");
 		$$ = proc_call;
-		//$$ = new Number_Ast<int> (0, int_data_type, get_line_number()) ;
 	}
 	}
 ;
@@ -1043,8 +1043,9 @@ return_statemnt:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		// TODO : replace by return_ast
-		$$ = new Number_Ast<int> (0, int_data_type, get_line_number()) ;
+		auto ret = new Return_Statement_Ast(NULL, current_procedure, get_line_number());
+		CHECK_INVARIANT(ret->check_ast(), "xxx");
+		$$ = ret;
 	}
 	}
 |
@@ -1052,8 +1053,9 @@ return_statemnt:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		// TODO : replace by return_ast
-		$$ = new Number_Ast<int> (0, int_data_type, get_line_number()) ;
+		auto ret = new Return_Statement_Ast($2, current_procedure, get_line_number());
+		CHECK_INVARIANT(ret->check_ast(), "xxx");
+		$$ = ret;
 	}
 	}
 ;

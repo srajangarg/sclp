@@ -1,18 +1,16 @@
 // int to_tower;
-void TOH(int n);
-// int from_tower;
+float TOH(int n, int p);
 void main();
 
 main()
 {
- int n,k;
- n = 5; k = n-1;
- // TOH(k,10,20,30);
+ float n,k;
+ n = TOH(20,30);
  return;
 }
 
-TOH(int n)
+TOH(int n, int p)
 {
-	print(2);
- 	return;
+ float k;
+ return k + 3.0;
 }

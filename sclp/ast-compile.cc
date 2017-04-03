@@ -45,7 +45,7 @@ CFA& Assignment_Ast::compile()
 	CFA& load_stmt = rhs->compile();
 
 	RD *l_reg = load_stmt.get_reg();
-	CHECK_INVARIANT(l_reg, "Load register cannot be null in Assignment_Ast");
+	CHECK_INVARIANT((l_reg != NULL), "Load register cannot be null in Assignment_Ast");
 	l_reg->set_use_for_expr_result();
 
 	CFA store_stmt = lhs->create_store_stmt(l_reg);
@@ -426,8 +426,36 @@ CFA& Call_Ast::compile()
 }
 
 CFA& Return_Statement_Ast::compile()
-{
+{	
+	list<ICS *>& ic_list = *new list<ICS *>;
 
+	if (return_val != NULL)
+	{
+		CFA& ret = return_val->compile();
+		ic_list.splice(ic_list.end(), ret.get_icode_list());
+		
+		Tgt_Op op; RD *reg;
+
+		if (return_val->get_data_type() == int_data_type)
+		{
+			op = mov;
+			reg = machine_desc_object.spim_register_table[v1];
+		}
+		else
+		{
+			op = mov_d;
+			reg = machine_desc_object.spim_register_table[f0];
+		}
+
+		MovS *m = new MovS(op, new RA_Opd(reg), new RA_Opd(ret.get_reg()));
+		// ret.get_reg()->reset_use_for_expr_result();
+		ic_list.push_back(m);
+	}
+
+	ic_list.push_back(new ContS(j, NULL, NULL, "epilogue_"+proc->get_proc_name()));
+
+	CFA* ret_stmt =  new CFA(ic_list, NULL);
+	return *ret_stmt;
 }
 
 CFA& Print_Ast::compile()
@@ -439,6 +467,5 @@ CFA& String_Ast::compile()
 {
 	label = "string" + to_string(program_object.string_asts.size());
 	program_object.string_asts.push_back(this);
-
-	
+	// todo
 }
