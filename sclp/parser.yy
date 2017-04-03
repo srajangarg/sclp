@@ -23,6 +23,7 @@
 	Boolean_Expr_Ast * boolean_expr_ast;
 	Ast * ast;
 	Data_Type dt;
+	vector<Ast *> * ast_vector;
 	//ADD CODE HERE
 };
 
@@ -55,14 +56,15 @@
 %type <sequence_ast> statement_list
 %type <assignment_ast> assignment_statement for_decl
 %type <iteration_statement_ast> do_while_statement while_statement
-%type <ast> variable constant relational_expression expression_term statement for_statement
+%type <ast> variable constant relational_expression expression_term statement for_statement 
+%type <ast> procedure_call return_statemnt
 %type <arithmetic_expr_ast> arith_expression
 %type <boolean_expr_ast> boolean_expression
 %type <selection_statement_ast> if_else_statement
 %type <dt> var_data_type
 %type <symbol_table> optional_procedure_argument_list procedure_argument_list
 %type <symbol_entry> procedure_argument
-
+%type <ast_vector> optional_argument_list argument_list
 %start program
 
 %%
@@ -289,7 +291,7 @@ procedure_definition:
 
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 		CHECK_INVARIANT((seq != NULL), "statement list cannot be null");
-
+		// TODO : check last statemnet is return statement (MAYBE make a fn of sequence to check this)
 		current_procedure->set_sequence_ast(*seq);
 	}
 	}
@@ -540,14 +542,22 @@ statement:
 		$$ = $2;
 	} 
 	}
-// |
-// 	procedure_call ';'
-// 	{
-// 	if (NOT_ONLY_PARSE)
-// 	{
-// 		$$ = $1;
-// 	} 
-// 	}
+|
+	procedure_call ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	} 
+	}
+|
+	return_statemnt
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	} 
+	}
 ;
 
 do_while_statement:
@@ -887,14 +897,14 @@ expression_term:
 		$$ = $1;
 	}
 	}
-// |
-// 	procedure_call
-// 	{
-// 	if (NOT_ONLY_PARSE)
-// 	{
-// 		$$ = $1;
-// 	} 
-// 	}
+|
+	procedure_call
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	} 
+	}
 ;
 
 variable:
@@ -968,18 +978,72 @@ var_data_type:
 	}
 ;
 
-// procedure_call:
-// 	NAME '(' optional_argument_list ')' 
-// ;
+procedure_call:
+	NAME '(' optional_argument_list ')' 
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		// TODO : replace by call_ast
+		$$ = new Number_Ast<int> (0, int_data_type, get_line_number()) ;
+	}
+	}
+;
 
-// optional_argument_list:
+optional_argument_list:
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = new vector<Ast *> ;
+	}
+	}
+|
+	argument_list
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	}
+	}
+;
 
-// |
-// 	argument_list
-// ;
+argument_list:
+	arith_expression
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		vector<Ast *> * arguments = new vector<Ast*>;
+		arguments->push_back($1);
+		$$ = arguments;
+	}
+	}
+|
+	argument_list ',' arith_expression
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		vector<Ast *> * arguments = $1;
+		arguments->push_back($3);
+		$$ = arguments;
+	}
+	}
+;
 
-// argument_list:
-// 	arith_expression
-// |
-// 	argument_list arith_expression
-// ;
+return_statemnt:
+	RETURN ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		// TODO : replace by return_ast
+		$$ = new Number_Ast<int> (0, int_data_type, get_line_number()) ;
+	}
+	}
+|
+	RETURN arith_expression ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		// TODO : replace by return_ast
+		$$ = new Number_Ast<int> (0, int_data_type, get_line_number()) ;
+	}
+	}
+;
