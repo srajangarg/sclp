@@ -102,6 +102,8 @@ statement:
 	procedure_call ';'
 |
 	return_statement
+|
+	print_statemnt
 ;
 
 assignment_statement:
@@ -219,3 +221,11 @@ return_statement:
 |
 	RETURN arith_expression ';'
 ;
+
+print_statement:
+	PRINT '(' print_argument ')';
+
+print_argument:
+	arith_expression
+|
+	string

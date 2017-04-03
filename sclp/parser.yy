@@ -986,7 +986,15 @@ procedure_call:
 	if (NOT_ONLY_PARSE)
 	{
 		// TODO : replace by call_ast
-		$$ = new Number_Ast<int> (0, int_data_type, get_line_number()) ;
+		string proc_name = *$1;
+		vector<Ast *> arg_list = *$3;
+
+		Procedure * proc = program_object.get_procedure(proc_name);		
+		CHECK_INVARIANT((proc != NULL), "Procedure corresponding to the name is not found");
+		
+		Call_Ast * proc_call = new Call_Ast(proc, arg_list, get_line_number());
+		$$ = proc_call;
+		//$$ = new Number_Ast<int> (0, int_data_type, get_line_number()) ;
 	}
 	}
 ;
