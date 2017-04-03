@@ -289,4 +289,54 @@ public:
 	}
 };
 
+class String_Ast : public Ast
+{
+	string s;
+public:
+	String_Ast(string s, int line);
+	~String_Ast();
+
+	Data_Type get_data_type();
+	void print(ostream & file_buffer);
+	Code_For_Ast & compile();
+};
+
+class Print_Ast : public Ast
+{
+	Ast* arg;
+public:
+	Print_Ast(Ast * arg, int line);
+	~Print_Ast();
+
+	void print(ostream & file_buffer);
+	Code_For_Ast & compile();
+};
+
+class Return_Statement_Ast : public Ast
+{
+	Ast* return_val;
+public:
+	Return_Statement_Ast(Ast * val, int line);
+	~Return_Statement_Ast();
+
+	void print(ostream & file_buffer);
+	Code_For_Ast & compile();
+};
+
+class Call_Ast : public Ast
+{
+	vector<Ast *> arg_list;
+	Procedure * func;
+public:
+	Call_Ast(Procedure* func, vector<Ast *>& a_list, int line);
+	~Call_Ast();
+
+	Data_Type get_data_type();
+	void set_data_type(Data_Type dt);
+	bool check_ast();
+
+	void print(ostream & file_buffer);
+	Code_For_Ast & compile();
+};
+
 #endif

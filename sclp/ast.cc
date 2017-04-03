@@ -676,3 +676,97 @@ void Boolean_Expr_Ast::print(ostream & file_buffer)
 	rhs_op->print(file_buffer);
 	file_buffer<<")";
 }
+
+String_Ast::String_Ast(string body, int line)
+{
+	s = body;
+	lineno = line;
+	node_data_type = string_data_type;
+	ast_num_child = zero_arity;
+}
+
+String_Ast::~String_Ast()
+{
+
+}
+
+Data_Type String_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+void String_Ast::print(ostream & file_buffer)
+{
+	//todo
+}
+
+//////////////////////////////////////////////////////////////////////
+
+Print_Ast::Print_Ast(Ast * body, int line)
+{
+	arg = body;
+	node_data_type = body->get_data_type();
+	lineno = line;
+	ast_num_child = unary_arity;
+}
+
+Print_Ast::~Print_Ast()
+{
+}
+
+void Print_Ast::print(ostream & file_buffer)
+{
+	//todo
+}
+
+//////////////////////////////////////////////////////////////////////
+
+Return_Statement_Ast::Return_Statement_Ast(Ast * val, int line)
+{
+	return_val = val;
+	lineno = line;
+	ast_num_child = unary_arity;
+}
+
+Return_Statement_Ast::~Return_Statement_Ast()
+{
+}
+
+void Return_Statement_Ast::print(ostream & file_buffer)
+{
+	//todo
+}
+
+//////////////////////////////////////////////////////////////////////
+
+// Call_Ast::Call_Ast(Procedure* f, vector<Ast *>& a_list, int line)
+// {
+// 	func = f;
+// 	arg_list = a_list;
+// 	lineno = line;
+// 	node_data_type = func->get_return_type();
+// 	// ast_num_child = zero_arity;
+// }
+
+// Call_Ast::~Call_Ast()
+// {
+// }
+
+// bool Call_Ast::check_ast()
+// {
+// 	// vector<pair<Data_Type, string> *> formal_args = *(func->get_argument_list());
+// 	// list<Ast*>::iterator it1 = argument_list.begin();
+// 	// int it2 = 0;
+// 	// for (; it1 != argument_list.end() and it2 < formal_args.size(); ++it1,++it2)
+// 	// {
+// 	// 	CHECK_INVARIANT((*it1)->get_data_type() == formal_args[it2]->first, "Actual and formal parameters data types are not matching");
+// 	// }
+// 	// if (it1 == argument_list.end() and it2 == formal_args.size())
+// 	// 	return true;
+// 	// return false;
+// }
+
+// void Call_Ast::print(ostream & file_buffer)
+// {
+// 	//todo
+// }
