@@ -421,9 +421,9 @@ void Sequence_Ast::print_icode(ostream & file_buffer)
 template class Number_Ast<double>;
 template class Number_Ast<int>;
 
-// CFA& Call_Ast::compile()
-// {	
-// }
+CFA& Call_Ast::compile()
+{	
+}
 
 CFA& Return_Statement_Ast::compile()
 {	

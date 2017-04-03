@@ -332,7 +332,6 @@ public:
 	~Call_Ast();
 
 	Data_Type get_data_type();
-	void set_data_type(Data_Type dt);
 	bool check_ast();
 
 	void print(ostream & file_buffer);

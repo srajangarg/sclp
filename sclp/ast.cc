@@ -739,34 +739,38 @@ void Return_Statement_Ast::print(ostream & file_buffer)
 
 //////////////////////////////////////////////////////////////////////
 
-// Call_Ast::Call_Ast(Procedure* f, vector<Ast *>& a_list, int line)
-// {
-// 	func = f;
-// 	arg_list = a_list;
-// 	lineno = line;
-// 	node_data_type = func->get_return_type();
-// 	// ast_num_child = zero_arity;
-// }
+Call_Ast::Call_Ast(Procedure* f, vector<Ast *>& a_list, int line)
+{
+	func = f;
+	arg_list = a_list;
+	lineno = line;
+	node_data_type = func->get_return_type();
+	// ast_num_child = zero_arity;
+}
 
-// Call_Ast::~Call_Ast()
-// {
-// }
+Call_Ast::~Call_Ast()
+{
+}
 
-// bool Call_Ast::check_ast()
-// {
-// 	// vector<pair<Data_Type, string> *> formal_args = *(func->get_argument_list());
-// 	// list<Ast*>::iterator it1 = argument_list.begin();
-// 	// int it2 = 0;
-// 	// for (; it1 != argument_list.end() and it2 < formal_args.size(); ++it1,++it2)
-// 	// {
-// 	// 	CHECK_INVARIANT((*it1)->get_data_type() == formal_args[it2]->first, "Actual and formal parameters data types are not matching");
-// 	// }
-// 	// if (it1 == argument_list.end() and it2 == formal_args.size())
-// 	// 	return true;
-// 	// return false;
-// }
+Data_Type Call_Ast::get_data_type()
+{
+	return node_data_type;
+}
 
-// void Call_Ast::print(ostream & file_buffer)
-// {
-// 	//todo
-// }
+bool Call_Ast::check_ast()
+{
+	// auto f_args = *(func->get_argument_list());
+
+	// if (f_args.size() != arg_list.size())
+	// 	return false;
+
+	// for (int i = 0; i < arg_list.size(); ++i)
+	// 	if (f_args[i]->first != arg_list[i]->get_data_type())
+	// 		return false;	
+	// return true;
+}
+
+void Call_Ast::print(ostream & file_buffer)
+{
+	//todo
+}
