@@ -248,7 +248,7 @@ procedure_definition_list:
 
 // TODO : argument list
 procedure_definition:
-	NAME '(' ')'
+	NAME '(' optional_procedure_argument_list ')'
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -260,7 +260,9 @@ procedure_definition:
 
 		CHECK_INVARIANT((current_procedure != NULL), "Procedure corresponding to the name is not found");
 		CHECK_INVARIANT((current_procedure->check_defined() == false), "Procedure has already been defined before");
-		// TODO : formal symbol table
+		
+		// TODO : check if arguments same as formal symbol table
+
 		current_procedure->set_defined();
 		CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
 			"Procedure name cannot be same as global variable", get_line_number());
@@ -274,7 +276,7 @@ procedure_definition:
 
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 
-		Symbol_Table * local_table = $6;
+		Symbol_Table * local_table = $7;
 
 		if (local_table == NULL)
 			local_table = new Symbol_Table();
@@ -287,7 +289,7 @@ procedure_definition:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		Sequence_Ast* seq = $8;
+		Sequence_Ast* seq = $9;
 
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 		CHECK_INVARIANT((seq != NULL), "statement list cannot be null");
