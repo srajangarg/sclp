@@ -38,6 +38,7 @@ void Program::add_procedure(Procedure * proc, int line)
 void Program::set_global_table(Symbol_Table & new_global_table)
 {
 	global_symbol_table = new_global_table;
+	global_symbol_table.set_table_scope(global);
 }
 
 Symbol_Table_Entry & Program::get_symbol_table_entry(string variable)
@@ -61,6 +62,22 @@ void Program::print_sym()
 
 void Program::print()
 {
+	ostream & file_buffer = command_options.get_output_buffer();
+	Procedure * main_procedure = get_procedure("main");
+
+	if (main_procedure == NULL)
+		return;
+	if(!global_symbol_table.is_empty() /*|| !string_vars.empty()*/){
+		file_buffer << "\n\t" << ".data" << "\n";
+		global_symbol_table.print_assembly(file_buffer);
+		// print_string_vars(file_buffer);
+	}
+	for(auto it = procedures.begin(); it != procedures.end(); it++)
+	{
+		if((*it)->get_proc_name() != "main")
+			(*it)->print_assembly(file_buffer);
+	}
+	main_procedure->print_assembly(file_buffer);
 }
 
 bool Program::variable_proc_name_check(string symbol)
@@ -89,18 +106,10 @@ bool Program::variable_in_proc_map_check(string var)
 			return true;
 	}
 	return false;
-	// global_symbol_table.global_list_in_proc_map_check();
 }
 
 void Program::compile()
 {
 	for (auto proc : procedures)
 		proc->compile();
-	print_assembly();
-}
-
-void Program::print_assembly()
-{
-	for (auto proc : procedures)
-		proc->print_assembly(command_options.get_output_buffer());
 }

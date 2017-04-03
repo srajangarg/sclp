@@ -292,6 +292,7 @@ public:
 class String_Ast : public Ast
 {
 	string s;
+	string label;
 public:
 	String_Ast(string s, int line);
 	~String_Ast();

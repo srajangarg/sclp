@@ -759,15 +759,15 @@ Data_Type Call_Ast::get_data_type()
 
 bool Call_Ast::check_ast()
 {
-	// auto f_args = *(func->get_argument_list());
+	auto f_args = func->get_arguments_data_type();
 
-	// if (f_args.size() != arg_list.size())
-	// 	return false;
+	if (f_args.size() != arg_list.size())
+		return false;
 
-	// for (int i = 0; i < arg_list.size(); ++i)
-	// 	if (f_args[i]->first != arg_list[i]->get_data_type())
-	// 		return false;	
-	// return true;
+	for (int i = 0; i < arg_list.size(); ++i)
+		if (f_args[i] != arg_list[i]->get_data_type())
+			return false;	
+	return true;
 }
 
 void Call_Ast::print(ostream & file_buffer)

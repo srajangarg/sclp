@@ -426,7 +426,8 @@ CFA& Call_Ast::compile()
 }
 
 CFA& Return_Statement_Ast::compile()
-{	
+{
+
 }
 
 CFA& Print_Ast::compile()
@@ -435,5 +436,9 @@ CFA& Print_Ast::compile()
 }
 
 CFA& String_Ast::compile()
-{	
+{
+	label = "string" + to_string(program_object.string_asts.size());
+	program_object.string_asts.push_back(this);
+
+	
 }

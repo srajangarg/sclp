@@ -19,6 +19,8 @@ class Program
 	list<Procedure *> procedures;
 
 public:
+	list<String_Ast *> string_asts;
+
 	Program();
 	~Program();
 	void delete_all();
