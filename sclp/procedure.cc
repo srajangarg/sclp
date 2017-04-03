@@ -62,6 +62,16 @@ vector<Data_Type> Procedure::get_arguments_data_type()
 	return vv;
 }
 
+vector<Symbol_Table_Entry*> Procedure::get_arguments_stes()
+{
+	auto stes = formal_symbol_table.get_table();
+	vector<Symbol_Table_Entry*> vv;
+
+	for (auto it = stes.begin(); it != stes.end(); it++)
+		vv.push_back((*it));
+	return vv;
+}
+
 void Procedure::set_defined()
 {
 	is_defined = true;	
@@ -143,11 +153,11 @@ void Procedure::print_prologue(ostream & file_buffer)
 
 void Procedure::print_epilogue(ostream & file_buffer)
 {
-	file_buffer << "\n# Epilogue begins\n";
+	file_buffer << "\n# Epilogue Begins\n";
 	file_buffer << "epilogue_"<<name<<":\n";
 	file_buffer << "\tadd $sp, $sp, "<<8-local_symbol_table.get_size()<<"\n";
 	file_buffer << "\tlw $fp, -4($sp)\n";
 	file_buffer << "\tlw $ra, 0($sp)\n";
 	file_buffer << "\tjr        $31		# Jump back to the called procedure\n";
-	file_buffer << "# Epilogue ends\n\n";
+	file_buffer << "# Epilogue Ends\n\n";
 }

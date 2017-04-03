@@ -423,6 +423,50 @@ template class Number_Ast<int>;
 
 CFA& Call_Ast::compile()
 {	
+	list<ICS *>& ic_list = *new list<ICS *>;
+	Tgt_Op op; RD * reg1, *reg2;
+	auto args_stes = func->get_arguments_stes();
+
+	for (int i = 0; i < arg_list.size(); i++)
+	{	
+		auto arg = arg_list[i];
+		auto ste = args_stes[i];
+
+		CFA& ret = arg->compile();
+		ic_list.splice(ic_list.end(), ret.get_icode_list());
+
+		if (arg->get_data_type() == int_data_type)
+			op = store;
+		else
+			op = store_d;
+
+		MovS *m = new MovS(op, new RA_Opd(ret.get_reg()), new MA_Opd(*ste));
+		ret.get_reg()->reset_use_for_expr_result();
+		ic_list.push_back(m);
+	}
+
+	auto spsp = new RA_Opd(machine_desc_object.spim_register_table[sp]);
+	ic_list.push_back(new CompS(sub, spsp, spsp, new Const_Opd<int>(func->get_formal_symbol_table_size()-8)));
+	ic_list.push_back(new ContS(jal, NULL, NULL, func->get_proc_name()));
+	ic_list.push_back(new CompS(add, spsp, spsp, new Const_Opd<int>(func->get_formal_symbol_table_size()-8)));
+
+	if (func->get_return_type() == int_data_type)
+	{
+		op = mov;
+		reg1 = machine_desc_object.get_new_register<gp_data>();
+		reg2 = machine_desc_object.spim_register_table[v1];
+	}
+	else
+	{
+		op = mov_d;
+		reg1 = machine_desc_object.get_new_register<float_reg>();
+		reg2 = machine_desc_object.spim_register_table[f0];
+	}
+	ic_list.push_back(new MovS(op, new RA_Opd(reg2), new RA_Opd(reg1)));
+	reg2->reset_use_for_expr_result();
+
+	CFA* ret_stmt =  new CFA(ic_list, reg1);
+	return *ret_stmt;
 }
 
 CFA& Return_Statement_Ast::compile()
@@ -447,8 +491,8 @@ CFA& Return_Statement_Ast::compile()
 			reg = machine_desc_object.spim_register_table[f0];
 		}
 
-		MovS *m = new MovS(op, new RA_Opd(reg), new RA_Opd(ret.get_reg()));
-		// ret.get_reg()->reset_use_for_expr_result();
+		MovS *m = new MovS(op, new RA_Opd(ret.get_reg()), new RA_Opd(reg));
+		ret.get_reg()->reset_use_for_expr_result();
 		ic_list.push_back(m);
 	}
 
@@ -460,12 +504,13 @@ CFA& Return_Statement_Ast::compile()
 
 CFA& Print_Ast::compile()
 {	
-
+	CHECK_INVARIANT(false, "XXXXX");
 }
 
 CFA& String_Ast::compile()
 {
 	label = "string" + to_string(program_object.string_asts.size());
 	program_object.string_asts.push_back(this);
+	CHECK_INVARIANT(false, "XXXXX");
 	// todo
 }

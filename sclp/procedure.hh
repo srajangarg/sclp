@@ -33,6 +33,12 @@ public:
 	}
 
 	vector<Data_Type> get_arguments_data_type();
+	vector<Symbol_Table_Entry*> get_arguments_stes();
+
+	int get_formal_symbol_table_size()
+	{
+		return formal_symbol_table.get_size();
+	}
 	
 	string get_proc_name();
   	void set_sequence_ast(Sequence_Ast & sa);

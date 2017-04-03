@@ -31,10 +31,11 @@
 
 %token <integer_value> INTEGER_NUMBER
 %token <double_value> DOUBLE_NUMBER
-%token <string_value> NAME
+%token <string_value> NAME STRING_LITERAL
 %token INTEGER VOID FLOAT
 %token ASSIGN RETURN
 %token IF DO WHILE FOR
+%token PRINT
 
 %nonassoc THEN
 %nonassoc ELSE
@@ -58,6 +59,7 @@
 %type <iteration_statement_ast> do_while_statement while_statement
 %type <ast> variable constant relational_expression expression_term statement for_statement 
 %type <ast> procedure_call return_statemnt
+%type <ast> print_statement print_argument
 %type <arithmetic_expr_ast> arith_expression
 %type <boolean_expr_ast> boolean_expression
 %type <selection_statement_ast> if_else_statement
@@ -560,6 +562,14 @@ statement:
 		$$ = $1;
 	} 
 	}
+|
+	print_statement
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	} 
+	}
 ;
 
 do_while_statement:
@@ -1056,6 +1066,35 @@ return_statemnt:
 		auto ret = new Return_Statement_Ast($2, current_procedure, get_line_number());
 		CHECK_INVARIANT(ret->check_ast(), "xxx");
 		$$ = ret;
+	}
+	}
+;
+
+print_statement:
+	PRINT '(' print_argument ')' ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = new Print_Ast($3, get_line_number());
+	}
+	}
+;
+
+print_argument:
+	arith_expression
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	}
+	}
+|
+	STRING_LITERAL
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		cout<<*$1<<endl;
+		$$ = new String_Ast(*$1, get_line_number());
 	}
 	}
 ;
