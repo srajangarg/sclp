@@ -69,7 +69,7 @@ CFA& Name_Ast::compile()
 	CHECK_INVARIANT((variable_symbol_entry != NULL), "variable_symbol_entry cannot be null in Name_Ast");
 
 	CFA *cfa = new CFA();
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 	RD *reg;
 	Tgt_Op op;
 
@@ -95,7 +95,7 @@ CFA& Name_Ast::create_store_stmt(RD *store_register)
 	CHECK_INVARIANT((variable_symbol_entry != NULL), "variable_symbol_entry cannot be null in Name_Ast");
 
 	CFA *cfa = new CFA(); Tgt_Op op;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if (get_data_type() == int_data_type)
 		op = store;
@@ -122,7 +122,7 @@ CFA& ArithTwoOp(Ast*lhs, Ast*rhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
 	ic_list.splice(ic_list.end(), rhs_s.get_icode_list());
 
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 	RD *reg; Tgt_Op op;
 
 	if (dt == int_data_type or void_data_type)
@@ -154,7 +154,7 @@ CFA& ArithOneOp(Ast*lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou, bool is_not_t
 
 	if (is_not_type)
 	{
-		machine_desc_object.clear_local_register_mappings();
+		// machine_desc_object.clear_local_register_mappings();
 		one = machine_desc_object.get_new_register<gp_data>();
 		ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(1), new RA_Opd(one)));
 	}
@@ -163,7 +163,7 @@ CFA& ArithOneOp(Ast*lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou, bool is_not_t
 	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
 	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "Lhs register cannot be null");
 
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 	if (dt == int_data_type)
 	{
 		op = opint;
@@ -208,7 +208,7 @@ CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel,
 
 	if (need_reg)
 	{
-		machine_desc_object.clear_local_register_mappings();
+		// machine_desc_object.clear_local_register_mappings();
 
 		if (dt == int_data_type or dt == void_data_type)
 			reg = machine_desc_object.get_new_register<gp_data>();
@@ -242,7 +242,7 @@ CFA& Number_Ast<DATA_TYPE>::compile()
 	CFA *cfa = new CFA();
 
 	RD *reg; Ics_Opd *opd; Tgt_Op op;
-	machine_desc_object.clear_local_register_mappings();
+	// machine_desc_object.clear_local_register_mappings();
 
 	if (get_data_type() == int_data_type)
 	{

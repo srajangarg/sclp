@@ -5,7 +5,7 @@ int fn(int a);		// fn prototype has parameter name 'a'
 main()
 {
 	int a;
-	fn(2);
+	a = fn(2);
 	return;
 }
 
