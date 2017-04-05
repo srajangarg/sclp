@@ -1093,7 +1093,6 @@ print_argument:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		cout<<*$1<<endl;
 		$$ = new String_Ast(*$1, get_line_number());
 	}
 	}

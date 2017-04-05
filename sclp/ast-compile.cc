@@ -69,7 +69,6 @@ CFA& Name_Ast::compile()
 	CHECK_INVARIANT((variable_symbol_entry != NULL), "variable_symbol_entry cannot be null in Name_Ast");
 
 	CFA *cfa = new CFA();
-	// machine_desc_object.clear_local_register_mappings();
 	RD *reg;
 	Tgt_Op op;
 
@@ -95,7 +94,6 @@ CFA& Name_Ast::create_store_stmt(RD *store_register)
 	CHECK_INVARIANT((variable_symbol_entry != NULL), "variable_symbol_entry cannot be null in Name_Ast");
 
 	CFA *cfa = new CFA(); Tgt_Op op;
-	// machine_desc_object.clear_local_register_mappings();
 
 	if (get_data_type() == int_data_type)
 		op = store;
@@ -122,7 +120,6 @@ CFA& ArithTwoOp(Ast*lhs, Ast*rhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
 	ic_list.splice(ic_list.end(), rhs_s.get_icode_list());
 
-	// machine_desc_object.clear_local_register_mappings();
 	RD *reg; Tgt_Op op;
 
 	if (dt == int_data_type or void_data_type)
@@ -154,7 +151,6 @@ CFA& ArithOneOp(Ast*lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou, bool is_not_t
 
 	if (is_not_type)
 	{
-		// machine_desc_object.clear_local_register_mappings();
 		one = machine_desc_object.get_new_register<gp_data>();
 		ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(1), new RA_Opd(one)));
 	}
@@ -163,7 +159,6 @@ CFA& ArithOneOp(Ast*lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou, bool is_not_t
 	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
 	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "Lhs register cannot be null");
 
-	// machine_desc_object.clear_local_register_mappings();
 	if (dt == int_data_type)
 	{
 		op = opint;
@@ -208,8 +203,6 @@ CFA& CondOpIfElse(CFA& cond_s, CFA& then_s, CFA& else_s, string flabel,
 
 	if (need_reg)
 	{
-		// machine_desc_object.clear_local_register_mappings();
-
 		if (dt == int_data_type or dt == void_data_type)
 			reg = machine_desc_object.get_new_register<gp_data>();
 		else
@@ -242,7 +235,6 @@ CFA& Number_Ast<DATA_TYPE>::compile()
 	CFA *cfa = new CFA();
 
 	RD *reg; Ics_Opd *opd; Tgt_Op op;
-	// machine_desc_object.clear_local_register_mappings();
 
 	if (get_data_type() == int_data_type)
 	{
@@ -446,24 +438,31 @@ CFA& Call_Ast::compile()
 	}
 
 	auto spsp = new RA_Opd(machine_desc_object.spim_register_table[sp]);
-	ic_list.push_back(new CompS(sub, spsp, spsp, new Const_Opd<int>(func->get_formal_symbol_table_size()-8)));
+	if (arg_list.size() > 0)
+		ic_list.push_back(new CompS(sub, spsp, spsp, 
+			 			  new Const_Opd<int>(func->get_formal_symbol_table_size()-8)));
 	ic_list.push_back(new ContS(jal, NULL, NULL, func->get_proc_name()));
-	ic_list.push_back(new CompS(add, spsp, spsp, new Const_Opd<int>(func->get_formal_symbol_table_size()-8)));
+
+	if (arg_list.size() > 0)
+		ic_list.push_back(new CompS(add, spsp, spsp, 
+						  new Const_Opd<int>(func->get_formal_symbol_table_size()-8)));
 
 	if (func->get_return_type() == int_data_type)
 	{
 		op = mov;
 		reg1 = machine_desc_object.get_new_register<gp_data>();
 		reg2 = machine_desc_object.spim_register_table[v1];
+
+		ic_list.push_back(new MovS(op, new RA_Opd(reg2), new RA_Opd(reg1)));
+		reg2->reset_use_for_expr_result();
 	}
 	else
 	{
 		op = mov_d;
-		reg1 = machine_desc_object.get_new_register<float_reg>();
-		reg2 = machine_desc_object.spim_register_table[f0];
+		reg1 = machine_desc_object.spim_register_table[f0];
 	}
-	ic_list.push_back(new MovS(op, new RA_Opd(reg2), new RA_Opd(reg1)));
-	reg2->reset_use_for_expr_result();
+	machine_desc_object.clear_local_register_mappings();
+
 
 	CFA* ret_stmt =  new CFA(ic_list, reg1);
 	return *ret_stmt;
@@ -504,13 +503,71 @@ CFA& Return_Statement_Ast::compile()
 
 CFA& Print_Ast::compile()
 {	
-	CHECK_INVARIANT(false, "XXXXX");
+	list<ICS *>& ic_list = *new list<ICS *>;
+
+	string sp = "$sp";
+	auto sp_st = new Symbol_Table_Entry(sp, int_data_type, 0, sp_ref);
+	auto sp_st2 = new Symbol_Table_Entry(sp, int_data_type, 0, sp_ref);
+	sp_st->set_symbol_scope(global);
+	sp_st2->set_symbol_scope(formal);
+	sp_st2->set_start_offset(0);
+	auto spsp =  new MA_Opd(*sp_st);
+	auto spfor =  new MA_Opd(*sp_st2);
+	auto rv0 = new RA_Opd(machine_desc_object.spim_register_table[v0]);
+	auto ra0 = new RA_Opd(machine_desc_object.spim_register_table[a0]);
+	auto rf12 = new RA_Opd(machine_desc_object.spim_register_table[f12]);
+
+	CFA& arg_cfa = arg->compile();
+	ic_list.splice(ic_list.end(), arg_cfa.get_icode_list());
+
+	ic_list.push_back(new CompS(imm_add, spsp, spsp, new Const_Opd<int>(-4)));
+	ic_list.push_back(new MovS(store, rv0, spfor));
+	ic_list.push_back(new CompS(imm_add, spsp, spsp, new Const_Opd<int>(-4)));
+	ic_list.push_back(new MovS(store, ra0, spfor));
+	ic_list.push_back(new CompS(imm_add, spsp, spsp, new Const_Opd<int>(-8)));
+	ic_list.push_back(new MovS(store_d, rf12, spfor));
+
+	if (arg->get_data_type() == int_data_type)
+	{
+		ic_list.push_back(new MovS(mov, new RA_Opd(arg_cfa.get_reg()), ra0));
+		ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(1), rv0));
+	}
+	else if (arg->get_data_type() == double_data_type)
+	{
+		ic_list.push_back(new MovS(mov_d, new RA_Opd(arg_cfa.get_reg()), rf12));
+		ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(3), rv0));
+	}
+	else if (arg->get_data_type() == string_data_type)
+	{
+		// la $a0, string0
+		string st = static_cast<String_Ast*>(arg)->get_label();
+		auto lal = new Symbol_Table_Entry(st, int_data_type, 0, sp_ref);
+		lal->set_symbol_scope(global);
+		auto lala = new MA_Opd(*lal);
+
+		ic_list.push_back(new MovS(la, lala, ra0));
+		ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(4), rv0));
+	}
+
+	if (arg_cfa.get_reg() != NULL)
+		arg_cfa.get_reg()->reset_use_for_expr_result();
+	ic_list.push_back(new LabS(syscall, NULL, ""));
+	ic_list.push_back(new MovS(load_d, spfor, rf12));
+	ic_list.push_back(new CompS(imm_add, spsp, spsp, new Const_Opd<int>(8)));
+	ic_list.push_back(new MovS(load, spfor, ra0));
+	ic_list.push_back(new CompS(imm_add, spsp, spsp, new Const_Opd<int>(4)));
+	ic_list.push_back(new MovS(load, spfor, rv0));
+	ic_list.push_back(new CompS(imm_add, spsp, spsp, new Const_Opd<int>(4)));
+
+	CFA* ret_stmt =  new CFA(ic_list, NULL);
+	return *ret_stmt;
 }
 
 CFA& String_Ast::compile()
 {
 	label = "string" + to_string(program_object.string_asts.size());
-	program_object.string_asts.push_back(this);
-	CHECK_INVARIANT(false, "XXXXX");
-	// todo
+	program_object.string_asts.insert(this);
+
+	CFA* ret_stmt =  new CFA(*new list<ICS *>, NULL);
+	return *ret_stmt;
 }

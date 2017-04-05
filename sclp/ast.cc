@@ -700,6 +700,17 @@ void String_Ast::print(ostream & file_buffer)
 	//todo
 }
 
+string  String_Ast::get_label() const
+{
+	return label;
+}
+
+string  String_Ast::get_s() const
+{
+	return s;
+}
+
+
 //////////////////////////////////////////////////////////////////////
 
 Print_Ast::Print_Ast(Ast * body, int line)

@@ -61,7 +61,7 @@ typedef enum
 	mfc1,
 	mtc1,
 	mov,
-	add, 
+	add,
 	sub,
 	mult, 
 	divd, 

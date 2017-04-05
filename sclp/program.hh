@@ -4,6 +4,8 @@
 
 #include <string>
 #include <list>
+#include <map>
+#include <set>
 #include "procedure.hh"
 #define GLOB_SPACE "   "
 
@@ -16,10 +18,17 @@ extern Program program_object;
 class Program
 {
 	Symbol_Table global_symbol_table;
-	list<Procedure *> procedures;
+	map<string, Procedure *> procedures;
 
 public:
-	list<String_Ast *> string_asts;
+	struct String_Ast_Compt
+	{
+	  bool operator()(const String_Ast* lhs, const String_Ast* rhs) const
+	  {
+	  	return lhs->get_s() < rhs->get_s();
+	  }
+	};
+	set<String_Ast *, String_Ast_Compt> string_asts;
 
 	Program();
 	~Program();

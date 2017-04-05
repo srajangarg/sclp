@@ -497,7 +497,10 @@ void Label_IC_Stmt::print_icode(ostream & file_buffer)
 
 void Label_IC_Stmt::print_assembly(ostream & file_buffer)
 {
-	file_buffer << "\n" << offset << ":\n";
+	if (offset != "")
+		file_buffer << "\n" << offset << ":\n";
+	else
+		file_buffer << "\tsyscall\n";
 }
 
 /******************************* Class Code_For_Ast ****************************/

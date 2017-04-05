@@ -298,6 +298,8 @@ public:
 	~String_Ast();
 
 	Data_Type get_data_type();
+	string get_label() const;
+	string get_s() const;
 	void print(ostream & file_buffer);
 	Code_For_Ast & compile();
 };
