@@ -427,7 +427,7 @@ CFA& Call_Ast::compile()
 	Tgt_Op op; RD * reg1, *reg2;
 	auto args_stes = func->get_arguments_stes();
 
-	for (int i = 0; i < arg_list.size(); i++)
+	for (int i = arg_list.size()-1; i >= 0; i--)
 	{	
 		auto arg = arg_list[i];
 		auto ste = args_stes[i];

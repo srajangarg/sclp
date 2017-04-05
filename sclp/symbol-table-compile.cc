@@ -167,3 +167,14 @@ void Symbol_Table_Entry::update_register(Register_Descriptor * result_reg_descr)
 	result_reg_descr->set_use_for_expr_result();
 	result_reg_descr->update_symbol_information(*this);
 }
+
+int Symbol_Table_Entry::get_width()
+{
+	switch(variable_data_type)
+	{
+	case int_data_type: return 4; break;
+	case double_data_type: return 8; break;
+	case void_data_type: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Attempt to seek size of type void");
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Data type not supperted");
+	}
+}

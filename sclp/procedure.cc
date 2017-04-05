@@ -64,11 +64,23 @@ vector<Data_Type> Procedure::get_arguments_data_type()
 
 vector<Symbol_Table_Entry*> Procedure::get_arguments_stes()
 {
+	// auto copy_table(formal_symbol_table);
 	auto stes = formal_symbol_table.get_table();
 	vector<Symbol_Table_Entry*> vv;
+	int off = -formal_symbol_table.get_size() + 8;
 
 	for (auto it = stes.begin(); it != stes.end(); it++)
-		vv.push_back((*it));
+	{
+		Symbol_Table_Entry* ste = *it;
+		string name = ste->get_variable_name();
+		off += ste->get_width();
+
+		Symbol_Table_Entry* newste = new Symbol_Table_Entry(name,  ste->get_data_type(),
+											ste->get_lineno(), sp_ref);
+		newste->set_start_offset(off);
+		newste->set_symbol_scope(formal);
+		vv.push_back(newste);
+	}
 	return vv;
 }
 

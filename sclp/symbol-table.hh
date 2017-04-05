@@ -126,6 +126,7 @@ public:
 	Offset_With_Ref_To get_ref_offset();
 
 	int get_lineno();
+	int get_width();
 
 	bool operator==(Symbol_Table_Entry & entry);
 

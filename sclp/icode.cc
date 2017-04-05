@@ -63,13 +63,9 @@ void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
 {
 	Table_Scope symbol_scope = symbol_entry->get_symbol_scope();
 
-	// CHECK_INVARIANT(((symbol_scope == local) || (symbol_scope == global)), 
-	// 		"Wrong scope value");
-
 	if (symbol_scope == local)
 	{
-		int offset = symbol_entry->get_start_offset();
-		file_buffer << offset << "($fp)";
+		file_buffer << symbol_entry->get_start_offset() << "($fp)";
 	}
 	else if (symbol_scope == global)
 	{
@@ -77,8 +73,10 @@ void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
 	}
 	else
 	{
-		int offset = 8 - symbol_entry->get_end_offset();
-		file_buffer << offset << "($fp)";
+		if (symbol_entry->get_ref_offset() == sp_ref)
+			file_buffer << symbol_entry->get_start_offset() << "($sp)";
+		else
+			file_buffer << symbol_entry->get_start_offset() << "($fp)";
 	}
 }
 
