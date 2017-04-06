@@ -21,6 +21,7 @@ class Procedure
     Symbol_Table formal_symbol_table;
     Sequence_Ast *sequence_ast;
     bool is_defined;
+    bool is_called;
     int lineno;
 
 public:
@@ -45,7 +46,9 @@ public:
     void set_local_list(Symbol_Table &new_list);
     void set_formal_list(Symbol_Table &new_list);
     void set_defined();
+    void set_called();
     bool check_defined();
+    bool check_called();
     Data_Type get_return_type();
     Symbol_Table_Entry &get_local_symbol_table_entry(string variable_name);
     Symbol_Table_Entry &get_formal_symbol_table_entry(string variable_name);

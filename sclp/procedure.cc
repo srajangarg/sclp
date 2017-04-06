@@ -87,9 +87,19 @@ void Procedure::set_defined()
     is_defined = true;
 }
 
+void Procedure::set_called()
+{
+    is_called = true;
+}
+
 bool Procedure::check_defined()
 {
     return is_defined;
+}
+
+bool Procedure::check_called()
+{
+    return is_called;
 }
 
 Data_Type Procedure::get_return_type()
@@ -132,17 +142,20 @@ bool Procedure::variable_in_formal_symbol_list_check(string variable)
 // compile
 void Procedure::compile()
 {
-    sequence_ast->compile();
+	if(check_defined())
+    	sequence_ast->compile();
 }
 
 void Procedure::print_icode(ostream &file_buffer)
 {
-    sequence_ast->print_icode(file_buffer);
+	if(check_defined())
+    	sequence_ast->print_icode(file_buffer);
 }
 void Procedure::print_assembly(ostream &file_buffer)
 {
     print_prologue(file_buffer);
-    sequence_ast->print_assembly(file_buffer);
+    if(check_defined())
+    	sequence_ast->print_assembly(file_buffer);
     print_epilogue(file_buffer);
 }
 

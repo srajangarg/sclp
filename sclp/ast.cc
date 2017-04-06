@@ -749,9 +749,6 @@ bool Return_Statement_Ast::check_ast()
     if (return_val != NULL) {
         if (proc->get_return_type() != return_val->get_data_type())
             return false;
-    } else {
-        if (proc->get_return_type() != void_data_type)
-            return false;
     }
 
     return true;

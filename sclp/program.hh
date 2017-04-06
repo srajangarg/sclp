@@ -46,7 +46,7 @@ public:
     bool variable_in_symbol_list_check(string variable);
     void global_list_in_proc_check(); // not required
     bool variable_in_proc_map_check(string var);
-
+    bool check_called_procedure_defined();
     // compile
     void compile();
     void print_assembly();

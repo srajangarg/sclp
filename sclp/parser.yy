@@ -78,12 +78,11 @@ program:
 	{
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 
-		CHECK_INVARIANT((program_object.variable_in_proc_map_check("main")), "Procedure main is not declared");
+		CHECK_INPUT((program_object.check_called_procedure_defined()), "Called procedure is not defined", -1)
 		
 		Procedure* main_proc = program_object.get_procedure("main");
-		CHECK_INVARIANT((main_proc->check_defined()), "Procedure main is not defined");
+		CHECK_INPUT((main_proc != NULL && main_proc->check_defined()), "Procedure main is not defined", -1);
 
-		
 		// program_object.set_procedure(current_procedure, get_line_number());
 		// program_object.global_list_in_proc_check();
 	}
@@ -1001,9 +1000,14 @@ procedure_call:
 
 		Procedure * proc = program_object.get_procedure(proc_name);		
 		CHECK_INVARIANT((proc != NULL), "Procedure corresponding to the name is not found");
+
+		CHECK_INPUT(proc->get_arguments_data_type().size() == arg_list.size(), "Actual and formal parameter count do not match", get_line_number());
 		
 		Call_Ast * proc_call = new Call_Ast(proc, arg_list, get_line_number());
-		CHECK_INVARIANT(proc_call->check_ast(), "xxx");
+		proc->set_called();
+		if(proc->get_arguments_data_type().size() == arg_list.size())
+			CHECK_INPUT(proc_call->check_ast(), "Actual and formal parameters data types are not matching", get_line_number());
+		
 		$$ = proc_call;
 	}
 	}
@@ -1054,7 +1058,7 @@ return_statemnt:
 	if (NOT_ONLY_PARSE)
 	{
 		auto ret = new Return_Statement_Ast(NULL, current_procedure, get_line_number());
-		CHECK_INVARIANT(ret->check_ast(), "xxx");
+		CHECK_INPUT(ret->check_ast(), "Two or more types of return values", get_line_number());
 		$$ = ret;
 	}
 	}
@@ -1064,7 +1068,7 @@ return_statemnt:
 	if (NOT_ONLY_PARSE)
 	{
 		auto ret = new Return_Statement_Ast($2, current_procedure, get_line_number());
-		CHECK_INVARIANT(ret->check_ast(), "xxx");
+		CHECK_INPUT(ret->check_ast(), "Two or more types of return values", get_line_number());
 		$$ = ret;
 	}
 	}

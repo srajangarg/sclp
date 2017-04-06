@@ -97,6 +97,15 @@ bool Program::variable_in_proc_map_check(string var)
     return false;
 }
 
+bool Program::check_called_procedure_defined()
+{
+    for (auto &pp : procedures)
+        if(pp.second->check_called() && ! pp.second->check_defined())
+            return false;
+
+    return true;
+}
+
 void Program::compile()
 {
     Procedure *main_procedure = get_procedure("main");
