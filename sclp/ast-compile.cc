@@ -135,12 +135,44 @@ CFA& ArithTwoOp(Ast*lhs, Ast*rhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
 
 	lhs_s.get_reg()->reset_use_for_expr_result();
 	rhs_s.get_reg()->reset_use_for_expr_result();
-	CompS *c = new CompS(op, new RA_Opd(reg), new RA_Opd(lhs_s.get_reg()), new RA_Opd(rhs_s.get_reg()));
-	ic_list.push_back(c);
+	ic_list.push_back(new CompS(op, new RA_Opd(reg), new RA_Opd(lhs_s.get_reg()), new RA_Opd(rhs_s.get_reg())));
 
 	CFA *arith = new CFA(ic_list, reg);
 	return *arith;
 }
+
+CFA& RelOpFloat(Ast*lhs, Ast*rhs, Tgt_Op co, Tgt_Op bc, string flabel, bool invert = false)
+{
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+
+	CFA& lhs_s = lhs->compile();
+	CFA& rhs_s = rhs->compile();
+
+	CHECK_INVARIANT((lhs_s.get_reg() != NULL), "Lhs register cannot be null");
+	CHECK_INVARIANT((rhs_s.get_reg() != NULL), "Rhs register cannot be null");
+
+	auto rv0 = new RA_Opd(machine_desc_object.spim_register_table[v0]);
+	list<ICS *>& ic_list = *new list<ICS *>;
+	ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
+	ic_list.splice(ic_list.end(), rhs_s.get_icode_list());
+
+	ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(0), rv0));
+	ic_list.push_back(new CompS(co, NULL, new RA_Opd(lhs_s.get_reg()), new RA_Opd(rhs_s.get_reg())));
+	ic_list.push_back(new ContS(bc, NULL, NULL, flabel));
+	ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(1), rv0));
+	ic_list.push_back(new LabS(label, NULL, flabel));
+
+	if (invert)
+		ic_list.push_back(new CompS(not_t, rv0, rv0, new Const_Opd<int>(1)));
+
+	lhs_s.get_reg()->reset_use_for_expr_result();
+	rhs_s.get_reg()->reset_use_for_expr_result();
+
+	CFA *arith = new CFA(ic_list, machine_desc_object.spim_register_table[v0]);
+	return *arith;
+}
+
 
 CFA& ArithOneOp(Ast*lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou, bool is_not_type = false)
 {
@@ -258,24 +290,49 @@ CFA& Number_Ast<DATA_TYPE>::compile()
 ///////////////////////////////////////////////////////////////////////////////
 
 CFA& Relational_Expr_Ast::compile()
-{
-	switch(rel_op)
+{	
+	if (lhs_condition->get_data_type() != double_data_type)
 	{
-		case less_equalto:
-			return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), sle, sle);
-		case less_than:
-			return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), slt, slt);
-		case greater_than:
-			return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), sgt, sgt);
-		case greater_equalto:
-			return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), sge, sge);
-		case equalto:
-			return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), seq, seq);
-		case not_equalto:
-			return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), sne, sne);
-		default:
-			CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Relational_Op not supported");
+		switch(rel_op)
+		{
+			case less_equalto:
+				return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), sle, sle);
+			case less_than:
+				return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), slt, slt);
+			case greater_than:
+				return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), sgt, sgt);
+			case greater_equalto:
+				return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), sge, sge);
+			case equalto:
+				return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), seq, seq);
+			case not_equalto:
+				return ArithTwoOp(lhs_condition, rhs_condition, get_data_type(), sne, sne);
+			default:
+				CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Relational_Op not supported");
+		}	
 	}
+	else
+	{	
+		string lab = Ast::get_new_label();
+		switch(rel_op)
+		{
+			case less_equalto:
+				return RelOpFloat(lhs_condition, rhs_condition, sle_d, bc1f, lab);
+			case less_than:
+				return RelOpFloat(lhs_condition, rhs_condition, slt_d, bc1f, lab);
+			case greater_than:
+				return RelOpFloat(lhs_condition, rhs_condition, sle_d, bc1f, lab, true);
+			case greater_equalto:
+				return RelOpFloat(lhs_condition, rhs_condition, slt_d, bc1f, lab, true);
+			case equalto:
+				return RelOpFloat(lhs_condition, rhs_condition, seq_d, bc1f, lab);
+			case not_equalto:
+				return RelOpFloat(lhs_condition, rhs_condition, seq_d, bc1f, lab, true);
+			default:
+				CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Relational_Op not supported");
+		}
+	}
+	
 }
 
 //////////////////////////////////////////////////////////////////////

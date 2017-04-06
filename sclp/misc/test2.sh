@@ -1,5 +1,4 @@
 #!/bin/bash
-cd sclp
 make
 rm -rf MIPSCODE
 rm -rf REFERCODE

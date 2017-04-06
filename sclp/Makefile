@@ -1,6 +1,6 @@
 AST_OBJ = ast.o ast-compile.o
-PROG_OBJ = program.o program-compile.o
-PROC_OBJ = procedure.o procedure-compile.o
+PROG_OBJ = program.o
+PROC_OBJ = procedure.o
 SYMTAB_OBJ = symbol-table.o symbol-table-compile.o
 OBJ_CORE = error-display.o main.o user-options.o icode.o reg-alloc.o
 OBJ_GEN = scanner.o parser.o
@@ -35,3 +35,6 @@ clean :
 	rm -f *.o scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output
 	rm -f sclp
 	rm -f cscope.out tags a.out
+
+format :
+	$(shell for FILE in `git ls-files | grep -E "\.(cpp|h|hpp|c)$$" | grep -Ev "DGP"`; do clang-format-3.7 -i $$FILE; done)

@@ -332,7 +332,6 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 {
 	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a move IC Stmt");
-	CHECK_INVARIANT (result, "Result cannot be NULL for a move IC Stmt");
 	string op_name = op_desc.get_mnemonic();
 
 	switch (op_desc.get_assembly_format())
@@ -372,6 +371,14 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 		opd1->print_asm_opd(file_buffer);
 		file_buffer << ", ";
 		result->print_asm_opd(file_buffer);
+		file_buffer << "\n";
+		break;
+
+	case a_op_o1_o2:
+		file_buffer << "\t" << op_name << " ";
+		opd1->print_asm_opd(file_buffer);
+		file_buffer << ", ";
+		opd2->print_asm_opd(file_buffer);
 		file_buffer << "\n";
 		break;
 	
