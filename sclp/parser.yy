@@ -261,8 +261,7 @@ procedure_definition:
 
 		CHECK_INVARIANT((current_procedure != NULL), "Procedure corresponding to the name is not found");
 		CHECK_INVARIANT((current_procedure->check_defined() == false), "Procedure has already been defined before");
-		
-		// TODO : check if arguments same as formal symbol table
+		current_procedure->get_formal_symbol_table() == *($3);
 
 		current_procedure->set_defined();
 		CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),

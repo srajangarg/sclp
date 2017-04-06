@@ -36,6 +36,16 @@ void Procedure::set_sequence_ast(Sequence_Ast &sa)
     sequence_ast = &sa;
 }
 
+int Procedure::get_formal_symbol_table_size()
+{
+    return formal_symbol_table.get_size();
+}
+
+Symbol_Table &Procedure::get_formal_symbol_table()
+{
+    return formal_symbol_table;
+}
+
 void Procedure::set_local_list(Symbol_Table &new_list)
 {
     local_symbol_table = new_list;
@@ -142,20 +152,20 @@ bool Procedure::variable_in_formal_symbol_list_check(string variable)
 // compile
 void Procedure::compile()
 {
-	if(check_defined())
-    	sequence_ast->compile();
+    if (check_defined())
+        sequence_ast->compile();
 }
 
 void Procedure::print_icode(ostream &file_buffer)
 {
-	if(check_defined())
-    	sequence_ast->print_icode(file_buffer);
+    if (check_defined())
+        sequence_ast->print_icode(file_buffer);
 }
 void Procedure::print_assembly(ostream &file_buffer)
 {
     print_prologue(file_buffer);
-    if(check_defined())
-    	sequence_ast->print_assembly(file_buffer);
+    if (check_defined())
+        sequence_ast->print_assembly(file_buffer);
     print_epilogue(file_buffer);
 }
 

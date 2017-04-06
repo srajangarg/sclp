@@ -6,7 +6,7 @@ Function Declarations & Function Definitions
 ✓ 2) A procedure should have same type of return value (int / float) except that a void return can exist along with either int or
    float return (i.e. a procedure may be declared to be an int/float but may not return a value)
 ✓ 3) Return type in the procedure prototype and the return value in the procedure definition should match. 
-4) Number, data types and names of formal parameters in procedure's prototype and its definition should match.
+✓ 4) Number, data types and names of formal parameters in procedure's prototype and its definition should match.
 ✓ 5) Formal parameter names and the procedure's name should be different
 ✓ 6) Formal parameters of the same procedure should have distinct names
 ✓ 7) Formal parameter names and local variable names in the same procedure should be distinct
