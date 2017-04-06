@@ -2,14 +2,14 @@ void main();
 
 main()
 {
-	int a;
-	a = 3;
-	fn(a, 4);
-	return;
+    int a;
+    a = 3;
+    fn(a, 4);
+    return;
 }
 
-fn(int a, int b)	
+fn(int a, int b)
 {
-	a = a + b;
-	return;
+    a = a + b;
+    return;
 }

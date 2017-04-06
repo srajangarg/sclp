@@ -2,8 +2,8 @@ void main();
 
 main()
 
-{float a,b;
+{
+    float a, b;
 
-a = 1-a;
-
+    a = 1 - a;
 }

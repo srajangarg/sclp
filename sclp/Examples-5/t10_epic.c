@@ -1,14 +1,12 @@
-void main(); 
+void main();
 
 main()
 
 {
 
-   int a;
+    int a;
 
-   float b;
+    float b;
 
-   a = a + b + a + b;
-
+    a = a + b + a + b;
 }
-

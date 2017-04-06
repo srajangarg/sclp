@@ -1,10 +1,9 @@
 // Empty statement in if statement is allowed.
-void main(); 
+void main();
 main()
 
-{int a,b;
+{
+    int a, b;
 
-a = 1.0-a;
-
+    a = 1.0 - a;
 }
-

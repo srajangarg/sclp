@@ -1,6 +1,7 @@
-void main(); main()
+void main();
+main()
 {
-	int a;
-	int b;
-	a = b = c;
+    int a;
+    int b;
+    a = b = c;
 }

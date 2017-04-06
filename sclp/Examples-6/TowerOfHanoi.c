@@ -4,10 +4,10 @@ void main();
 
 main()
 {
-	// float x;
-	// x = 21.0;
- // print("lol");
- print("lol");
- // print(x);
- return;
+    // float x;
+    // x = 21.0;
+    // print("lol");
+    print("lol");
+    // print(x);
+    return;
 }

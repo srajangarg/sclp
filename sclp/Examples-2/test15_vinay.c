@@ -1,7 +1,7 @@
-void main(); main ()
+void main();
+main()
 {
-  int a;
-  float b;
-  b = 1.++.1;
+    int a;
+    float b;
+    b = 1. ++.1;
 }
-

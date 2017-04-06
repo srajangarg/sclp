@@ -4,10 +4,8 @@ main()
 
 {
 
-int a;
+    int a;
 
-a = 2;
-return;
-
+    a = 2;
+    return;
 }
-

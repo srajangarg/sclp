@@ -33,8 +33,8 @@ parser.cc parserbase.h: parser.yy parser.ih parser.h
 
 clean :
 	rm -f *.o scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output
-	rm -f sclp
+	rm -f sclp gmon.out out.s comparison.txt
 	rm -f cscope.out tags a.out
 
 format :
-	$(shell for FILE in `git ls-files | grep -E "\.(cpp|h|hpp|c)$$" | grep -Ev "DGP"`; do clang-format-3.7 -i $$FILE; done)
+	$(shell for FILE in `git ls-files | grep -E "\.(cc|hh|cpp|hpp|h|c)$$" | grep -Ev "DGP"`; do clang-format-3.7 -i $$FILE; done)

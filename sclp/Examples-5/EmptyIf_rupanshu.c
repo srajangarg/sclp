@@ -3,6 +3,7 @@ void main();
 
 main()
 {
-	float f, g;
-	if (f < g){}
+    float f, g;
+    if (f < g) {
+    }
 }

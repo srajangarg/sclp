@@ -1,9 +1,9 @@
 void main();
 
-main(){
-	int a;
-	do{
-		a = a + 1;
-	}
-	while (a < 10);
+main()
+{
+    int a;
+    do {
+        a = a + 1;
+    } while (a < 10);
 }

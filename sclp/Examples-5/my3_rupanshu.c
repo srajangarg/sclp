@@ -3,20 +3,16 @@ void main();
 
 main()
 {
-	int f;
-	float g;
-	if(!(f==g))
-	{
-		f = 0;
-	}
-	else
-	{
-		f = 1;
-	}
+    int f;
+    float g;
+    if (!(f == g)) {
+        f = 0;
+    } else {
+        f = 1;
+    }
 
-	if ()
+    if ()
 
-	while(!(f<10))
-		f=f+1;
-
+        while (!(f < 10))
+            f = f + 1;
 }

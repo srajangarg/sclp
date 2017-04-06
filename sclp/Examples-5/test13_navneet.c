@@ -3,8 +3,8 @@ void main();
 
 main()
 {
-	int a ;
-	int b , c;
+    int a;
+    int b, c;
 
-	c = a >= b + a == b;
+    c = a >= b + a == b;
 }

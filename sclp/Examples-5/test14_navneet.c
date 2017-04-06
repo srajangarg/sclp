@@ -1,7 +1,7 @@
 void main();
 main()
 {
-	float a, b, c, d;
+    float a, b, c, d;
 
-	d = a+b < a-b ? a*b : a - b;
+    d = a + b < a - b ? a * b : a - b;
 }

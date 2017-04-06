@@ -1,9 +1,9 @@
 void main();
 main()
 {
-	int a;
-	int b;
-	int iftmp0;
+    int a;
+    int b;
+    int iftmp0;
 
-	b= (a==b)? b : iftmp0;
+    b = (a == b) ? b : iftmp0;
 }

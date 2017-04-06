@@ -1,7 +1,6 @@
-int
-Removing;
+int Removing;
 
 main()
 {
-	int a;
+    int a;
 }

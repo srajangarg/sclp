@@ -3,11 +3,11 @@ float b;
 void main();
 main()
 {
-	int c;
-	float d;
+    int c;
+    float d;
 
-	c = 2;
-	d = 4.3;
-	a = a * -(c + a + a);
-	d = -b * d / (-d + b);
+    c = 2;
+    d = 4.3;
+    a = a * -(c + a + a);
+    d = -b * d / (-d + b);
 }

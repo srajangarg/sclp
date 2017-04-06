@@ -1,6 +1,6 @@
-void main(); main ()
+void main();
+main()
 {
-  float b;
-  b = e10;
+    float b;
+    b = e10;
 }
-
