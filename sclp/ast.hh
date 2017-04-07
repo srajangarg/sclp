@@ -288,6 +288,7 @@ public:
     Code_For_Ast &compile();
     void print_assembly(ostream &file_buffer);
     void print_icode(ostream &file_buffer);
+    bool last_statement_is_return();
 
     list<Icode_Stmt *> get_icode_list()
     {

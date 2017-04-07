@@ -10,7 +10,8 @@ Function Declarations & Function Definitions
 ✓ 5) Formal parameter names and the procedure's name should be different
 ✓ 6) Formal parameters of the same procedure should have distinct names
 ✓ 7) Formal parameter names and local variable names in the same procedure should be distinct
-✓ (handling in semantics, not syntax) 8) Every function definition must contain a return statement at the end. Also, multiple return statements are allowed.
+(handling in semantics, not syntax) 
+✓ 8) Every function definition must contain a return statement at the end. Also, multiple return statements are allowed.
 ✓ 9) As before, local variable declaration are to be made at the beginning of the function definition and not in between.
 ✓ 10) Function call names and local variable names should be distince inside a function definition.
     (http://moodle.iitb.ac.in/mod/forum/discuss.php?d=56030)

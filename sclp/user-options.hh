@@ -66,6 +66,7 @@ public:
     ostream &get_tokens_buffer();
     ostream &get_ast_buffer();
     ostream &get_output_buffer();
+    void set_output_buffer(ostream *file_buffer);
     ostream &get_symtab_buffer();
     ostream &get_ic_buffer();
 

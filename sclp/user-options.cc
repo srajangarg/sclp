@@ -151,6 +151,11 @@ ostream &User_Options::get_output_buffer()
     return *output_buffer;
 }
 
+void User_Options::set_output_buffer(ostream *file_buffer)
+{
+    output_buffer = file_buffer;
+}
+
 ostream &User_Options::get_symtab_buffer()
 {
     if (symtab_buffer == NULL)

@@ -294,6 +294,7 @@ procedure_definition:
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 		CHECK_INVARIANT((seq != NULL), "statement list cannot be null");
 		// TODO : check last statemnet is return statement (MAYBE make a fn of sequence to check this)
+		CHECK_INVARIANT(seq->last_statement_is_return(), "Last statement of procedure definition is not return");
 		current_procedure->set_sequence_ast(*seq);
 	}
 	}
@@ -997,20 +998,20 @@ procedure_call:
 	{
 	if (NOT_ONLY_PARSE)
 	{
-		// TODO : replace by call_ast
 		string proc_name = *$1;
 		vector<Ast *> arg_list = *$3;
 
 		Procedure * proc = program_object.get_procedure(proc_name);		
-		CHECK_INVARIANT((proc != NULL), "Procedure corresponding to the name is not found");
-
+		CHECK_INVARIANT((proc != NULL), "Function prototype of the called function cannot be null");
+		CHECK_INPUT(not current_procedure->variable_in_local_symbol_list_check(proc_name), "Procedure name clashes with local variable", get_line_number());
+		CHECK_INPUT(not current_procedure->variable_in_formal_symbol_list_check(proc_name), "Procedure name clashes with formal variable", get_line_number());
 		CHECK_INPUT(proc->get_arguments_data_type().size() == arg_list.size(), "Actual and formal parameter count do not match", get_line_number());
-		
+
 		Call_Ast * proc_call = new Call_Ast(proc, arg_list, get_line_number());
 		proc->set_called();
 		if(proc->get_arguments_data_type().size() == arg_list.size())
 			CHECK_INPUT(proc_call->check_ast(), "Actual and formal parameters data types are not matching", get_line_number());
-		
+
 		$$ = proc_call;
 	}
 	}
