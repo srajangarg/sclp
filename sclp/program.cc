@@ -48,6 +48,8 @@ Procedure *Program::get_procedure(string name)
 {
     if (procedures.find(name) != procedures.end())
         return procedures[name];
+
+    CHECK_INPUT(false, "Procedure corresponding to the name is not found", -1);
     return NULL;
 }
 
