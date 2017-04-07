@@ -103,16 +103,6 @@ bool Symbol_Table::variable_in_symbol_list_check(string variable)
     return false;
 }
 
-bool Symbol_Table::variable_in_formal_list_check(string variable)
-{
-    list<Symbol_Table_Entry *>::iterator i;
-    for (i = variable_table.begin(); i != variable_table.end(); i++) {
-        if ((*i)->get_variable_name() == variable)
-            return true;
-    }
-
-    return false;
-}
 
 Symbol_Table_Entry &Symbol_Table::get_symbol_table_entry(string variable_name)
 {

@@ -153,13 +153,13 @@ procedure_declaration:
 		string proc_name = *$2;
 		CHECK_INVARIANT((program_object.variable_in_proc_map_check(proc_name) == false), "Overloading of the procedure is not allowed");
 		// CHECK_INVARIANT((program_object.variable_in_symbol_list_check(proc_name) == false), "Overloading of the procedure is not allowed");
-		
 		// remove line number
 		Procedure * proc = new Procedure($1, proc_name, get_line_number());
 		program_object.add_procedure(proc, get_line_number());
 
 		Symbol_Table * formal_table = $4;
 		proc->set_formal_list(*formal_table);
+		CHECK_INPUT((!formal_table->variable_in_symbol_list_check(proc_name)), "Procedure name cannot be same as formal parameter name", get_line_number());
 	}
 	}
 |
@@ -235,6 +235,7 @@ procedure_argument:
 	{
 		CHECK_INVARIANT(($2 != NULL), "Argument name cannot be null");
 		string arg_name = *$2;
+		
 		Symbol_Table_Entry * arg_entry = new Symbol_Table_Entry(arg_name, $1, get_line_number());
 		$$ = arg_entry;
 	}
@@ -259,7 +260,7 @@ procedure_definition:
 		
 		current_procedure = program_object.get_procedure(proc_name);		
 
-		CHECK_INVARIANT((current_procedure != NULL), "Procedure corresponding to the name is not found");
+		CHECK_INVARIANT((current_procedure != NULL), "Procedure prototype cannot be null");
 		CHECK_INVARIANT((current_procedure->check_defined() == false), "Procedure has already been defined before");
 		current_procedure->get_formal_symbol_table() == *($3);
 
