@@ -237,6 +237,8 @@ bool Arithmetic_Expr_Ast::check_ast()
     if (ast_num_child == unary_arity)
         return true;
 
+    node_data_type = int_data_type;
+
     CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Arithmetic statement data type not compatible",
                 lineno);
 }
@@ -405,6 +407,17 @@ void Sequence_Ast::print(ostream &file_buffer)
     file_buffer << "\n      Sequence Ast:\n";
     for (auto it = statement_list.begin(); it != statement_list.end(); it++)
         (*it)->print(file_buffer);
+}
+
+bool Sequence_Ast::last_statement_is_return()
+{
+    Ast* last = *(statement_list.rbegin());
+    Return_Statement_Ast temp(NULL, NULL, 0);
+
+    if (typeid(*last) == typeid(temp))
+        return true;
+
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////

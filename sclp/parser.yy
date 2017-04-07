@@ -294,6 +294,7 @@ procedure_definition:
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 		CHECK_INVARIANT((seq != NULL), "statement list cannot be null");
 		// TODO : check last statemnet is return statement (MAYBE make a fn of sequence to check this)
+		CHECK_INVARIANT(seq->last_statement_is_return(), "Last statement of procedure definition is not return");
 		current_procedure->set_sequence_ast(*seq);
 	}
 	}
