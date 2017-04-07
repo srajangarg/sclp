@@ -507,13 +507,14 @@ CFA &Call_Ast::compile()
         op = mov;
         reg1 = machine_desc_object.get_new_register<gp_data>();
         reg2 = machine_desc_object.spim_register_table[v1];
-
-        ic_list.push_back(new MovS(op, new RA_Opd(reg2), new RA_Opd(reg1)));
-        reg2->reset_use_for_expr_result();
     } else {
         op = mov_d;
-        reg1 = machine_desc_object.spim_register_table[f0];
+        reg1 = machine_desc_object.get_new_register<float_reg>();
+        reg2 = machine_desc_object.spim_register_table[f0];
     }
+
+    ic_list.push_back(new MovS(op, new RA_Opd(reg2), new RA_Opd(reg1)));
+    reg2->reset_use_for_expr_result();
     machine_desc_object.clear_local_register_mappings();
 
     CFA *ret_stmt = new CFA(ic_list, reg1);

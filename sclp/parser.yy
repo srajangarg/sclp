@@ -260,7 +260,7 @@ procedure_definition:
 		current_procedure = program_object.get_procedure(proc_name);		
 
 		CHECK_INVARIANT((current_procedure != NULL), "Procedure corresponding to the name is not found");
-		CHECK_INVARIANT((current_procedure->check_defined() == false), "Procedure has already been defined before");
+		CHECK_INPUT((not current_procedure->check_defined()), "Procedure has already been defined before", -1);
 		current_procedure->get_formal_symbol_table() == *($3);
 
 		current_procedure->set_defined();
