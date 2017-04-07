@@ -57,7 +57,6 @@ void Procedure::set_formal_list(Symbol_Table &new_list)
 {
     formal_symbol_table = new_list;
     formal_symbol_table.set_table_scope(formal);
-    formal_symbol_table.set_start_offset_of_first_symbol(8);
     formal_symbol_table.assign_offsets();
 }
 
@@ -73,19 +72,16 @@ vector<Data_Type> Procedure::get_arguments_data_type()
 
 vector<Symbol_Table_Entry *> Procedure::get_arguments_stes()
 {
-    // auto copy_table(formal_symbol_table);
     auto stes = formal_symbol_table.get_table();
     vector<Symbol_Table_Entry *> vv;
-    int off = -formal_symbol_table.get_size() + 8;
 
     for (auto it = stes.begin(); it != stes.end(); it++) {
         Symbol_Table_Entry *ste = *it;
         string name = ste->get_variable_name();
-        off += ste->get_width();
 
         Symbol_Table_Entry *newste = new Symbol_Table_Entry(name, ste->get_data_type(),
                                                             ste->get_lineno(), sp_ref);
-        newste->set_start_offset(off);
+        newste->set_start_offset(ste->get_start_offset());
         newste->set_symbol_scope(formal);
         vv.push_back(newste);
     }
@@ -177,11 +173,10 @@ void Procedure::print_prologue(ostream &file_buffer)
     file_buffer << name << ":\t\t\t\t# .globl makes main know to the\n";
     file_buffer << "\t\t\t\t# outside of the program.\n";
     file_buffer << "# Prologue begins\n";
-    file_buffer << "\tsw $ra, 0($sp)		# Save the return address\n";
-    file_buffer << "\tsw $fp, -4($sp)		# Save the frame pointer\n";
-    file_buffer << "\tsub $fp, $sp, 8		# Update the frame pointer\n\n";
-    file_buffer << "\tsub $sp, $sp, " << 8 - local_symbol_table.get_size()
-                << "\t\t# Make space for the locals\n";
+    file_buffer << "\tsub $sp, $sp, " << 8 - local_symbol_table.get_size() << "\n";
+    file_buffer << "\tsw $ra, 0($sp)        # Save the return address\n";
+    file_buffer << "\tsw $fp, 4($sp)        # Save the frame pointer\n";
+    file_buffer << "\tadd $fp, $sp, " << 8 - local_symbol_table.get_size() << "\n";
     file_buffer << "# Prologue ends\n\n";
 }
 
@@ -189,9 +184,9 @@ void Procedure::print_epilogue(ostream &file_buffer)
 {
     file_buffer << "\n# Epilogue Begins\n";
     file_buffer << "epilogue_" << name << ":\n";
-    file_buffer << "\tadd $sp, $sp, " << 8 - local_symbol_table.get_size() << "\n";
-    file_buffer << "\tlw $fp, -4($sp)\n";
+    file_buffer << "\tlw $fp, 4($sp)\n";
     file_buffer << "\tlw $ra, 0($sp)\n";
+    file_buffer << "\tadd $sp, $sp, " << 8 - local_symbol_table.get_size() << "\n";
     file_buffer << "\tjr        $31		# Jump back to the called procedure\n";
     file_buffer << "# Epilogue Ends\n\n";
 }

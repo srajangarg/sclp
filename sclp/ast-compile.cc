@@ -478,8 +478,14 @@ CFA &Call_Ast::compile()
     Tgt_Op op;
     RD *reg1, *reg2;
     auto args_stes = func->get_arguments_stes();
+    auto spsp = new RA_Opd(machine_desc_object.spim_register_table[sp]);
 
-    for (int i = arg_list.size() - 1; i >= 0; i--) {
+    if (arg_list.size() > 0)
+        ic_list.push_back(
+            new CompS(sub, spsp, spsp,
+                      new Const_Opd<int>(func->get_formal_symbol_table_size())));
+
+    for (int i = 0; i < arg_list.size(); i++) {
         auto arg = arg_list[i];
         auto ste = args_stes[i];
 
@@ -496,17 +502,12 @@ CFA &Call_Ast::compile()
         ic_list.push_back(m);
     }
 
-    auto spsp = new RA_Opd(machine_desc_object.spim_register_table[sp]);
-    if (arg_list.size() > 0)
-        ic_list.push_back(
-            new CompS(sub, spsp, spsp,
-                      new Const_Opd<int>(func->get_formal_symbol_table_size() - 8)));
     ic_list.push_back(new ContS(jal, NULL, NULL, func->get_proc_name()));
 
     if (arg_list.size() > 0)
         ic_list.push_back(
             new CompS(add, spsp, spsp,
-                      new Const_Opd<int>(func->get_formal_symbol_table_size() - 8)));
+                      new Const_Opd<int>(func->get_formal_symbol_table_size())));
 
     if (func->get_return_type() == int_data_type) {
         op = mov;

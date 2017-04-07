@@ -39,18 +39,18 @@ void Symbol_Table::assign_offsets()
         int size;
         if (((*i)->get_symbol_scope() == local) || ((*i)->get_symbol_scope() == global)) {
             size = -(get_size_of_value_type((*i)->get_data_type()));
-
-            (*i)->set_start_offset(size_in_bytes);
-            size_in_bytes += size;
+            
             (*i)->set_end_offset(size_in_bytes);
+            size_in_bytes += size;
+            (*i)->set_start_offset(size_in_bytes);
         }
 
         else if ((*i)->get_symbol_scope() == formal) {
             size = get_size_of_value_type((*i)->get_data_type());
 
-            (*i)->set_end_offset(size_in_bytes);
-            size_in_bytes += size;
             (*i)->set_start_offset(size_in_bytes);
+            size_in_bytes += size;
+            (*i)->set_end_offset(size_in_bytes);
         }
 
         else
