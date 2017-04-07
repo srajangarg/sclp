@@ -8,4 +8,5 @@ main()
     g = 6.6;
     if (f < g) {
     }
+    return;
 }

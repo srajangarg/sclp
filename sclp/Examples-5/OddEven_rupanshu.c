@@ -22,4 +22,5 @@ main()
         cntr = 0;
 
     return;
+    return;
 }

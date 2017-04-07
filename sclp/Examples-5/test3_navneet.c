@@ -6,4 +6,5 @@ main()
     float a, b, c;
 
     c = a * b >= a < b + b;
+    return;
 }

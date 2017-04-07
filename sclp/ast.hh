@@ -30,15 +30,16 @@ protected:
     Ast_Arity ast_num_child;
     static int labelCounter;
     int lineno;
-    string get_new_label()
-    {
-
-        return "label" + to_string(labelCounter++);
-    }
 
 public:
     Ast();
     ~Ast();
+
+    static string get_new_label()
+    {
+
+        return "label" + to_string(labelCounter++);
+    }
 
     virtual Data_Type get_data_type();
     virtual void set_data_type(Data_Type dt);

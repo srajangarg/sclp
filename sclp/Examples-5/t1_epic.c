@@ -48,4 +48,5 @@ main()
         f = 0;
     if (f + 10 <= f * 100)
         f = 0;
+    return;
 }

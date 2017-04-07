@@ -19,4 +19,5 @@ main()
         a = a + d * e / f;
     else
         b = 1;
+    return;
 }

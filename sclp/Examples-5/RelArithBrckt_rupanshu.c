@@ -6,4 +6,5 @@ main()
     int f = (a + b) / c;
     int g = a + (b - c);
     int h = (a + b) * c / ((e - f) > (a - b));
+    return;
 }

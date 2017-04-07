@@ -9,4 +9,5 @@ main()
     float b;
 
     a = a + b + a + b;
+    return;
 }

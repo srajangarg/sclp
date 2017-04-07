@@ -9,4 +9,5 @@ main()
     do {
         f = f * 1.0;
     } while (g < 1.0);
+    return;
 }

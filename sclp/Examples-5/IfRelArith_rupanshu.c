@@ -6,4 +6,5 @@ main()
         a += d * e / f <= b;
     else
         b = 1;
+    return;
 }

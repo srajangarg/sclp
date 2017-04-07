@@ -7,4 +7,5 @@ main()
     {
         g = 1.0;
     }
+    return;
 }

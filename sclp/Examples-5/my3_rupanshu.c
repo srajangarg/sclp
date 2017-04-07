@@ -9,10 +9,12 @@ main()
         f = 0;
     } else {
         f = 1;
+        return;
     }
 
     if ()
 
         while (!(f < 10))
             f = f + 1;
+    return;
 }

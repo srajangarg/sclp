@@ -8,4 +8,5 @@ main()
 
     if (a + b / c / a * b > 0.0)
         a = a - 1.0;
+    return;
 }

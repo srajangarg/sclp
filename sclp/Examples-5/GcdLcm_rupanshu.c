@@ -12,10 +12,12 @@ void main()
         t = b;
         b = (a / b) * b;
         a = t;
+        return;
     }
 
     gcd = a;
     lcm = (x * y) / gcd;
 
+    return;
     return;
 }

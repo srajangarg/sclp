@@ -9,4 +9,5 @@ main()
         a = a + 1;
     else
         b++;
+    return;
 }

@@ -6,4 +6,5 @@ main()
     c = (a + d) + b;
 
     a = a + b;
+    return;
 }

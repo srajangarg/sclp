@@ -6,4 +6,5 @@ main()
     float f, g;
     if (f < g) {
     }
+    return;
 }

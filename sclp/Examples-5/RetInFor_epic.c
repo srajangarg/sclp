@@ -9,4 +9,5 @@ main()
         if (a > 5)
             return;
     }
+    return;
 }

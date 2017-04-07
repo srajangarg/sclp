@@ -15,4 +15,5 @@ main()
         f = 1;
         continue;
     }
+    return;
 }

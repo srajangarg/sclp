@@ -7,4 +7,5 @@ main()
 
     a = 4;
     b = -5.0;
+    return;
 }

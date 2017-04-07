@@ -6,4 +6,5 @@ main()
     int iftmp0;
 
     b = (a == b) ? b : iftmp0;
+    return;
 }

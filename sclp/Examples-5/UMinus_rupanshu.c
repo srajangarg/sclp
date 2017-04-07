@@ -4,4 +4,5 @@ main()
 {
     float a, b;
     b = -a;
+    return;
 }

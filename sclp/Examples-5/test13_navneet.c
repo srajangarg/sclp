@@ -7,4 +7,5 @@ main()
     int b, c;
 
     c = a >= b + a == b;
+    return;
 }

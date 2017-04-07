@@ -15,6 +15,7 @@ main()
 
                     } else
                         f = g;
+                    return;
                 }
 
             } else
@@ -28,6 +29,7 @@ main()
                     f = g;
             }
         }
+        return;
     }
 
     else {
@@ -37,6 +39,7 @@ main()
                 f = f * ((f < 1.0) ? 1.0 : 2.0);
             }
         }
+        return;
     }
 
     if (f == g) {

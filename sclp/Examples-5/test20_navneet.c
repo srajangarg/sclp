@@ -13,4 +13,5 @@ main()
     // if(a<0.1 && a < 2){}
     //	a = a + (a<2)?b:a;
     a = a + b;
+    return;
 }

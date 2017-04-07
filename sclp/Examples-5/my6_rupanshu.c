@@ -9,9 +9,11 @@ main()
             f = g / 1;
         } else {
             g = f / 3;
+            return;
         }
 
         i = 1 + f;
     }
+    return;
     return;
 }

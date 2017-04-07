@@ -13,6 +13,7 @@ main()
         t = b;
         b = (a / b) * b;
         a = t;
+        return;
     }
 
     gcd = a;

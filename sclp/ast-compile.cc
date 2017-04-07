@@ -141,8 +141,7 @@ CFA &ArithTwoOp(Ast *lhs, Ast *rhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou)
     return *arith;
 }
 
-CFA &RelOpFloat(Ast *lhs, Ast *rhs, Tgt_Op co, Tgt_Op bc, string flabel,
-                bool invert = false)
+CFA &RelOpFloat(Ast *lhs, Ast *rhs, Tgt_Op co, Tgt_Op bc, bool invert = false)
 {
     CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
     CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
@@ -153,25 +152,32 @@ CFA &RelOpFloat(Ast *lhs, Ast *rhs, Tgt_Op co, Tgt_Op bc, string flabel,
     CHECK_INVARIANT((lhs_s.get_reg() != NULL), "Lhs register cannot be null");
     CHECK_INVARIANT((rhs_s.get_reg() != NULL), "Rhs register cannot be null");
 
-    auto rv0 = new RA_Opd(machine_desc_object.spim_register_table[v0]);
+    auto regx = machine_desc_object.get_new_register<gp_data>();
+
     list<ICS *> &ic_list = *new list<ICS *>;
     ic_list.splice(ic_list.end(), lhs_s.get_icode_list());
     ic_list.splice(ic_list.end(), rhs_s.get_icode_list());
 
-    ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(0), rv0));
+    string lab = Ast::get_new_label();
+    ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(0), new RA_Opd(regx)));
     ic_list.push_back(
         new CompS(co, NULL, new RA_Opd(lhs_s.get_reg()), new RA_Opd(rhs_s.get_reg())));
-    ic_list.push_back(new ContS(bc, NULL, NULL, flabel));
-    ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(1), rv0));
-    ic_list.push_back(new LabS(label, NULL, flabel));
+    ic_list.push_back(new ContS(bc, NULL, NULL, lab));
+    ic_list.push_back(new MovS(imm_load, new Const_Opd<int>(1), new RA_Opd(regx)));
+    ic_list.push_back(new LabS(label, NULL, lab));
+
+    regx->reset_use_for_expr_result();
+
+    RD *reg = machine_desc_object.get_new_register<gp_data>();
 
     if (invert)
-        ic_list.push_back(new CompS(not_t, rv0, rv0, new Const_Opd<int>(1)));
+        ic_list.push_back(
+            new CompS(not_t, new RA_Opd(reg), new RA_Opd(reg), new Const_Opd<int>(1)));
 
     lhs_s.get_reg()->reset_use_for_expr_result();
     rhs_s.get_reg()->reset_use_for_expr_result();
 
-    CFA *arith = new CFA(ic_list, machine_desc_object.spim_register_table[v0]);
+    CFA *arith = new CFA(ic_list, reg);
     return *arith;
 }
 
@@ -312,20 +318,19 @@ CFA &Relational_Expr_Ast::compile()
                 CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Relational_Op not supported");
         }
     } else {
-        string lab = Ast::get_new_label();
         switch (rel_op) {
             case less_equalto:
-                return RelOpFloat(lhs_condition, rhs_condition, sle_d, bc1f, lab);
+                return RelOpFloat(lhs_condition, rhs_condition, sle_d, bc1f);
             case less_than:
-                return RelOpFloat(lhs_condition, rhs_condition, slt_d, bc1f, lab);
+                return RelOpFloat(lhs_condition, rhs_condition, slt_d, bc1f);
             case greater_than:
-                return RelOpFloat(lhs_condition, rhs_condition, sle_d, bc1f, lab, true);
+                return RelOpFloat(lhs_condition, rhs_condition, sle_d, bc1f, true);
             case greater_equalto:
-                return RelOpFloat(lhs_condition, rhs_condition, slt_d, bc1f, lab, true);
+                return RelOpFloat(lhs_condition, rhs_condition, slt_d, bc1f, true);
             case equalto:
-                return RelOpFloat(lhs_condition, rhs_condition, seq_d, bc1f, lab);
+                return RelOpFloat(lhs_condition, rhs_condition, seq_d, bc1f);
             case not_equalto:
-                return RelOpFloat(lhs_condition, rhs_condition, seq_d, bc1f, lab, true);
+                return RelOpFloat(lhs_condition, rhs_condition, seq_d, bc1f, true);
             default:
                 CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Relational_Op not supported");
         }
@@ -507,13 +512,18 @@ CFA &Call_Ast::compile()
         op = mov;
         reg1 = machine_desc_object.get_new_register<gp_data>();
         reg2 = machine_desc_object.spim_register_table[v1];
-    } else {
+        ic_list.push_back(new MovS(op, new RA_Opd(reg2), new RA_Opd(reg1)));
+
+    } else if (func->get_return_type() == double_data_type) {
         op = mov_d;
         reg1 = machine_desc_object.get_new_register<float_reg>();
         reg2 = machine_desc_object.spim_register_table[f0];
+        ic_list.push_back(new MovS(op, new RA_Opd(reg2), new RA_Opd(reg1)));
+
+    } else {
+        reg1 = NULL;
     }
 
-    ic_list.push_back(new MovS(op, new RA_Opd(reg2), new RA_Opd(reg1)));
     reg2->reset_use_for_expr_result();
     machine_desc_object.clear_local_register_mappings();
 

@@ -16,4 +16,5 @@ main()
         cntr = 1;
     else
         cntr = 0;
+    return;
 }

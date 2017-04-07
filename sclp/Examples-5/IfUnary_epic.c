@@ -14,4 +14,5 @@ main()
     else
         b = b + 1;
     return;
+    return;
 }

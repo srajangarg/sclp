@@ -17,6 +17,7 @@ main()
         } else {
             a = 1;
         }
+        return;
     }
 
     a1 = 1.0;
@@ -32,6 +33,7 @@ main()
     } else {
         if (!(a > j))
             j1 = -a1 - 1.0;
+        return;
     }
 
     while (a == j) {
@@ -55,12 +57,14 @@ main()
         j = 3;
     } else {
         j = 2;
+        return;
     }
 
     a = (a > b) ? a : b;
 
     while (a < 10) {
         a = 2 + j;
+        return;
     }
 
     do {
@@ -70,4 +74,5 @@ main()
 
     a1 = 1.0;
     a1 = a1 + j1;
+    return;
 }

@@ -3,4 +3,5 @@ void main();
 main()
 {
     int a;
+    return;
 }

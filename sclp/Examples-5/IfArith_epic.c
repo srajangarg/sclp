@@ -9,4 +9,5 @@ main()
     c = 10;
     if (a + b * c)
         a = a + 1;
+    return;
 }

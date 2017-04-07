@@ -17,4 +17,5 @@ main()
 
     if (!(f < g))
         f = 3;
+    return;
 }

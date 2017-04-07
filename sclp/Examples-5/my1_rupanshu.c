@@ -6,6 +6,7 @@ void main();
         f = 0;
     } else {
         f = 1;
+        return;
     }
 
     if (!(f == 0))
@@ -14,4 +15,5 @@ void main();
         else
             while (g < 10)
                 g = g + 2;
+    return;
 }

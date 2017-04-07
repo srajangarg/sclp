@@ -12,4 +12,5 @@ main()
         a = a + 1.0;
     else
         j = -a - 1.0;
+    return;
 }

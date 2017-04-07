@@ -7,4 +7,5 @@ main()
     int c;
 
     c = (a == b) ? a : b;
+    return;
 }
