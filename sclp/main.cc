@@ -44,6 +44,13 @@ int main(int argc, char *argv[])
         if (error_status() == false) {
 #ifdef COMPILE
             program_object.compile();
+
+            ofstream file_buffer;
+            file_buffer.open(command_options.get_file_name() + ".s");
+            command_options.set_output_buffer(&file_buffer);
+
+            if (command_options.is_demo_mode_selected())
+                command_options.set_output_buffer(&cout);
             program_object.print();
 #else
             CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH,

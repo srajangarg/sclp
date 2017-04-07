@@ -411,7 +411,7 @@ void Sequence_Ast::print(ostream &file_buffer)
 
 bool Sequence_Ast::last_statement_is_return()
 {
-    Ast* last = *(statement_list.rbegin());
+    Ast *last = *(statement_list.rbegin());
     Return_Statement_Ast temp(NULL, NULL, 0);
 
     if (typeid(*last) == typeid(temp))
