@@ -621,8 +621,16 @@ CFA &Print_Ast::compile()
 
 CFA &String_Ast::compile()
 {
-    label = "string" + to_string(program_object.string_asts.size());
-    program_object.string_asts.insert(this);
+    auto it = program_object.string_asts.find(this);
+    if (it != program_object.string_asts.end())
+    {
+        label = (*it)->get_label();
+    }
+    else
+    {
+        label = "string" + to_string(program_object.string_asts.size());
+        program_object.string_asts.insert(this);
+    }
 
     CFA *ret_stmt = new CFA(*new list<ICS *>, NULL);
     return *ret_stmt;
