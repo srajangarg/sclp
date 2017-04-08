@@ -35,6 +35,12 @@ Register_Use_Category Register_Descriptor::get_use_category()
 {
     return reg_use;
 }
+
+Register_Val_Type Register_Descriptor::get_val_type()
+{
+    return value_type;
+}
+
 Spim_Register Register_Descriptor::get_register()
 {
     return reg_id;
@@ -380,6 +386,27 @@ Register_Descriptor *Machine_Description::get_new_register()
                                                   "requirements of input program cannot "
                                                   "be met");
     }
+}
+
+vector<Register_Descriptor *> Machine_Description::get_used_registers()
+{
+    vector<Register_Descriptor *> used_regs;
+    Register_Descriptor *reg_desc;
+
+    map<Spim_Register, Register_Descriptor *>::iterator i;
+    for (i = spim_register_table.begin(); i != spim_register_table.end(); i++) {
+        reg_desc = i->second;
+
+        CHECK_INVARIANT((reg_desc != NULL),
+                        "Null register descriptor in the register table");
+
+        if(!((reg_desc->empty_lra_list()) 
+        && (reg_desc->is_used_for_expr_result() == false) && (reg_desc->is_register_occupied() == false)))
+        {
+            used_regs.push_back(reg_desc);
+        }
+    }
+    return used_regs;
 }
 
 template <Register_Use_Category dt>

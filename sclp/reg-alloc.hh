@@ -95,6 +95,10 @@ public:
     {
     }
 
+    bool empty_lra_list()
+    {
+        return lra_symbol_list.empty();
+    }
     bool is_symbol_list_empty();
     void update_symbol_information(Symbol_Table_Entry &symbol_entry);
 
@@ -104,6 +108,7 @@ public:
     void remove_symbol_entry_from_list(Symbol_Table_Entry &symbol_entry);
 
     Register_Use_Category get_use_category();
+    Register_Val_Type get_val_type();
     Spim_Register get_register();
 
     string get_name();
@@ -153,6 +158,8 @@ public:
 
     template <Register_Use_Category dt>
     Register_Descriptor *get_new_register();
+
+    vector<Register_Descriptor *> get_used_registers();
 };
 
 extern Machine_Description machine_desc_object;

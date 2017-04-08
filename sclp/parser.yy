@@ -640,18 +640,6 @@ assignment_statement:
 		$$ = assignment_stmt;
 	}
 	}
-|
-	variable ASSIGN procedure_call ';'
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		//ADD CODE HERE
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-		Assignment_Ast * assignment_stmt = new Assignment_Ast($1, $3, get_line_number());
-		assignment_stmt->check_ast();
-		$$ = assignment_stmt;
-	}
-	}
 ;
 
 for_statement:
@@ -918,6 +906,14 @@ expression_term:
 	if (NOT_ONLY_PARSE)
 	{
 		//ADD CODE HERE
+		$$ = $1;
+	}
+	}
+|
+	procedure_call
+	{
+	if (NOT_ONLY_PARSE)
+	{
 		$$ = $1;
 	}
 	}

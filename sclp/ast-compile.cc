@@ -478,8 +478,32 @@ CFA &Call_Ast::compile()
     list<ICS *> &ic_list = *new list<ICS *>;
     Tgt_Op op;
     RD *reg1, *reg2;
+    int sz;
     auto args_stes = func->get_arguments_stes();
     auto spsp = new RA_Opd(machine_desc_object.spim_register_table[sp]);
+    string sp = "$sp";
+    auto sp_st2 = new Symbol_Table_Entry(sp, int_data_type, 0, sp_ref);
+    sp_st2->set_start_offset(0);
+    auto spfor = new MA_Opd(*sp_st2);
+
+    // push used registers
+    vector<RD *> used_regs = machine_desc_object.get_used_registers();
+
+    for(auto reg_des : used_regs)
+    {
+        if(reg_des->get_val_type() == int_num)
+        {
+            op = store;
+            sz = 4; 
+        }
+        else
+        {
+            op = store_d;
+            sz = 8;
+        }
+        ic_list.push_back(new CompS(imm_add, spsp, spsp, new Const_Opd<int>(-sz)));
+        ic_list.push_back(new MovS(op, new RA_Opd(reg_des), spfor));
+    }
 
     if (arg_list.size() > 0)
         ic_list.push_back(
@@ -502,6 +526,8 @@ CFA &Call_Ast::compile()
         ret.get_reg()->reset_use_for_expr_result();
         ic_list.push_back(m);
     }
+
+    
 
     ic_list.push_back(new ContS(jal, NULL, NULL, func->get_proc_name()));
 
@@ -527,7 +553,25 @@ CFA &Call_Ast::compile()
     }
 
     reg2->reset_use_for_expr_result();
-    machine_desc_object.clear_local_register_mappings();
+    
+    for(auto reg_des : used_regs)
+    {
+        if(reg_des->get_val_type() == int_num)
+        {
+            op = load;
+            sz = 4; 
+        }
+        else
+        {
+            op = load_d;
+            sz = 8;
+        }
+        ic_list.push_back(new MovS(op, spfor, new RA_Opd(reg_des)));
+        ic_list.push_back(new CompS(imm_add, spsp, spsp, new Const_Opd<int>(sz)));
+    }
+
+
+    // machine_desc_object.clear_local_register_mappings();
 
     CFA *ret_stmt = new CFA(ic_list, reg1);
     return *ret_stmt;
