@@ -222,7 +222,7 @@ CFA &ArithOneOp(Ast *lhs, Data_Type dt, Tgt_Op opint, Tgt_Op opdou,
 CFA &CondOpIfElse(CFA &cond_s, CFA &then_s, CFA &else_s, string flabel, string slabel,
                   Data_Type dt, bool need_reg = false)
 {
-    RD *reg = NULL;
+    RD *reg = NULL; Tgt_Op op;
 
     ContS *bq
         = new ContS(beq, new RA_Opd(cond_s.get_reg()),
@@ -240,17 +240,18 @@ CFA &CondOpIfElse(CFA &cond_s, CFA &then_s, CFA &else_s, string flabel, string s
 
     if (need_reg) {
         if (dt == int_data_type or dt == void_data_type)
+        {
+            op = mov;
             reg = machine_desc_object.get_new_register<gp_data>();
+        }
         else
+        {
+            op = mov_d;
             reg = machine_desc_object.get_new_register<float_reg>();
+        }
 
-        CompS *or1 = new CompS(or_t, new RA_Opd(reg), new RA_Opd(then_s.get_reg()),
-                               new RA_Opd(machine_desc_object.spim_register_table[zero]));
-        ic1.push_back(or1);
-
-        CompS *or2 = new CompS(or_t, new RA_Opd(reg), new RA_Opd(else_s.get_reg()),
-                               new RA_Opd(machine_desc_object.spim_register_table[zero]));
-        ic2.push_back(or2);
+        ic1.push_back(new MovS(op, new RA_Opd(then_s.get_reg()), new RA_Opd(reg)));
+        ic2.push_back(new MovS(op, new RA_Opd(else_s.get_reg()), new RA_Opd(reg)));
 
         then_s.get_reg()->reset_use_for_expr_result();
         else_s.get_reg()->reset_use_for_expr_result();
