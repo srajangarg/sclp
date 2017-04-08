@@ -552,7 +552,7 @@ CFA &Call_Ast::compile()
         reg1 = NULL;
     }
 
-    reg2->reset_use_for_expr_result();
+    // reg2->reset_use_for_expr_result();
     
     for(auto reg_des : used_regs)
     {
