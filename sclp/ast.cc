@@ -237,8 +237,6 @@ bool Arithmetic_Expr_Ast::check_ast()
     if (ast_num_child == unary_arity)
         return true;
 
-    node_data_type = int_data_type;
-
     CHECK_INPUT(CONTROL_SHOULD_NOT_REACH, "Arithmetic statement data type not compatible",
                 lineno);
 }
@@ -431,11 +429,6 @@ Conditional_Operator_Ast::Conditional_Operator_Ast(Ast *c, Ast *l, Ast *r, int l
     cond = c;
     ast_num_child = ternary_arity;
     node_data_type = l->get_data_type();
-
-    // if(l->get_data_type() == r->get_data_type())
-    // 	node_data_type = l->get_data_type();
-    // else
-    // 	node_data_type = void_data_type;
 }
 
 Conditional_Operator_Ast::~Conditional_Operator_Ast()
@@ -784,7 +777,6 @@ Call_Ast::Call_Ast(Procedure *f, vector<Ast *> &a_list, int line)
     arg_list = a_list;
     lineno = line;
     node_data_type = func->get_return_type();
-    // ast_num_child = zero_arity;
 }
 
 Call_Ast::~Call_Ast()
