@@ -3,8 +3,15 @@ void main();
 
 main()
 {
-	float a, b, c;
-	a = 2.3; b = 3.4;	
+    float a, b, c;
+    a = 2.3;
+    b = 3.4;
 
-	c = a * b >= a ;
+    if (a > b) {
+        a = 1.0;
+    } else {
+        b = 2.0;
+    }
+
+    return;
 }

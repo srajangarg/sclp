@@ -3,7 +3,7 @@
 void main();
 main()
 {
-	int a;
-	float b;
-	a = b+b*a;
+    int a;
+    float b;
+    a = b + b * a;
 }

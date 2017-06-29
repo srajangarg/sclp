@@ -1,6 +1,6 @@
-void main(); main ()
+void main();
+main()
 {
-  int a;
-  a + 6;
+    int a;
+    a + 6;
 }
-

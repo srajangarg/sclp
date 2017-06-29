@@ -1,11 +1,11 @@
 #ifndef AST_HH
 #define AST_HH
 
-#include<string>
-#include<iostream>
-#include<iomanip>
-#include<typeinfo>
-#include<list>
+#include <string>
+#include <iostream>
+#include <iomanip>
+#include <typeinfo>
+#include <list>
 
 #define AST_SPACE "         "
 #define AST_NODE_SPACE "            "
@@ -19,275 +19,340 @@ class Ast;
 class Ast
 {
 protected:
-	typedef enum
-	{
-		zero_arity = 0,
-		unary_arity = 1,
-		binary_arity = 2,
-		ternary_arity = 3
-	}Ast_Arity;
+    typedef enum {
+        zero_arity = 0,
+        unary_arity = 1,
+        binary_arity = 2,
+        ternary_arity = 3
+    } Ast_Arity;
 
-	Data_Type node_data_type;
-	Ast_Arity ast_num_child;
-	static int labelCounter;
-	int lineno;
-	string get_new_label(){
-
-		return "label"+to_string(labelCounter++);
-	}
+    Data_Type node_data_type;
+    Ast_Arity ast_num_child;
+    static int labelCounter;
+    int lineno;
 
 public:
-	Ast();
-	~Ast();
+    Ast();
+    ~Ast();
 
-	virtual Data_Type get_data_type();
-	virtual void set_data_type(Data_Type dt);
+    static string get_new_label()
+    {
 
-	virtual bool is_value_zero();
+        return "label" + to_string(labelCounter++);
+    }
 
-	virtual bool check_ast();
-	virtual Symbol_Table_Entry & get_symbol_entry();
+    virtual Data_Type get_data_type();
+    virtual void set_data_type(Data_Type dt);
 
-	virtual void print(ostream & file_buffer) = 0;
-	virtual Code_For_Ast & compile() = 0;
-	virtual Code_For_Ast & create_store_stmt(Register_Descriptor * store_register);
-	virtual void print_assembly();
-	virtual void print_icode();
+    virtual bool is_value_zero();
 
+    virtual bool check_ast();
+    virtual Symbol_Table_Entry &get_symbol_entry();
+
+    virtual void print(ostream &file_buffer) = 0;
+    virtual Code_For_Ast &compile() = 0;
+    virtual Code_For_Ast &create_store_stmt(Register_Descriptor *store_register);
+    virtual void print_assembly();
+    virtual void print_icode();
 };
 
-class Assignment_Ast:public Ast
+class Assignment_Ast : public Ast
 {
-	Ast * lhs;
-	Ast * rhs;
+    Ast *lhs;
+    Ast *rhs;
 
 public:
-	Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line);
-	~Assignment_Ast();
+    Assignment_Ast(Ast *temp_lhs, Ast *temp_rhs, int line);
+    ~Assignment_Ast();
 
-	bool check_ast();
+    bool check_ast();
 
-	void print(ostream & file_buffer);
+    void print(ostream &file_buffer);
 
-	Code_For_Ast & compile();
+    Code_For_Ast &compile();
 };
 
-class Name_Ast:public Ast
+class Name_Ast : public Ast
 {
-	Symbol_Table_Entry * variable_symbol_entry;
+    Symbol_Table_Entry *variable_symbol_entry;
 
 public:
-	Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line);
-	~Name_Ast();
+    Name_Ast(string &name, Symbol_Table_Entry &var_entry, int line);
+    ~Name_Ast();
 
-	Data_Type get_data_type();
-	Symbol_Table_Entry & get_symbol_entry();
-	void set_data_type(Data_Type dt);
+    Data_Type get_data_type();
+    Symbol_Table_Entry &get_symbol_entry();
+    void set_data_type(Data_Type dt);
 
-	void print(ostream & file_buffer);
+    void print(ostream &file_buffer);
 
-	Code_For_Ast & compile();
-	Code_For_Ast & create_store_stmt(Register_Descriptor * store_register);
+    Code_For_Ast &compile();
+    Code_For_Ast &create_store_stmt(Register_Descriptor *store_register);
 };
 
 template <class T>
-class Number_Ast:public Ast
+class Number_Ast : public Ast
 {
-	T constant;
+    T constant;
 
 public:
-	Number_Ast(T number, Data_Type constant_data_type, int line);
-	~Number_Ast();
+    Number_Ast(T number, Data_Type constant_data_type, int line);
+    ~Number_Ast();
 
-	Data_Type get_data_type();
-	void set_data_type(Data_Type dt);
-	bool is_value_zero();
+    Data_Type get_data_type();
+    void set_data_type(Data_Type dt);
+    bool is_value_zero();
 
-	void print(ostream & file_buffer);
-	Code_For_Ast & compile();
+    void print(ostream &file_buffer);
+    Code_For_Ast &compile();
 };
 
-class Relational_Expr_Ast:public Ast
+class Relational_Expr_Ast : public Ast
 {
-	Ast * lhs_condition;
-	Ast * rhs_condition;
-	Relational_Op rel_op;
+    Ast *lhs_condition;
+    Ast *rhs_condition;
+    Relational_Op rel_op;
 
 public:
-	Relational_Expr_Ast(Ast * lhs, Relational_Op rop, Ast * rhs, int line);
-	~Relational_Expr_Ast();
+    Relational_Expr_Ast(Ast *lhs, Relational_Op rop, Ast *rhs, int line);
+    ~Relational_Expr_Ast();
 
-	Data_Type get_data_type();
-	void set_data_type(Data_Type dt);
+    Data_Type get_data_type();
+    void set_data_type(Data_Type dt);
 
-	bool check_ast();
+    bool check_ast();
 
-	void print(ostream & file_buffer);
-	Code_For_Ast & compile();
+    void print(ostream &file_buffer);
+    Code_For_Ast &compile();
 };
 
-class Boolean_Expr_Ast:public Ast
+class Boolean_Expr_Ast : public Ast
 {
-	Ast * lhs_op;
-	Ast * rhs_op;
-	Boolean_Op bool_op;
+    Ast *lhs_op;
+    Ast *rhs_op;
+    Boolean_Op bool_op;
 
 public:
-	Boolean_Expr_Ast(Ast * lhs, Boolean_Op bop, Ast * rhs, int line);
-	~Boolean_Expr_Ast();
+    Boolean_Expr_Ast(Ast *lhs, Boolean_Op bop, Ast *rhs, int line);
+    ~Boolean_Expr_Ast();
 
-	Data_Type get_data_type();
-	void set_data_type(Data_Type dt);
+    Data_Type get_data_type();
+    void set_data_type(Data_Type dt);
 
-	bool check_ast();
+    bool check_ast();
 
-	void print(ostream & file_buffer);
+    void print(ostream &file_buffer);
 
-	Code_For_Ast & compile();
+    Code_For_Ast &compile();
 };
 
-class Selection_Statement_Ast: public Ast {
-protected:
-	Ast* cond;
-	Ast* then_part;
-	Ast* else_part;
-public:
-	Selection_Statement_Ast(Ast * cond,Ast* then_part, Ast* else_part, int line);
-	~Selection_Statement_Ast();
-
-	Data_Type get_data_type();
-	void set_data_type(Data_Type dt);
-
-	bool check_ast();
-
-	void print(ostream & file_buffer);
-
-	Code_For_Ast & compile();
-};
-
-class Iteration_Statement_Ast: public Ast {
-protected:
-	Ast* cond;
-	Ast* body;
-	bool is_do_form;
-public:
-	Iteration_Statement_Ast(Ast * cond, Ast* body, int line, bool do_form);
-	~Iteration_Statement_Ast();
-
-	Data_Type get_data_type();
-	void set_data_type(Data_Type dt);
-
-	bool check_ast();
-
-	void print(ostream & file_buffer);
-
-	Code_For_Ast & compile();
-};
-
-
-class Arithmetic_Expr_Ast:public Ast
+class Selection_Statement_Ast : public Ast
 {
 protected:
-	Ast * lhs;
-	Ast * rhs;
+    Ast *cond;
+    Ast *then_part;
+    Ast *else_part;
 
 public:
-	Arithmetic_Expr_Ast() {}
-	~Arithmetic_Expr_Ast();
+    Selection_Statement_Ast(Ast *cond, Ast *then_part, Ast *else_part, int line);
+    ~Selection_Statement_Ast();
 
-	Data_Type get_data_type();
-	void set_data_type(Data_Type dt);
-	bool check_ast();
+    Data_Type get_data_type();
+    void set_data_type(Data_Type dt);
 
-	virtual void print(ostream & file_buffer) = 0;
-	virtual Code_For_Ast & compile() = 0;
+    bool check_ast();
+
+    void print(ostream &file_buffer);
+
+    Code_For_Ast &compile();
 };
 
-class Plus_Ast:public Arithmetic_Expr_Ast
-{
-public:
-	Plus_Ast(Ast * l, Ast * r, int line);
-	~Plus_Ast();
-
-	void print(ostream & file_buffer);
-
-	Code_For_Ast & compile();
-};
-
-class Minus_Ast:public Arithmetic_Expr_Ast
-{
-public:
-	Minus_Ast(Ast * l, Ast * r, int line);
-	~Minus_Ast();
-
-	void print(ostream & file_buffer);
-
-	Code_For_Ast & compile();
-};
-
-class Divide_Ast:public Arithmetic_Expr_Ast
-{
-public:
-	Divide_Ast(Ast * l, Ast * r, int line);
-	~Divide_Ast();
-
-	void print(ostream & file_buffer);
-	Code_For_Ast & compile();
-};
-
-class Mult_Ast:public Arithmetic_Expr_Ast
-{
-public:
-	Mult_Ast(Ast * l, Ast * r, int line);
-	~Mult_Ast();
-
-	void print(ostream & file_buffer);
-
-	Code_For_Ast & compile();
-};
-
-class Conditional_Operator_Ast: public Arithmetic_Expr_Ast
+class Iteration_Statement_Ast : public Ast
 {
 protected:
-	Ast* cond;
+    Ast *cond;
+    Ast *body;
+    bool is_do_form;
+
 public:
-	Conditional_Operator_Ast(Ast* cond, Ast* l, Ast* r, int line);
-	~Conditional_Operator_Ast();
+    Iteration_Statement_Ast(Ast *cond, Ast *body, int line, bool do_form);
+    ~Iteration_Statement_Ast();
 
-	void print(ostream & file_buffer);
+    Data_Type get_data_type();
+    void set_data_type(Data_Type dt);
 
-	Code_For_Ast & compile();
+    bool check_ast();
+
+    void print(ostream &file_buffer);
+
+    Code_For_Ast &compile();
 };
 
-class UMinus_Ast: public Arithmetic_Expr_Ast
+class Arithmetic_Expr_Ast : public Ast
 {
-public:
-	UMinus_Ast(Ast * l, Ast * r, int line);
-	~UMinus_Ast();
-	
-	void print(ostream & file_buffer);
+protected:
+    Ast *lhs;
+    Ast *rhs;
 
-	Code_For_Ast & compile();
+public:
+    Arithmetic_Expr_Ast()
+    {
+    }
+    ~Arithmetic_Expr_Ast();
+
+    Data_Type get_data_type();
+    void set_data_type(Data_Type dt);
+    bool check_ast();
+
+    virtual void print(ostream &file_buffer) = 0;
+    virtual Code_For_Ast &compile() = 0;
 };
 
-class Sequence_Ast: public Ast
+class Plus_Ast : public Arithmetic_Expr_Ast
 {
-	list<Ast *> statement_list;
-	list<Icode_Stmt *> sa_icode_list;
 public:
-	Sequence_Ast(int line);
-	~Sequence_Ast();
-	void ast_push_back(Ast * ast);
-	void print(ostream & file_buffer);
-	Code_For_Ast & compile();
-	void print_assembly(ostream & file_buffer);
-	void print_icode(ostream & file_buffer);
-	void deadCodeElimination(Symbol_Table global_symbol_tableS);
+    Plus_Ast(Ast *l, Ast *r, int line);
+    ~Plus_Ast();
 
-	list<Icode_Stmt*> get_icode_list()
-	{
-		return sa_icode_list;
-	}
+    void print(ostream &file_buffer);
+
+    Code_For_Ast &compile();
+};
+
+class Minus_Ast : public Arithmetic_Expr_Ast
+{
+public:
+    Minus_Ast(Ast *l, Ast *r, int line);
+    ~Minus_Ast();
+
+    void print(ostream &file_buffer);
+
+    Code_For_Ast &compile();
+};
+
+class Divide_Ast : public Arithmetic_Expr_Ast
+{
+public:
+    Divide_Ast(Ast *l, Ast *r, int line);
+    ~Divide_Ast();
+
+    void print(ostream &file_buffer);
+    Code_For_Ast &compile();
+};
+
+class Mult_Ast : public Arithmetic_Expr_Ast
+{
+public:
+    Mult_Ast(Ast *l, Ast *r, int line);
+    ~Mult_Ast();
+
+    void print(ostream &file_buffer);
+
+    Code_For_Ast &compile();
+};
+
+class Conditional_Operator_Ast : public Arithmetic_Expr_Ast
+{
+protected:
+    Ast *cond;
+
+public:
+    Conditional_Operator_Ast(Ast *cond, Ast *l, Ast *r, int line);
+    ~Conditional_Operator_Ast();
+
+    void print(ostream &file_buffer);
+
+    Code_For_Ast &compile();
+};
+
+class UMinus_Ast : public Arithmetic_Expr_Ast
+{
+public:
+    UMinus_Ast(Ast *l, Ast *r, int line);
+    ~UMinus_Ast();
+
+    void print(ostream &file_buffer);
+
+    Code_For_Ast &compile();
+};
+
+class Sequence_Ast : public Ast
+{
+    list<Ast *> statement_list;
+    list<Icode_Stmt *> sa_icode_list;
+
+public:
+    Sequence_Ast(int line);
+    ~Sequence_Ast();
+    void ast_push_back(Ast *ast);
+    void print(ostream &file_buffer);
+    Code_For_Ast &compile();
+    void print_assembly(ostream &file_buffer);
+    void print_icode(ostream &file_buffer);
+    bool last_statement_is_return();
+
+    list<Icode_Stmt *> get_icode_list()
+    {
+        return sa_icode_list;
+    }
+};
+
+class String_Ast : public Ast
+{
+    string s;
+    string label;
+
+public:
+    String_Ast(string s, int line);
+    ~String_Ast();
+
+    Data_Type get_data_type();
+    string get_label() const;
+    string get_s() const;
+    void print(ostream &file_buffer);
+    Code_For_Ast &compile();
+};
+
+class Print_Ast : public Ast
+{
+    Ast *arg;
+
+public:
+    Print_Ast(Ast *arg, int line);
+    ~Print_Ast();
+
+    void print(ostream &file_buffer);
+    Code_For_Ast &compile();
+};
+
+class Return_Statement_Ast : public Ast
+{
+    Ast *return_val;
+    Procedure *proc;
+
+public:
+    Return_Statement_Ast(Ast *val, Procedure *p, int line);
+    ~Return_Statement_Ast();
+
+    bool check_ast();
+    void print(ostream &file_buffer);
+    Code_For_Ast &compile();
+};
+
+class Call_Ast : public Ast
+{
+    vector<Ast *> arg_list;
+    Procedure *func;
+
+public:
+    Call_Ast(Procedure *func, vector<Ast *> &a_list, int line);
+    ~Call_Ast();
+
+    Data_Type get_data_type();
+    bool check_ast();
+
+    void print(ostream &file_buffer);
+    Code_For_Ast &compile();
 };
 
 #endif

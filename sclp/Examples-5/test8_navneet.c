@@ -1,10 +1,11 @@
 void main();
 main()
 {
-	float a ,b , c, d , e;
+    float a, b, c, d, e;
 
-	if (a >= b + c && d > e * d / c)
-		a = a * d / e;
-	else
-		e = e + d;
+    if (a > b && d > e)
+        a = d;
+    else
+        e = d;
+    return;
 }

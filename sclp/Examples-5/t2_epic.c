@@ -2,7 +2,8 @@
 void main();
 main()
 {
-	int f;
-	if (f < 0.1){}
-
+    int f;
+    if (f < 0.1) {
+    }
+    return;
 }

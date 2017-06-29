@@ -1,3 +1,4 @@
-void main(); main()
+void main();
+main()
 {
 }

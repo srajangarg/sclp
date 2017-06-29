@@ -26,51 +26,47 @@ using namespace std;
 #include "parserbase.h"
 #include "scannerbase.h"
 
-class Scanner: public ScannerBase
+class Scanner : public ScannerBase
 {
-    public:
-        explicit Scanner(std::istream &in = std::cin,
-                                std::ostream &out = std::cout);
+public:
+    explicit Scanner(std::istream &in = std::cin, std::ostream &out = std::cout);
 
-        Scanner(std::string const &infile, std::string const &outfile);
-        
-        int lex();
+    Scanner(std::string const &infile, std::string const &outfile);
 
-    private:
-        int lex__();
-        int executeAction__(size_t ruleNr);
-		void postCode(PostEnum__ type);
-        void print();
-        void preCode(); 
-
-/////////////////// Functions for scanner.ll //////////////////////////////
+    int lex();
 
 private:
-	string token_name;
-	ParserBase::STYPE__ * dval;
+    int lex__();
+    int executeAction__(size_t ruleNr);
+    void postCode(PostEnum__ type);
+    void print();
+    void preCode();
+
+    /////////////////// Functions for scanner.ll //////////////////////////////
+
+private:
+    string token_name;
+    ParserBase::STYPE__ *dval;
 
 public:
-	void store_token_name(string name);
-	void display_token(int token_code);
-	void ignore_token();
+    void store_token_name(string name);
+    void display_token(int token_code);
+    void ignore_token();
 
-	int get_scan_line_number();						// Used for errors
+    int get_scan_line_number(); // Used for errors
 
-	void setSval(ParserBase::STYPE__ * val);
-	ParserBase::STYPE__ * getSval();
+    void setSval(ParserBase::STYPE__ *val);
+    ParserBase::STYPE__ *getSval();
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 };
 
-inline Scanner::Scanner(std::istream &in, std::ostream &out)
-:
-    ScannerBase(in, out)
+inline Scanner::Scanner(std::istream &in, std::ostream &out) : ScannerBase(in, out)
 {
 }
 
 inline Scanner::Scanner(std::string const &infile, std::string const &outfile)
-:
-    ScannerBase(infile, outfile)
+    : ScannerBase(infile, outfile)
 {
 }
 
@@ -79,25 +75,24 @@ inline int Scanner::lex()
     return lex__();
 }
 
-inline void Scanner::preCode() 
+inline void Scanner::preCode()
 {
 ////////////////////////// Command options for cfglp ////////////////////////
 #ifndef TOKENS
 #define TOKENS
 
-	if (command_options.is_show_tokens_selected())
-		command_options.create_tokens_buffer();
+    if (command_options.is_show_tokens_selected())
+        command_options.create_tokens_buffer();
 
 #endif
-////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 }
 
 inline void Scanner::postCode(PostEnum__ type)
 {
-	
 }
 
-inline void Scanner::print() 
+inline void Scanner::print()
 {
     print__();
 }
@@ -106,55 +101,50 @@ inline void Scanner::print()
 
 inline void Scanner::store_token_name(string name)
 {
-	token_name = name;
+    token_name = name;
 }
 
 inline void Scanner::display_token(int token_code)
 {
-	ostream & file_buffer = command_options.get_tokens_buffer();
-	
-	file_buffer << "Line: " << lineNr() << " ";
-	file_buffer << "\tToken Name: " << token_name;
-	file_buffer << " \tToken: " << matched();
-	file_buffer << " \tToken Code: " << token_code << "\n";
+    ostream &file_buffer = command_options.get_tokens_buffer();
+
+    file_buffer << "Line: " << lineNr() << " ";
+    file_buffer << "\tToken Name: " << token_name;
+    file_buffer << " \tToken: " << matched();
+    file_buffer << " \tToken Code: " << token_code << "\n";
 }
 
 inline void Scanner::ignore_token()
 {
-	if (command_options.is_show_tokens_selected())
-	{
-		if (matched()[0] == '\n')
-		{
-			ostream & file_buffer = command_options.get_tokens_buffer();
-			file_buffer << "Line: "<< lineNr() << " ";
-			file_buffer << "\tIgnored NEWLINE character\n";
-		}
-		else
-		{
-			ostream & buffer = command_options.get_tokens_buffer();
+    if (command_options.is_show_tokens_selected()) {
+        if (matched()[0] == '\n') {
+            ostream &file_buffer = command_options.get_tokens_buffer();
+            file_buffer << "Line: " << lineNr() << " ";
+            file_buffer << "\tIgnored NEWLINE character\n";
+        } else {
+            ostream &buffer = command_options.get_tokens_buffer();
 
-			buffer << "Line: " << lineNr() << " ";
-			buffer << "\tIgnored lexeme: '" << matched() << "'\n";
-		}
-	}
+            buffer << "Line: " << lineNr() << " ";
+            buffer << "\tIgnored lexeme: '" << matched() << "'\n";
+        }
+    }
 }
 
-inline void Scanner::setSval(ParserBase::STYPE__ * val)
+inline void Scanner::setSval(ParserBase::STYPE__ *val)
 {
-	dval = val;
+    dval = val;
 }
 
 inline int Scanner::get_scan_line_number()
 {
-	return lineNr();
+    return lineNr();
 }
 
-inline ParserBase::STYPE__ * Scanner::getSval()
+inline ParserBase::STYPE__ *Scanner::getSval()
 {
-	return dval;
+    return dval;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 
 #endif
-

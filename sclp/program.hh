@@ -3,6 +3,9 @@
 #define PROGRAM_HH
 
 #include <string>
+#include <list>
+#include <map>
+#include <set>
 #include "procedure.hh"
 #define GLOB_SPACE "   "
 
@@ -14,38 +17,39 @@ extern Program program_object;
 
 class Program
 {
-	Symbol_Table global_symbol_table;
-	Procedure * procedure;
+    Symbol_Table global_symbol_table;
+    map<string, Procedure *> procedures;
 
 public:
-	Program();
-	~Program();
-	void delete_all();
+    struct String_Ast_Compt {
+        bool operator()(const String_Ast *lhs, const String_Ast *rhs) const
+        {
+            return lhs->get_s() < rhs->get_s();
+        }
+    };
+    set<String_Ast *, String_Ast_Compt> string_asts;
 
-	void set_procedure(Procedure * proc, int line);
-	void set_global_table(Symbol_Table & new_global_table);
+    Program();
+    ~Program();
+    void delete_all();
 
-	Procedure* get_procedure()
-	{
-		return procedure;
-	}
+    void add_procedure(Procedure *proc, int line);
+    void set_global_table(Symbol_Table &new_global_table);
 
-	Symbol_Table_Entry & get_symbol_table_entry(string variable);
+    Symbol_Table_Entry &get_symbol_table_entry(string variable);
+    Procedure *get_procedure(string name);
 
-	void print_sym();
-	void print();
+    void print_sym();
+    void print();
 
-	bool variable_proc_name_check(string symbol);
-	bool variable_in_symbol_list_check(string variable);
-	void global_list_in_proc_check();
-
-	// compile
-	void compile();
-	void print_assembly();
-	void deadCodeElimination()
-	{
-		procedure->get_seqast()->deadCodeElimination(global_symbol_table);
-	}
+    bool variable_proc_name_check(string symbol); // not required
+    bool variable_in_symbol_list_check(string variable);
+    void global_list_in_proc_check(); // not required
+    bool variable_in_proc_map_check(string var);
+    bool check_called_procedure_defined();
+    // compile
+    void compile();
+    void print_assembly();
 };
 
 #endif

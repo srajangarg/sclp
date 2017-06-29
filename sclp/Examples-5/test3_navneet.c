@@ -3,7 +3,8 @@ void main();
 
 main()
 {
-	float a, b, c;
+    float a, b, c;
 
-	c = a * b >= a < b + b;
+    c = a * b >= a < b + b;
+    return;
 }

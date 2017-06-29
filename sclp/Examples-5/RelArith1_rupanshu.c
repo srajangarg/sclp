@@ -2,8 +2,9 @@
 
 main()
 {
-	int a = 3;
-	int b = 8, c;
+    int a = 3;
+    int b = 8, c;
 
-	c = a >= b + a == b;
+    c = a >= b + a == b;
+    return;
 }

@@ -1,9 +1,9 @@
 void main();
 main()
 {
-	int a,n;
+    int a, n;
 
-	if(a<n){
-		a = 2;
-	}
+    if (a < n) {
+        a = 2;
+    }
 }

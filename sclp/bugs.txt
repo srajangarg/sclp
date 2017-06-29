@@ -1,0 +1,29 @@
+int fn;
+void main();
+int fn();
+main(){
+  int a;
+  int b;
+  a=10;
+  return;
+}
+
+
+// This works. But if fn is defined then doesn't
+
+
+void main();
+int fn();
+main(){
+	int fn; 	// fine
+  int a;
+  int b;
+  int main;		// error
+  a = fn();
+  return;
+}
+
+fn()
+{
+	return 1;
+}

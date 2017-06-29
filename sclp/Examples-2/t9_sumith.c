@@ -1,5 +1,6 @@
-void main(); main ()
+void main();
+main()
 {
-	float b;
-	b = 0 + 0;
+    float b;
+    b = 0 + 0;
 }

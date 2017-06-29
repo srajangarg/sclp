@@ -22,6 +22,11 @@ void                        {
                                 return Parser::VOID;
                             }
 
+return                      {
+                                store_token_name("RETURN");
+                                return Parser::RETURN;
+                            }
+
 if                          {
                                 store_token_name("IF");
                                 return Parser::IF;
@@ -47,6 +52,10 @@ for                         {
                                 return Parser::FOR;
                             }
 
+print                       {
+                                store_token_name("PRINT");
+                                return Parser::PRINT;
+                            }
 
 "="                         {
                                 store_token_name("ASSIGN_OP");
@@ -139,6 +148,12 @@ for                         {
                                 return Parser::NAME;
                             }
 
+\".*(\\\".*)*\"             {
+                                ParserBase::STYPE__ *val = getSval();
+                                val->string_value = new std::string(matched());
+                                store_token_name("STRING_LITERAL");
+                                return Parser::STRING_LITERAL;
+                            }
 
 \n              |
 ";;".*          |

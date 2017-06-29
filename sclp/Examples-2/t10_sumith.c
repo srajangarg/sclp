@@ -1,6 +1,7 @@
-void main(); main ()
+void main();
+main()
 {
-	int a;
-	int b;
-	a = b + 0.0;
+    int a;
+    int b;
+    a = b + 0.0;
 }

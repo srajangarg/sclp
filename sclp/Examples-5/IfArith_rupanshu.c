@@ -2,8 +2,9 @@
 
 main()
 {
-	int a = 3, b = 5, c = 10;
+    int a = 3, b = 5, c = 10;
 
-	if (a + b * c / a / b)
-		a = a+1;
+    if (a + b * c / a / b)
+        a = a + 1;
+    return;
 }

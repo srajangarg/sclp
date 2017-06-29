@@ -2,8 +2,10 @@ void main();
 
 main()
 {
-	float f,g;
+    float f, g;
 
-	{g = 1.0;}
-
+    {
+        g = 1.0;
+    }
+    return;
 }

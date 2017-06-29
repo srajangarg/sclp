@@ -3,8 +3,9 @@ void main();
 
 main()
 {
-	int a, b, c;
+    int a, b, c;
 
-	if (a + b * c / a / b)
-		a = a+1;
+    if (a + b * c / a / b)
+        a = a + 1;
+    return;
 }

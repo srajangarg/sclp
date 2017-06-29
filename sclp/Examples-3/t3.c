@@ -2,7 +2,7 @@
 void main();
 main()
 {
-	int f;
-	if (f < 0){}
-
+    int f;
+    if (f < 0) {
+    }
 }

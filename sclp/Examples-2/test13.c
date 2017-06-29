@@ -1,5 +1,6 @@
-void main(); main()
+void main();
+main()
 {
-	int a;
-	float ;
+    int a;
+    float;
 }

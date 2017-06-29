@@ -1,10 +1,10 @@
-void main(); 
+void main();
 
 main()
 
 {
-	int a;
+    int a;
 
-	if(1-a<1||!a*2>2&&a-1==2&&a+2!=4)
-	{}
+    if (1 - a < 1 || !a * 2 > 2 && a - 1 == 2 && a + 2 != 4) {
+    }
 }

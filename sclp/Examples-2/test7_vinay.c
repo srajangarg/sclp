@@ -1,5 +1,5 @@
-void main(); main ()
+void main();
+main()
 {
-  int a;
+    int a;
 }
-
